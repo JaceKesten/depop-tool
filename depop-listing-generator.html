@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depop Listing Generator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --border: #e2e0da;
+    --border-strong: #c8c5bc;
+    --text: #1a1916;
+    --text-secondary: #6b6860;
+    --text-hint: #9e9b94;
+    --accent: #1a1916;
+    --accent-fg: #ffffff;
+    --info-bg: #eef4ff;
+    --info-border: #c3d8ff;
+    --info-text: #1d4ed8;
+    --success-bg: #edfaf3;
+    --success-border: #86efb8;
+    --success-text: #15803d;
+    --danger-bg: #fff1f1;
+    --danger-border: #fca5a5;
+    --danger-text: #b91c1c;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  header { margin-bottom: 2rem; }
+  header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 12px;
+  }
+
+  .upload-zone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 1.75rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: var(--bg);
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .upload-zone:hover { background: #f0ede8; border-color: #a09d96; }
+  .upload-zone.drag-over { background: var(--info-bg); border-color: var(--info-border); }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 28px; margin-bottom: 6px; }
+  .upload-zone p { font-size: 14px; color: var(--text-secondary); }
+  .upload-zone .hint { font-size: 12px; color: var(--text-hint); margin-top: 3px; }
+
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .thumb {
+    width: 76px; height: 76px; object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .thumb:hover { opacity: 0.7; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field + .field { margin-top: 10px; }
+  label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+  .sublabel { font-size: 11px; color: var(--text-hint); }
+
+  input[type=text], textarea, select {
+    width: 100%;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input[type=text]:focus, textarea:focus, select:focus { border-color: var(--border-strong); }
+  textarea { min-height: 56px; resize: vertical; line-height: 1.5; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6860' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; cursor: pointer; }
+
+  .api-key-wrap { position: relative; }
+  .api-key-wrap input { padding-right: 70px; font-family: monospace; font-size: 13px; }
+  .toggle-key {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 12px; color: var(--text-hint); background: none; border: none;
+    cursor: pointer; padding: 2px 4px;
+  }
+  .toggle-key:hover { color: var(--text-secondary); }
+
+  .gen-btn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    background: var(--accent);
+    color: var(--accent-fg);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    margin-top: 4px;
+    transition: opacity 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .gen-btn:hover { opacity: 0.85; }
+  .gen-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .status { font-size: 13px; color: var(--text-secondary); margin-top: 8px; text-align: center; min-height: 18px; }
+
+  .alert {
+    font-size: 13px; border-radius: var(--radius-sm);
+    padding: 10px 14px; margin-top: 10px; line-height: 1.5; display: none;
+  }
+  .alert-danger { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
+  .alert-success { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  .result-section { margin-bottom: 1.25rem; }
+  .result-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 8px; }
+
+  .description-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    margin-top: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-secondary);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .copy-btn:hover { background: var(--bg); }
+
+  .cats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cat-pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+  }
+  .cat-pill .k { font-size: 11px; color: var(--text-hint); margin-bottom: 2px; }
+  .cat-pill .v { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  #results { display: none; }
+
+  @media (max-width: 480px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .grid4 { grid-template-columns: 1fr 1fr; }
+    .cats-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Depop listing generator</h1>
+    <p>Upload a photo, fill in the details, get a ready-to-paste listing.</p>
+  </header>
+
+  <!-- API Key -->
+  <div class="card">
+    <p class="card-label">Anthropic API key</p>
+    <div class="field">
+      <div class="api-key-wrap">
+        <input type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off">
+        <button class="toggle-key" onclick="toggleKey()">show</button>
+      </div>
+      <span class="sublabel">Never sent anywhere except directly to Anthropic. Stored only in your browser.</span>
+    </div>
+  </div>
+
+  <!-- Photos -->
+  <div class="card">
+    <p class="card-label">Photos</p>
+    <div class="upload-zone" id="dropzone" onclick="document.getElementById('img-input').click()">
+      <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+      <div class="upload-icon">📷</div>
+      <p>Click · drag & drop · or paste (Ctrl/Cmd+V)</p>
+      <p class="hint">Front required · back/graphic optional · up to 4 images · click thumb to remove</p>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+
+  <!-- Details -->
+  <div class="card">
+    <p class="card-label">Item details</p>
+
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="field">
+        <label>Size</label>
+        <input type="text" id="size" placeholder="e.g. Medium, L, XS">
+      </div>
+      <div class="field">
+        <label>Material</label>
+        <input type="text" id="material" placeholder="e.g. 100% cotton">
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="field">
+        <label>Condition</label>
+        <select id="condition">
+          <option>New with tags</option>
+          <option>Like new</option>
+          <option selected>Good</option>
+          <option>Fair</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Source</label>
+        <select id="source">
+          <option>Thrifted</option>
+          <option>Vintage</option>
+          <option>Brand new</option>
+          <option>Own wardrobe</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label>Measurements <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+      <div class="grid4" style="margin-top:4px">
+        <div class="field">
+          <label class="sublabel">Chest (cm)</label>
+          <input type="text" id="m-chest" placeholder="116">
+        </div>
+        <div class="field">
+          <label class="sublabel">Length (cm)</label>
+          <input type="text" id="m-length" placeholder="68">
+        </div>
+        <div class="field">
+          <label class="sublabel">Shoulder (cm)</label>
+          <input type="text" id="m-shoulder" placeholder="55">
+        </div>
+        <div class="field">
+          <label class="sublabel">Sleeve (cm)</label>
+          <input type="text" id="m-sleeve" placeholder="52">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:10px">
+      <div class="field">
+        <label>Brand <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+        <input type="text" id="brand" placeholder="e.g. Carhartt, no label">
+      </div>
+      <div class="field">
+        <label>Era / Age <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+        <input type="text" id="era" placeholder="e.g. Y2K, 90s, vintage">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Extra notes <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+      <textarea id="notes" placeholder="Flaws, special features, fit notes..."></textarea>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate listing</button>
+  <p class="status" id="status"></p>
+  <div class="alert alert-danger" id="error-box"></div>
+
+  <!-- Results -->
+  <div id="results">
+    <hr class="divider">
+
+    <div class="result-section">
+      <p class="result-label">Description — copy this into Depop</p>
+      <div class="description-box" id="desc-output"></div>
+      <button class="copy-btn" onclick="copyDesc()">⎘ Copy description</button>
+    </div>
+
+    <div class="result-section">
+      <p class="result-label">Categories & pricing</p>
+      <div class="cats-grid" id="cats-out"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let imageDataList = [];
+let currentDesc = '';
+
+// --- API key storage ---
+const keyInput = document.getElementById('api-key');
+const saved = localStorage.getItem('depop_api_key');
+if (saved) keyInput.value = saved;
+keyInput.addEventListener('input', () => localStorage.setItem('depop_api_key', keyInput.value.trim()));
+
+function toggleKey() {
+  const btn = document.querySelector('.toggle-key');
+  if (keyInput.type === 'password') { keyInput.type = 'text'; btn.textContent = 'hide'; }
+  else { keyInput.type = 'password'; btn.textContent = 'show'; }
+}
+
+// --- Image handling ---
+function handleFiles(files) {
+  const newFiles = [...files].filter(f => f.type.startsWith('image/')).slice(0, 4 - imageDataList.length);
+  newFiles.forEach(file => {
+    if (imageDataList.length >= 4) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      imageDataList.push({ data: e.target.result.split(',')[1], type: file.type });
+      rebuildThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeImage(idx) { imageDataList.splice(idx, 1); rebuildThumbs(); }
+
+function rebuildThumbs() {
+  const thumbs = document.getElementById('thumbs');
+  thumbs.innerHTML = '';
+  imageDataList.forEach((img, i) => {
+    const el = document.createElement('img');
+    el.src = 'data:' + img.type + ';base64,' + img.data;
+    el.className = 'thumb';
+    el.title = 'Click to remove';
+    el.onclick = () => removeImage(i);
+    thumbs.appendChild(el);
+  });
+}
+
+const zone = document.getElementById('dropzone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+document.addEventListener('paste', e => {
+  const files = [...(e.clipboardData?.items || [])].filter(i => i.type.startsWith('image/')).map(i => i.getAsFile()).filter(Boolean);
+  if (files.length) handleFiles(files);
+});
+
+// --- Measurements ---
+function getMeasurements() {
+  const chest = document.getElementById('m-chest').value;
+  const length = document.getElementById('m-length').value;
+  const shoulder = document.getElementById('m-shoulder').value;
+  const sleeve = document.getElementById('m-sleeve').value;
+  const size = document.getElementById('size').value || 'One size';
+  const parts = [];
+  if (chest) parts.push(`Chest ${chest}cm`);
+  if (length) parts.push(`Length ${length}cm`);
+  if (shoulder) parts.push(`Shoulder ${shoulder}cm`);
+  if (sleeve) parts.push(`Sleeve ${sleeve}cm`);
+  if (!parts.length) return '';
+  return `${size} — ${parts.join(' · ')}`;
+}
+
+// --- Generate ---
+async function generate() {
+  const apiKey = keyInput.value.trim();
+  if (!apiKey) { showError('Add your Anthropic API key at the top first.'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  const status = document.getElementById('status');
+  const errorBox = document.getElementById('error-box');
+  btn.disabled = true;
+  status.textContent = 'Generating…';
+  errorBox.style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+
+  const size = document.getElementById('size').value || 'unknown';
+  const material = document.getElementById('material').value || 'unknown';
+  const condition = document.getElementById('condition').value;
+  const source = document.getElementById('source').value;
+  const brand = document.getElementById('brand').value;
+  const era = document.getElementById('era').value;
+  const notes = document.getElementById('notes').value;
+  const measurements = getMeasurements();
+
+  const userContent = [];
+  imageDataList.forEach(img => userContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.data } }));
+
+  userContent.push({ type: 'text', text: `Generate a Depop resale listing for this item. Study the photo(s) carefully — identify the exact color, item type, and any graphic/print/text on it.
+
+ITEM INFO:
+- Size: ${size}
+- Material: ${material}
+- Condition: ${condition}
+- Source: ${source}
+${brand ? `- Brand: ${brand}` : ''}
+${era ? `- Era: ${era}` : ''}
+${notes ? `- Notes: ${notes}` : ''}
+${measurements ? `- Measurements: ${measurements}` : ''}
+
+DESCRIPTION FORMAT — follow this exactly, character for character in terms of structure:
+
+‼️ DM FOR MORE SIZES ‼️ [Color] [Specific item type] [with "Graphic text if any" / key detail] [Size written out]
+
+[One sentence describing the item — what it looks like, the print/graphic if any, silhouette or fit. One more sentence on vibe/style/use case.]${measurements ? `
+
+📏 MEASUREMENTS
+[measurements line]` : ''}
+
+Size: [size written out]
+
+[#tag1 ](https://www.depop.com/search/?q=%23tag1)[#tag2 ](https://www.depop.com/search/?q=%23tag2)[#tag3 ](https://www.depop.com/search/?q=%23tag3)[#tag4 ](https://www.depop.com/search/?q=%23tag4)[#tag5](https://www.depop.com/search/?q=%23tag5)
+
+HASHTAG RULES:
+- Maximum 5 hashtags
+- All lowercase, no spaces
+- Choose from: item type (#hoodie #tshirt #tanktop #jeans #jacket etc), style (#streetwear #y2k #vintage #casual #grunge #gothic #preppy etc), material (#cotton #denim #polyester etc), era (#90s #00s #y2k etc), use case (#graphictee #graphicprint #goingout etc)
+- Last hashtag has NO trailing space
+
+RESPOND ONLY with a JSON object, no markdown, no backticks:
+{
+  "description": "the full listing text exactly as formatted above",
+  "color": "main color(s)",
+  "style": "e.g. Streetwear, Y2K, Casual, Vintage",
+  "age": "e.g. Y2K, 90s, Vintage, Modern",
+  "price_min": 10,
+  "price_max": 18
+}` });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: `You are an expert Depop reseller. You write punchy, accurate listings that match this exact style:
+
+EXAMPLE 1:
+‼️ DM FOR MORE SIZES ‼️ Grey Graphic Zip-Up Hoodie with "Social Security" Card Print, Medium
+
+Grey zip-up hoodie featuring a unique graphic print of a "Social Security" card on the front. This comfortable hoodie is perfect for a casual, streetwear look.
+
+📏 MEASUREMENTS
+M — Chest 124cm · Length 72cm · Shoulder 60cm · Sleeve 60cm
+
+Size: Medium
+
+[#hoodie ](https://www.depop.com/search/?q=%23hoodie)[#streetwear ](https://www.depop.com/search/?q=%23streetwear)[#graphicprint ](https://www.depop.com/search/?q=%23graphicprint)[#casual ](https://www.depop.com/search/?q=%23casual)[#fall](https://www.depop.com/search/?q=%23fall)
+
+EXAMPLE 2:
+‼️ DM FOR MORE SIZES ‼️ White Choose Juicy Graphic Tank Top Y2K
+
+White tank top with a striking "CHOOSE JUICY" graphic print, featuring a fitted silhouette and classic scoop neck. Made from comfortable polyester, this sleeveless top is perfect for a Y2K-inspired look or a casual summer day.
+
+📏 MEASUREMENTS
+M — Chest 71cm · Length 52cm
+
+Size: Medium
+
+[#tanktop ](https://www.depop.com/search/?q=%23tanktop)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#graphictee ](https://www.depop.com/search/?q=%23graphictee)[#summer ](https://www.depop.com/search/?q=%23summer)[#casual](https://www.depop.com/search/?q=%23casual)
+
+EXAMPLE 3:
+‼️ DM FOR MORE SIZES ‼️ White Graphic Camisole Top with Ornate Cross Print Y2K
+
+White fitted camisole top with a gothic-inspired ornate cross graphic print and delicate script details. Perfect for a Y2K aesthetic or a casual going-out look.
+
+📏 MEASUREMENTS
+M — Chest 72cm · Length 40cm
+
+Size: Medium
+
+[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)
+
+Match this length, tone, and structure exactly. Always respond with only valid JSON.`,
+        messages: [{ role: 'user', content: userContent }]
+      })
+    });
+
+    if (!res.ok) {
+      const t = await res.text();
+      showError(`API error ${res.status}: ${t}`);
+      btn.disabled = false; status.textContent = ''; return;
+    }
+
+    const data = await res.json();
+    if (data.error) { showError(`Error: ${JSON.stringify(data.error)}`); btn.disabled = false; status.textContent = ''; return; }
+
+    const raw = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(clean); }
+    catch { showError(`Couldn't parse response:\n${raw}`); btn.disabled = false; status.textContent = ''; return; }
+
+    currentDesc = parsed.description;
+    document.getElementById('desc-output').textContent = parsed.description;
+
+    const catsEl = document.getElementById('cats-out');
+    catsEl.innerHTML = '';
+    const cats = [
+      ['Color', parsed.color],
+      ['Style', parsed.style],
+      ['Age / Era', parsed.age],
+      ['Condition', condition],
+      ['Source', source],
+      ['Price range', `£${parsed.price_min} – £${parsed.price_max}`]
+    ];
+    cats.forEach(([k, v]) => {
+      if (!v) return;
+      const d = document.createElement('div');
+      d.className = 'cat-pill';
+      d.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
+      catsEl.appendChild(d);
+    });
+
+    document.getElementById('results').style.display = '';
+    status.textContent = '';
+  } catch(e) {
+    showError(`Network error: ${e.message}`);
+  }
+  btn.disabled = false;
+}
+
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  box.textContent = msg; box.style.display = 'block';
+}
+
+function copyDesc() {
+  navigator.clipboard.writeText(currentDesc).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '⎘ Copy description', 2000);
+  });
+}
+</script>
+</body>
+</html>
