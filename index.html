@@ -3,172 +3,386 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Depop Listing Generator</title>
+<title>Depop Lister</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #f7f6f3; --surface: #ffffff; --border: #e2e0da; --border-strong: #c8c5bc;
-    --text: #1a1916; --text-secondary: #6b6860; --text-hint: #9e9b94;
-    --accent: #1a1916; --accent-fg: #ffffff;
-    --info-bg: #eef4ff; --info-border: #c3d8ff;
-    --danger-bg: #fff1f1; --danger-border: #fca5a5; --danger-text: #b91c1c;
-    --radius: 10px; --radius-sm: 6px;
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1rem; }
-  .container { max-width: 640px; margin: 0 auto; }
-  header { margin-bottom: 2rem; }
-  header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
-  header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
-  .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 12px; }
-  .upload-zone { border: 1.5px dashed var(--border-strong); border-radius: var(--radius-sm); padding: 1.75rem 1rem; text-align: center; cursor: pointer; background: var(--bg); transition: background 0.15s, border-color 0.15s; user-select: none; }
-  .upload-zone:hover { background: #f0ede8; border-color: #a09d96; }
-  .upload-zone.drag-over { background: var(--info-bg); border-color: var(--info-border); }
-  .upload-zone input { display: none; }
-  .upload-icon { font-size: 28px; margin-bottom: 6px; }
-  .upload-zone p { font-size: 14px; color: var(--text-secondary); }
-  .upload-zone .hint { font-size: 12px; color: var(--text-hint); margin-top: 3px; }
-  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-  .thumb { width: 76px; height: 76px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
-  .thumb:hover { opacity: 0.7; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
-  .field { display: flex; flex-direction: column; gap: 4px; }
-  label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-  .sublabel { font-size: 11px; color: var(--text-hint); }
-  input[type=text], textarea { width: 100%; font-size: 14px; font-family: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; outline: none; transition: border-color 0.15s; }
-  input[type=text]:focus, textarea:focus { border-color: var(--border-strong); }
-  textarea { min-height: 56px; resize: vertical; line-height: 1.5; }
-  .api-key-wrap { position: relative; }
-  .api-key-wrap input { padding-right: 70px; font-family: monospace; font-size: 13px; }
-  .toggle-key { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-hint); background: none; border: none; cursor: pointer; padding: 2px 4px; }
-  .gen-btn { width: 100%; padding: 0.8rem; font-size: 15px; font-weight: 600; font-family: inherit; background: var(--accent); color: var(--accent-fg); border: none; border-radius: var(--radius); cursor: pointer; margin-top: 4px; transition: opacity 0.15s; }
-  .gen-btn:hover { opacity: 0.85; }
-  .gen-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .status { font-size: 13px; color: var(--text-secondary); margin-top: 8px; text-align: center; min-height: 18px; }
-  .alert { font-size: 13px; border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 10px; line-height: 1.5; display: none; white-space: pre-wrap; word-break: break-all; }
-  .alert-danger { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-  .result-section { margin-bottom: 1.25rem; }
-  .result-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 8px; }
-  .description-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem 1.1rem; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-  .copy-btn { margin-top: 8px; font-size: 13px; font-family: inherit; color: var(--text-secondary); background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; cursor: pointer; }
-  .copy-btn:hover { background: var(--bg); }
-  .cats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cat-pill { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; }
-  .cat-pill .k { font-size: 11px; color: var(--text-hint); margin-bottom: 2px; }
-  .cat-pill .v { font-size: 14px; font-weight: 500; color: var(--text); }
-  .raw-box { font-size: 11px; font-family: monospace; background: #1a1916; color: #a8f0a0; border-radius: var(--radius-sm); padding: 10px; margin-top: 8px; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; display: none; }
-  #results { display: none; }
-  @media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } .grid4 { grid-template-columns: 1fr 1fr; } .cats-grid { grid-template-columns: 1fr; } }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:    #0f2340;
+  --navy2:   #1a3458;
+  --teal:    #2ec4b6;
+  --coral:   #ff6b6b;
+  --sand:    #fdf8f0;
+  --sand2:   #f5ede0;
+  --white:   #ffffff;
+  --ink:     #0f2340;
+  --muted:   #5a7a9a;
+  --border:  #d8e8f0;
+  --r:       12px;
+  --rs:      7px;
+}
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--navy);
+  padding: 1.4rem 1.5rem 1.2rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+.site-header h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.site-header h1 span { color: var(--teal); }
+.site-header p {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding-bottom: 3px;
+}
+
+/* wave divider */
+.wave {
+  width: 100%;
+  display: block;
+  background: var(--navy);
+  line-height: 0;
+}
+.wave svg { display: block; width: 100%; }
+
+/* ── Main layout ── */
+.main { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+/* ── Section label ── */
+.label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* ── API key ── */
+.key-wrap { position: relative; }
+.key-wrap input {
+  width: 100%;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 10px 60px 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--rs);
+  background: var(--sand);
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.key-wrap input:focus { border-color: var(--teal); }
+.toggle-key {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; font-family: 'Barlow', sans-serif; font-weight: 600;
+  color: var(--muted); background: none; border: none; cursor: pointer;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.key-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ── Upload zone ── */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--rs);
+  padding: 1.8rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  background: var(--sand);
+  transition: background .15s, border-color .15s;
+  user-select: none;
+}
+.upload-zone:hover { background: var(--sand2); border-color: var(--teal); }
+.upload-zone.drag-over { background: #e8f8f7; border-color: var(--teal); }
+.upload-zone input { display: none; }
+.upload-icon { font-size: 32px; display: block; margin-bottom: 6px; }
+.upload-zone .up-text { font-size: 14px; font-weight: 600; color: var(--navy); }
+.upload-zone .up-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.thumb {
+  width: 78px; height: 78px; object-fit: cover;
+  border-radius: var(--rs); border: 2px solid var(--border);
+  cursor: pointer; transition: opacity .15s, border-color .15s;
+}
+.thumb:hover { opacity: .75; border-color: var(--coral); }
+
+/* ── Form fields ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field + .field { margin-top: 10px; }
+.field-label {
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.field input {
+  width: 100%; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 500;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--rs);
+  background: var(--sand); color: var(--ink); outline: none;
+  transition: border-color .15s;
+}
+.field input:focus { border-color: var(--teal); background: var(--white); }
+.field input::placeholder { color: #a0b8cc; }
+
+/* ── Generate button ── */
+.gen-btn {
+  width: 100%; padding: 1rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--coral);
+  color: var(--white);
+  border: none; border-radius: var(--r);
+  cursor: pointer; margin-top: 4px;
+  transition: background .15s, transform .1s;
+  box-shadow: 0 4px 16px rgba(255,107,107,.3);
+}
+.gen-btn:hover { background: #ff4f4f; transform: translateY(-1px); }
+.gen-btn:active { transform: translateY(0); }
+.gen-btn:disabled {
+  background: #c0cdd8; box-shadow: none;
+  transform: none; cursor: not-allowed;
+}
+
+/* ── Status ── */
+.status {
+  text-align: center; font-size: 13px; font-weight: 600;
+  color: var(--muted); margin-top: 10px; min-height: 18px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Error ── */
+.error {
+  background: #fff0f0; border: 1.5px solid #ffb3b3;
+  color: #c0392b; border-radius: var(--rs);
+  padding: 12px 14px; font-size: 13px; line-height: 1.6;
+  margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;
+}
+.raw {
+  background: var(--navy); color: #7fffdd;
+  font-family: monospace; font-size: 11px;
+  border-radius: var(--rs); padding: 10px;
+  margin-top: 8px; white-space: pre-wrap; word-break: break-all;
+  max-height: 180px; overflow-y: auto; display: none;
+}
+
+/* ── Results ── */
+#results { display: none; margin-top: 1.5rem; }
+
+.result-header {
+  background: var(--navy);
+  border-radius: var(--r) var(--r) 0 0;
+  padding: 1rem 1.2rem 0.9rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.result-header .rh-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 700; text-transform: uppercase;
+  color: var(--teal); letter-spacing: 0.06em;
+}
+.copy-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  background: var(--teal); color: var(--navy);
+  border: none; border-radius: 6px; padding: 6px 16px;
+  cursor: pointer; transition: background .12s;
+}
+.copy-btn:hover { background: #25b0a3; }
+
+.desc-box {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--r) var(--r);
+  padding: 1.2rem 1.3rem;
+  font-size: 14px; line-height: 1.8; color: var(--ink);
+  white-space: pre-wrap; word-break: break-word;
+  margin-bottom: 1rem;
+}
+
+.cats-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; text-transform: uppercase;
+  color: var(--navy); letter-spacing: 0.07em; margin-bottom: 10px;
+}
+.cats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cat-pill {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rs); padding: 10px 13px;
+}
+.cat-pill .ck {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+}
+.cat-pill .cv {
+  font-size: 15px; font-weight: 600; color: var(--navy);
+}
+.price-pill {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+.price-pill .ck { color: var(--teal); }
+.price-pill .cv { color: var(--white); font-size: 17px; }
+
+@media (max-width: 480px) {
+  .g2 { grid-template-columns: 1fr; }
+  .g4 { grid-template-columns: 1fr 1fr; }
+  .cats-grid { grid-template-columns: 1fr; }
+  .site-header h1 { font-size: 28px; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>Depop listing generator</h1>
-    <p>Upload a photo, fill in size and measurements, get a ready-to-paste listing.</p>
-  </header>
 
+<div class="site-header">
+  <div>
+    <h1>Depop <span>Lister</span></h1>
+  </div>
+  <p>AI-powered listing generator</p>
+</div>
+<div class="wave">
+  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,20 C200,40 400,0 600,20 C800,40 1000,0 1200,20 L1200,0 L0,0 Z" fill="#0f2340"/>
+  </svg>
+</div>
+
+<div class="main">
+
+  <!-- API Key -->
   <div class="card">
-    <p class="card-label">Anthropic API key</p>
-    <div class="field">
-      <div class="api-key-wrap">
-        <input type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off">
-        <button class="toggle-key" onclick="toggleKey()">show</button>
-      </div>
-      <span class="sublabel">Saved in your browser. Only sent directly to Anthropic.</span>
+    <p class="label">Anthropic API key</p>
+    <div class="key-wrap">
+      <input type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off">
+      <button class="toggle-key" onclick="toggleKey()">show</button>
     </div>
+    <p class="key-hint">Saved in your browser · sent only to Anthropic · get yours at console.anthropic.com</p>
   </div>
 
+  <!-- Photos -->
   <div class="card">
-    <p class="card-label">Photos</p>
+    <p class="label">Photos</p>
     <div class="upload-zone" id="dropzone" onclick="document.getElementById('img-input').click()">
       <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)">
-      <div class="upload-icon">📷</div>
-      <p>Click · drag & drop · or paste (Ctrl/Cmd+V)</p>
-      <p class="hint">Front required · back/graphic optional · up to 4 · click thumb to remove</p>
+      <span class="upload-icon">📸</span>
+      <p class="up-text">Click, drag & drop, or paste (Ctrl/Cmd+V)</p>
+      <p class="up-hint">Front required · back/graphic optional · up to 4 · click thumb to remove</p>
     </div>
     <div class="thumbs" id="thumbs"></div>
   </div>
 
+  <!-- Details -->
   <div class="card">
-    <p class="card-label">Item details</p>
-    <div class="grid2" style="margin-bottom:10px">
+    <p class="label">Item details</p>
+
+    <div class="g2" style="margin-bottom:10px">
       <div class="field">
-        <label>Size</label>
+        <span class="field-label">Size</span>
         <input type="text" id="size" placeholder="e.g. Medium, L, XS">
       </div>
       <div class="field">
-        <label>Material <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+        <span class="field-label">Material (optional)</span>
         <input type="text" id="material" placeholder="e.g. 100% cotton">
       </div>
     </div>
+
     <div class="field" style="margin-bottom:10px">
-      <label>Measurements <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
-      <div class="grid4" style="margin-top:4px">
-        <div class="field"><label class="sublabel">Chest (cm)</label><input type="text" id="m-chest" placeholder="116"></div>
-        <div class="field"><label class="sublabel">Length (cm)</label><input type="text" id="m-length" placeholder="68"></div>
-        <div class="field"><label class="sublabel">Shoulder (cm)</label><input type="text" id="m-shoulder" placeholder="55"></div>
-        <div class="field"><label class="sublabel">Sleeve (cm)</label><input type="text" id="m-sleeve" placeholder="52"></div>
+      <span class="field-label">Measurements (optional)</span>
+      <div class="g4" style="margin-top:4px">
+        <div class="field"><span class="field-label" style="font-size:10px">Chest cm</span><input type="text" id="m-chest" placeholder="116"></div>
+        <div class="field"><span class="field-label" style="font-size:10px">Length cm</span><input type="text" id="m-length" placeholder="68"></div>
+        <div class="field"><span class="field-label" style="font-size:10px">Shoulder cm</span><input type="text" id="m-shoulder" placeholder="55"></div>
+        <div class="field"><span class="field-label" style="font-size:10px">Sleeve cm</span><input type="text" id="m-sleeve" placeholder="52"></div>
       </div>
     </div>
-    <div class="grid2">
+
+    <div class="g2">
       <div class="field">
-        <label>Brand <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+        <span class="field-label">Brand (optional)</span>
         <input type="text" id="brand" placeholder="e.g. Carhartt, no label">
       </div>
       <div class="field">
-        <label>Extra notes <span style="font-weight:400;color:var(--text-hint)">(optional)</span></label>
+        <span class="field-label">Notes (optional)</span>
         <input type="text" id="notes" placeholder="e.g. small mark on sleeve">
       </div>
     </div>
   </div>
 
-  <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate listing</button>
+  <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate Listing</button>
   <p class="status" id="status"></p>
-  <div class="alert alert-danger" id="error-box"></div>
-  <div class="raw-box" id="raw-box"></div>
+  <div class="error" id="error-box"></div>
+  <div class="raw" id="raw-box"></div>
 
+  <!-- Results -->
   <div id="results">
-    <hr class="divider">
-    <div class="result-section">
-      <p class="result-label">Description — copy this into Depop</p>
-      <div class="description-box" id="desc-output"></div>
-      <button class="copy-btn" onclick="copyDesc()">⎘ Copy description</button>
+    <div class="result-header">
+      <span class="rh-label">Your listing</span>
+      <button class="copy-btn" onclick="copyDesc()">⎘ Copy</button>
     </div>
-    <div class="result-section">
-      <p class="result-label">Categories & pricing</p>
-      <div class="cats-grid" id="cats-out"></div>
-    </div>
+    <div class="desc-box" id="desc-output"></div>
+
+    <p class="cats-label">Categories & pricing</p>
+    <div class="cats-grid" id="cats-out"></div>
   </div>
+
 </div>
 
 <script>
 let imageDataList = [];
 let currentDesc = '';
 
+// Persist API key
 const keyInput = document.getElementById('api-key');
-try { const s = localStorage.getItem('depop_api_key'); if (s) keyInput.value = s; } catch(e){}
-keyInput.addEventListener('input', () => { try { localStorage.setItem('depop_api_key', keyInput.value.trim()); } catch(e){} });
-
+try { const s = localStorage.getItem('depop_ak'); if (s) keyInput.value = s; } catch(e){}
+keyInput.addEventListener('input', () => { try { localStorage.setItem('depop_ak', keyInput.value.trim()); } catch(e){} });
 function toggleKey() {
   keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
   document.querySelector('.toggle-key').textContent = keyInput.type === 'password' ? 'show' : 'hide';
 }
 
+// Images
 function handleFiles(files) {
   [...files].filter(f => f.type.startsWith('image/')).forEach(file => {
     if (imageDataList.length >= 4) return;
-    const reader = new FileReader();
-    reader.onload = e => { imageDataList.push({ data: e.target.result.split(',')[1], type: file.type }); rebuildThumbs(); };
-    reader.readAsDataURL(file);
+    const r = new FileReader();
+    r.onload = e => { imageDataList.push({ data: e.target.result.split(',')[1], type: file.type }); renderThumbs(); };
+    r.readAsDataURL(file);
   });
 }
-
-function removeImage(idx) { imageDataList.splice(idx, 1); rebuildThumbs(); }
-
-function rebuildThumbs() {
+function removeImage(i) { imageDataList.splice(i, 1); renderThumbs(); }
+function renderThumbs() {
   const el = document.getElementById('thumbs');
   el.innerHTML = '';
   imageDataList.forEach((img, i) => {
@@ -179,7 +393,6 @@ function rebuildThumbs() {
     el.appendChild(t);
   });
 }
-
 const zone = document.getElementById('dropzone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -189,56 +402,52 @@ document.addEventListener('paste', e => {
   if (files.length) handleFiles(files);
 });
 
+// Measurements
 function getMeasurements() {
-  const chest = document.getElementById('m-chest').value;
-  const length = document.getElementById('m-length').value;
-  const shoulder = document.getElementById('m-shoulder').value;
-  const sleeve = document.getElementById('m-sleeve').value;
-  const size = document.getElementById('size').value || 'One size';
+  const c = document.getElementById('m-chest').value;
+  const l = document.getElementById('m-length').value;
+  const sh = document.getElementById('m-shoulder').value;
+  const sl = document.getElementById('m-sleeve').value;
+  const sz = document.getElementById('size').value || 'One size';
   const parts = [];
-  if (chest) parts.push(`Chest ${chest}cm`);
-  if (length) parts.push(`Length ${length}cm`);
-  if (shoulder) parts.push(`Shoulder ${shoulder}cm`);
-  if (sleeve) parts.push(`Sleeve ${sleeve}cm`);
-  if (!parts.length) return '';
-  return `${size} — ${parts.join(' · ')}`;
+  if (c) parts.push(`Chest ${c}cm`);
+  if (l) parts.push(`Length ${l}cm`);
+  if (sh) parts.push(`Shoulder ${sh}cm`);
+  if (sl) parts.push(`Sleeve ${sl}cm`);
+  return parts.length ? `${sz} — ${parts.join(' · ')}` : '';
 }
 
+// Error display
 function showError(msg, raw) {
-  const box = document.getElementById('error-box');
-  box.textContent = msg; box.style.display = 'block';
-  if (raw) {
+  const b = document.getElementById('error-box');
+  b.textContent = msg; b.style.display = 'block';
+  if (raw !== undefined) {
     const rb = document.getElementById('raw-box');
-    rb.textContent = 'Raw response:\n' + raw;
+    rb.textContent = 'Raw API response:\n' + raw;
     rb.style.display = 'block';
   }
 }
 
-// Robustly extract JSON from any response — handles backticks, extra text, etc.
+// Extract JSON robustly
 function extractJSON(text) {
-  // Try direct parse first
   try { return JSON.parse(text.trim()); } catch(e){}
-  // Strip markdown fences
-  let cleaned = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-  try { return JSON.parse(cleaned); } catch(e){}
-  // Find first { ... } block
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start !== -1 && end !== -1 && end > start) {
-    try { return JSON.parse(cleaned.slice(start, end + 1)); } catch(e){}
-  }
+  const stripped = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  try { return JSON.parse(stripped); } catch(e){}
+  const s = stripped.indexOf('{'), end = stripped.lastIndexOf('}');
+  if (s !== -1 && end > s) { try { return JSON.parse(stripped.slice(s, end+1)); } catch(e){} }
   return null;
 }
 
 async function generate() {
   const apiKey = keyInput.value.trim();
-  if (!apiKey) { showError('Paste your Anthropic API key at the top first.'); return; }
-  if (imageDataList.length === 0) { showError('Upload at least one photo — Claude needs to see the item.'); return; }
+  if (!apiKey) { showError('Add your Anthropic API key above first.'); return; }
+  if (imageDataList.length === 0) { showError('Upload at least one photo so Claude can see the item.'); return; }
 
   const btn = document.getElementById('gen-btn');
   const status = document.getElementById('status');
   btn.disabled = true;
-  status.textContent = 'Analysing photo and writing listing…';
+  btn.textContent = '⏳ Generating…';
+  status.textContent = 'Analysing your photo…';
   document.getElementById('error-box').style.display = 'none';
   document.getElementById('raw-box').style.display = 'none';
   document.getElementById('results').style.display = 'none';
@@ -251,54 +460,32 @@ async function generate() {
 
   const userContent = [];
   imageDataList.forEach(img => userContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.data } }));
-  userContent.push({ type: 'text', text: `Write a Depop listing for this item.
+  userContent.push({ type: 'text', text: `Write a Depop listing for this item. Look at the photo carefully.
 
 PROVIDED:
 - Size: ${size}${material ? '\n- Material: ' + material : ''}${brand ? '\n- Brand: ' + brand : ''}${notes ? '\n- Notes: ' + notes : ''}${measurements ? '\n- Measurements: ' + measurements : ''}
 
-FROM THE PHOTO determine: exact color, item type, any graphic/text/print, condition, source, era/style.
+FROM THE PHOTO determine: exact color, item type, any graphic/text/print on it, condition, source (thrifted/vintage/etc), era/style aesthetic.
 
-Output a single raw JSON object with these exact keys:
-{
-  "description": "<full listing>",
-  "color": "<color>",
-  "style": "<style>",
-  "age": "<era or Modern>",
-  "condition": "<condition>",
-  "source": "<source>",
-  "price_min": <number>,
-  "price_max": <number>
-}
+Return ONLY a raw JSON object — no markdown, no backticks, no text before or after. Just the JSON:
 
-The description must follow this EXACT format (copy the structure and length):
+{"description":"...","color":"...","style":"...","age":"...","condition":"...","source":"...","price_min":0,"price_max":0}
 
-‼️ DM FOR MORE SIZES ‼️ [Color] [Item type] [with "[Graphic/print text]" if any] [era if applicable]
+The description field must follow this EXACT structure and length:
 
-[One sentence describing what it looks like, the print/graphic, silhouette. One sentence on vibe/use case.]${measurements ? '\n\n📏 MEASUREMENTS\n' + measurements : ''}
+‼️ DM FOR MORE SIZES ‼️ [Color] [Item type] [with "[Graphic text]" if graphic present] [era if obvious]
 
-Size: [size written out in full e.g. Medium]
+[One sentence: what it looks like, the print/graphic/detail, fit. One sentence: vibe or use case.]${measurements ? '\n\n📏 MEASUREMENTS\n' + measurements : ''}
+
+Size: [size written out e.g. Medium not M]
 
 [#tag1 ](https://www.depop.com/search/?q=%23tag1)[#tag2 ](https://www.depop.com/search/?q=%23tag2)[#tag3 ](https://www.depop.com/search/?q=%23tag3)[#tag4 ](https://www.depop.com/search/?q=%23tag4)[#tag5](https://www.depop.com/search/?q=%23tag5)
 
-Hashtag rules: exactly 5, lowercase, tags 1-4 have a trailing space before ], tag 5 has no trailing space.
-Price: be optimistic — highest realistic Depop price.
-Return ONLY the raw JSON. No markdown. No backticks. No explanation.` });
+Hashtags: exactly 5, lowercase, no spaces. Tags 1-4 have a space before the ]. Tag 5 has NO trailing space. Price = optimistic high-end Depop resale value.` });
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-6',
-        max_tokens: 1024,
-        system: `You write Depop resale listings. You always respond with a single raw JSON object — no markdown, no backticks, no explanation. Just the JSON.
+  const SYSTEM = `You are a Depop resale expert. You write punchy accurate listings. You ALWAYS respond with ONLY a raw JSON object. No markdown. No backticks. No explanation. Nothing before or after the JSON. Just the JSON object.
 
-Your listings match this exact style and length:
+Your listing style matches these examples EXACTLY:
 
 EXAMPLE 1:
 ‼️ DM FOR MORE SIZES ‼️ Grey Graphic Zip-Up Hoodie with "Social Security" Card Print, Medium
@@ -334,74 +521,91 @@ M — Chest 72cm · Length 40cm
 
 Size: Medium
 
-[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)`,
+[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1024,
+        system: SYSTEM,
         messages: [{ role: 'user', content: userContent }]
       })
     });
 
+    const responseText = await res.text();
+
     if (!res.ok) {
-      const t = await res.text();
-      showError(`API error ${res.status} — ${t}`);
-      btn.disabled = false; status.textContent = ''; return;
+      showError(`API error ${res.status}`, responseText);
+      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
     }
 
-    const data = await res.json();
+    let data;
+    try { data = JSON.parse(responseText); }
+    catch(e) { showError('Could not parse API response', responseText); btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return; }
 
     if (data.error) {
-      showError(`Claude returned an error: ${data.error.type} — ${data.error.message}`);
-      btn.disabled = false; status.textContent = ''; return;
+      showError(`Claude error: ${data.error.type} — ${data.error.message}`, responseText);
+      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
     }
 
     const raw = data.content?.find(b => b.type === 'text')?.text || '';
     if (!raw) {
-      showError('Claude returned an empty response. Try again.');
-      btn.disabled = false; status.textContent = ''; return;
+      showError('Empty response from Claude.', responseText);
+      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
     }
 
     const parsed = extractJSON(raw);
-    if (!parsed) {
-      showError('Could not parse Claude\'s response as JSON.', raw);
-      btn.disabled = false; status.textContent = ''; return;
+    if (!parsed || !parsed.description) {
+      showError('Could not extract listing from response.', raw);
+      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
     }
 
-    if (!parsed.description) {
-      showError('Response is missing the description field.', raw);
-      btn.disabled = false; status.textContent = ''; return;
-    }
-
+    // Success
     currentDesc = parsed.description;
     document.getElementById('desc-output').textContent = parsed.description;
 
     const catsEl = document.getElementById('cats-out');
     catsEl.innerHTML = '';
-    [
-      ['Color', parsed.color],
-      ['Style', parsed.style],
-      ['Era / Age', parsed.age],
-      ['Condition', parsed.condition],
-      ['Source', parsed.source],
-      ['Price range', parsed.price_min && parsed.price_max ? `£${parsed.price_min} – £${parsed.price_max}` : null]
-    ].forEach(([k, v]) => {
+    const cats = [
+      ['Color', parsed.color, false],
+      ['Style', parsed.style, false],
+      ['Era', parsed.age, false],
+      ['Condition', parsed.condition, false],
+      ['Source', parsed.source, false],
+      ['Price range', parsed.price_min && parsed.price_max ? `£${parsed.price_min} – £${parsed.price_max}` : null, true]
+    ];
+    cats.forEach(([k, v, isPrice]) => {
       if (!v) return;
       const d = document.createElement('div');
-      d.className = 'cat-pill';
-      d.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
+      d.className = 'cat-pill' + (isPrice ? ' price-pill' : '');
+      d.innerHTML = `<div class="ck">${k}</div><div class="cv">${v}</div>`;
       catsEl.appendChild(d);
     });
 
     document.getElementById('results').style.display = '';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
     status.textContent = '';
   } catch(e) {
-    showError(`Unexpected error: ${e.message}`);
+    showError(`Unexpected error: ${e.message}\n\nCheck your API key and internet connection.`);
   }
+
   btn.disabled = false;
+  btn.textContent = '✦ Generate Listing';
 }
 
 function copyDesc() {
   navigator.clipboard.writeText(currentDesc).then(() => {
     const b = document.querySelector('.copy-btn');
     b.textContent = '✓ Copied!';
-    setTimeout(() => b.textContent = '⎘ Copy description', 2000);
+    setTimeout(() => b.textContent = '⎘ Copy', 2000);
   });
 }
 </script>
