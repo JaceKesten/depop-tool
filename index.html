@@ -42,8 +42,7 @@
   .api-key-wrap { position: relative; }
   .api-key-wrap input { padding-right: 70px; font-family: monospace; font-size: 13px; }
   .toggle-key { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--text-hint); background: none; border: none; cursor: pointer; padding: 2px 4px; }
-  .toggle-key:hover { color: var(--text-secondary); }
-  .gen-btn { width: 100%; padding: 0.8rem; font-size: 15px; font-weight: 600; font-family: inherit; background: var(--accent); color: var(--accent-fg); border: none; border-radius: var(--radius); cursor: pointer; margin-top: 4px; transition: opacity 0.15s; letter-spacing: -0.01em; }
+  .gen-btn { width: 100%; padding: 0.8rem; font-size: 15px; font-weight: 600; font-family: inherit; background: var(--accent); color: var(--accent-fg); border: none; border-radius: var(--radius); cursor: pointer; margin-top: 4px; transition: opacity 0.15s; }
   .gen-btn:hover { opacity: 0.85; }
   .gen-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .status { font-size: 13px; color: var(--text-secondary); margin-top: 8px; text-align: center; min-height: 18px; }
@@ -53,12 +52,13 @@
   .result-section { margin-bottom: 1.25rem; }
   .result-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 8px; }
   .description-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem 1.1rem; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-  .copy-btn { margin-top: 8px; font-size: 13px; font-family: inherit; color: var(--text-secondary); background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; cursor: pointer; transition: background 0.12s; }
+  .copy-btn { margin-top: 8px; font-size: 13px; font-family: inherit; color: var(--text-secondary); background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; cursor: pointer; }
   .copy-btn:hover { background: var(--bg); }
   .cats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .cat-pill { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; }
   .cat-pill .k { font-size: 11px; color: var(--text-hint); margin-bottom: 2px; }
   .cat-pill .v { font-size: 14px; font-weight: 500; color: var(--text); }
+  .raw-box { font-size: 11px; font-family: monospace; background: #1a1916; color: #a8f0a0; border-radius: var(--radius-sm); padding: 10px; margin-top: 8px; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; display: none; }
   #results { display: none; }
   @media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } .grid4 { grid-template-columns: 1fr 1fr; } .cats-grid { grid-template-columns: 1fr; } }
 </style>
@@ -87,7 +87,7 @@
       <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)">
       <div class="upload-icon">📷</div>
       <p>Click · drag & drop · or paste (Ctrl/Cmd+V)</p>
-      <p class="hint">Front required · back/graphic optional · up to 4 images · click thumb to remove</p>
+      <p class="hint">Front required · back/graphic optional · up to 4 · click thumb to remove</p>
     </div>
     <div class="thumbs" id="thumbs"></div>
   </div>
@@ -128,6 +128,7 @@
   <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate listing</button>
   <p class="status" id="status"></p>
   <div class="alert alert-danger" id="error-box"></div>
+  <div class="raw-box" id="raw-box"></div>
 
   <div id="results">
     <hr class="divider">
@@ -148,18 +149,16 @@ let imageDataList = [];
 let currentDesc = '';
 
 const keyInput = document.getElementById('api-key');
-try { const saved = localStorage.getItem('depop_api_key'); if (saved) keyInput.value = saved; } catch(e){}
+try { const s = localStorage.getItem('depop_api_key'); if (s) keyInput.value = s; } catch(e){}
 keyInput.addEventListener('input', () => { try { localStorage.setItem('depop_api_key', keyInput.value.trim()); } catch(e){} });
 
 function toggleKey() {
-  const btn = document.querySelector('.toggle-key');
   keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
-  btn.textContent = keyInput.type === 'password' ? 'show' : 'hide';
+  document.querySelector('.toggle-key').textContent = keyInput.type === 'password' ? 'show' : 'hide';
 }
 
 function handleFiles(files) {
-  const newFiles = [...files].filter(f => f.type.startsWith('image/')).slice(0, 4 - imageDataList.length);
-  newFiles.forEach(file => {
+  [...files].filter(f => f.type.startsWith('image/')).forEach(file => {
     if (imageDataList.length >= 4) return;
     const reader = new FileReader();
     reader.onload = e => { imageDataList.push({ data: e.target.result.split(',')[1], type: file.type }); rebuildThumbs(); };
@@ -170,14 +169,14 @@ function handleFiles(files) {
 function removeImage(idx) { imageDataList.splice(idx, 1); rebuildThumbs(); }
 
 function rebuildThumbs() {
-  const thumbs = document.getElementById('thumbs');
-  thumbs.innerHTML = '';
+  const el = document.getElementById('thumbs');
+  el.innerHTML = '';
   imageDataList.forEach((img, i) => {
-    const el = document.createElement('img');
-    el.src = 'data:' + img.type + ';base64,' + img.data;
-    el.className = 'thumb'; el.title = 'Click to remove';
-    el.onclick = () => removeImage(i);
-    thumbs.appendChild(el);
+    const t = document.createElement('img');
+    t.src = 'data:' + img.type + ';base64,' + img.data;
+    t.className = 'thumb'; t.title = 'Click to remove';
+    t.onclick = () => removeImage(i);
+    el.appendChild(t);
   });
 }
 
@@ -205,21 +204,43 @@ function getMeasurements() {
   return `${size} — ${parts.join(' · ')}`;
 }
 
-function showError(msg) {
+function showError(msg, raw) {
   const box = document.getElementById('error-box');
   box.textContent = msg; box.style.display = 'block';
+  if (raw) {
+    const rb = document.getElementById('raw-box');
+    rb.textContent = 'Raw response:\n' + raw;
+    rb.style.display = 'block';
+  }
+}
+
+// Robustly extract JSON from any response — handles backticks, extra text, etc.
+function extractJSON(text) {
+  // Try direct parse first
+  try { return JSON.parse(text.trim()); } catch(e){}
+  // Strip markdown fences
+  let cleaned = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  try { return JSON.parse(cleaned); } catch(e){}
+  // Find first { ... } block
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start !== -1 && end !== -1 && end > start) {
+    try { return JSON.parse(cleaned.slice(start, end + 1)); } catch(e){}
+  }
+  return null;
 }
 
 async function generate() {
   const apiKey = keyInput.value.trim();
   if (!apiKey) { showError('Paste your Anthropic API key at the top first.'); return; }
-  if (imageDataList.length === 0) { showError('Upload at least one photo — Claude needs to see the item to write an accurate listing.'); return; }
+  if (imageDataList.length === 0) { showError('Upload at least one photo — Claude needs to see the item.'); return; }
 
   const btn = document.getElementById('gen-btn');
   const status = document.getElementById('status');
   btn.disabled = true;
-  status.textContent = 'Generating…';
+  status.textContent = 'Analysing photo and writing listing…';
   document.getElementById('error-box').style.display = 'none';
+  document.getElementById('raw-box').style.display = 'none';
   document.getElementById('results').style.display = 'none';
 
   const size = document.getElementById('size').value || 'unknown';
@@ -230,39 +251,38 @@ async function generate() {
 
   const userContent = [];
   imageDataList.forEach(img => userContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.data } }));
+  userContent.push({ type: 'text', text: `Write a Depop listing for this item.
 
-  userContent.push({ type: 'text', text: `Generate a Depop listing. Study the photo(s) carefully to identify: exact color, item type, any graphic/text/print, condition, era/style.
+PROVIDED:
+- Size: ${size}${material ? '\n- Material: ' + material : ''}${brand ? '\n- Brand: ' + brand : ''}${notes ? '\n- Notes: ' + notes : ''}${measurements ? '\n- Measurements: ' + measurements : ''}
 
-PROVIDED INFO:
-- Size: ${size}${material ? `\n- Material: ${material}` : ''}${brand ? `\n- Brand: ${brand}` : ''}${notes ? `\n- Notes: ${notes}` : ''}${measurements ? `\n- Measurements: ${measurements}` : ''}
+FROM THE PHOTO determine: exact color, item type, any graphic/text/print, condition, source, era/style.
 
-DETERMINE FROM PHOTO:
-- Exact color(s)
-- Specific item type (hoodie, tank top, camisole, jeans, etc)
-- Any graphic, print, or text on the item — quote it exactly if readable
-- Condition (New with tags / Like new / Good / Fair)
-- Source (Thrifted / Vintage / Brand new / Own wardrobe)
-- Era/style (Y2K, 90s, Vintage, Streetwear, etc) — only if clearly evident
+Output a single raw JSON object with these exact keys:
+{
+  "description": "<full listing>",
+  "color": "<color>",
+  "style": "<style>",
+  "age": "<era or Modern>",
+  "condition": "<condition>",
+  "source": "<source>",
+  "price_min": <number>,
+  "price_max": <number>
+}
 
-DESCRIPTION FORMAT — match this structure and length exactly:
+The description must follow this EXACT format (copy the structure and length):
 
-‼️ DM FOR MORE SIZES ‼️ [Color] [Item type] [with "[Graphic text]" / key detail] [era if applicable]
+‼️ DM FOR MORE SIZES ‼️ [Color] [Item type] [with "[Graphic/print text]" if any] [era if applicable]
 
-[One sentence: what it looks like, the print/graphic if any, fit/silhouette. One sentence: vibe, style, or use case.]${measurements ? `
+[One sentence describing what it looks like, the print/graphic, silhouette. One sentence on vibe/use case.]${measurements ? '\n\n📏 MEASUREMENTS\n' + measurements : ''}
 
-📏 MEASUREMENTS
-[measurements]` : ''}
-
-Size: [size written out e.g. Medium not M]
+Size: [size written out in full e.g. Medium]
 
 [#tag1 ](https://www.depop.com/search/?q=%23tag1)[#tag2 ](https://www.depop.com/search/?q=%23tag2)[#tag3 ](https://www.depop.com/search/?q=%23tag3)[#tag4 ](https://www.depop.com/search/?q=%23tag4)[#tag5](https://www.depop.com/search/?q=%23tag5)
 
-HASHTAG RULES: exactly 5, all lowercase, no spaces. Tags 1-4 have a trailing space before the ], tag 5 has NO trailing space. Pick from: item type, style/aesthetic, material, era, use case.
-
-Respond ONLY with raw JSON, no markdown fences:
-{"description":"...","color":"...","style":"...","age":"...","condition":"...","source":"...","price_min":0,"price_max":0}
-
-For price: be optimistic — what's the most someone would realistically pay on Depop for this.` });
+Hashtag rules: exactly 5, lowercase, tags 1-4 have a trailing space before ], tag 5 has no trailing space.
+Price: be optimistic — highest realistic Depop price.
+Return ONLY the raw JSON. No markdown. No backticks. No explanation.` });
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -276,8 +296,11 @@ For price: be optimistic — what's the most someone would realistically pay on 
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 1024,
-        system: `You write Depop resale listings. Match this style exactly — same length, same structure, same tone:
+        system: `You write Depop resale listings. You always respond with a single raw JSON object — no markdown, no backticks, no explanation. Just the JSON.
 
+Your listings match this exact style and length:
+
+EXAMPLE 1:
 ‼️ DM FOR MORE SIZES ‼️ Grey Graphic Zip-Up Hoodie with "Social Security" Card Print, Medium
 
 Grey zip-up hoodie featuring a unique graphic print of a "Social Security" card on the front. This comfortable hoodie is perfect for a casual, streetwear look.
@@ -289,8 +312,7 @@ Size: Medium
 
 [#hoodie ](https://www.depop.com/search/?q=%23hoodie)[#streetwear ](https://www.depop.com/search/?q=%23streetwear)[#graphicprint ](https://www.depop.com/search/?q=%23graphicprint)[#casual ](https://www.depop.com/search/?q=%23casual)[#fall](https://www.depop.com/search/?q=%23fall)
 
----
-
+EXAMPLE 2:
 ‼️ DM FOR MORE SIZES ‼️ White Choose Juicy Graphic Tank Top Y2K
 
 White tank top with a striking "CHOOSE JUICY" graphic print, featuring a fitted silhouette and classic scoop neck. Made from comfortable polyester, this sleeveless top is perfect for a Y2K-inspired look or a casual summer day.
@@ -302,8 +324,7 @@ Size: Medium
 
 [#tanktop ](https://www.depop.com/search/?q=%23tanktop)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#graphictee ](https://www.depop.com/search/?q=%23graphictee)[#summer ](https://www.depop.com/search/?q=%23summer)[#casual](https://www.depop.com/search/?q=%23casual)
 
----
-
+EXAMPLE 3:
 ‼️ DM FOR MORE SIZES ‼️ White Graphic Camisole Top with Ornate Cross Print Y2K
 
 White fitted camisole top with a gothic-inspired ornate cross graphic print and delicate script details. Perfect for a Y2K aesthetic or a casual going-out look.
@@ -313,33 +334,40 @@ M — Chest 72cm · Length 40cm
 
 Size: Medium
 
-[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)
-
-Always respond with raw JSON only. No markdown. No backticks.`,
+[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)`,
         messages: [{ role: 'user', content: userContent }]
       })
     });
 
     if (!res.ok) {
       const t = await res.text();
-      showError(`API error ${res.status}:\n${t}`);
+      showError(`API error ${res.status} — ${t}`);
       btn.disabled = false; status.textContent = ''; return;
     }
 
     const data = await res.json();
 
     if (data.error) {
-      showError(`Claude error: ${JSON.stringify(data.error)}`);
+      showError(`Claude returned an error: ${data.error.type} — ${data.error.message}`);
       btn.disabled = false; status.textContent = ''; return;
     }
 
     const raw = data.content?.find(b => b.type === 'text')?.text || '';
-    if (!raw) { showError('Empty response from Claude. Try again.'); btn.disabled = false; status.textContent = ''; return; }
+    if (!raw) {
+      showError('Claude returned an empty response. Try again.');
+      btn.disabled = false; status.textContent = ''; return;
+    }
 
-    const clean = raw.replace(/```json|```/g, '').trim();
-    let parsed;
-    try { parsed = JSON.parse(clean); }
-    catch { showError(`Couldn't parse response. Raw:\n${raw}`); btn.disabled = false; status.textContent = ''; return; }
+    const parsed = extractJSON(raw);
+    if (!parsed) {
+      showError('Could not parse Claude\'s response as JSON.', raw);
+      btn.disabled = false; status.textContent = ''; return;
+    }
+
+    if (!parsed.description) {
+      showError('Response is missing the description field.', raw);
+      btn.disabled = false; status.textContent = ''; return;
+    }
 
     currentDesc = parsed.description;
     document.getElementById('desc-output').textContent = parsed.description;
@@ -352,7 +380,7 @@ Always respond with raw JSON only. No markdown. No backticks.`,
       ['Era / Age', parsed.age],
       ['Condition', parsed.condition],
       ['Source', parsed.source],
-      ['Price range', `£${parsed.price_min} – £${parsed.price_max}`]
+      ['Price range', parsed.price_min && parsed.price_max ? `£${parsed.price_min} – £${parsed.price_max}` : null]
     ].forEach(([k, v]) => {
       if (!v) return;
       const d = document.createElement('div');
@@ -364,16 +392,16 @@ Always respond with raw JSON only. No markdown. No backticks.`,
     document.getElementById('results').style.display = '';
     status.textContent = '';
   } catch(e) {
-    showError(`Network error: ${e.message}\n\nMake sure your API key is correct and you have credits at console.anthropic.com`);
+    showError(`Unexpected error: ${e.message}`);
   }
   btn.disabled = false;
 }
 
 function copyDesc() {
   navigator.clipboard.writeText(currentDesc).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = '⎘ Copy description', 2000);
+    const b = document.querySelector('.copy-btn');
+    b.textContent = '✓ Copied!';
+    setTimeout(() => b.textContent = '⎘ Copy description', 2000);
   });
 }
 </script>
