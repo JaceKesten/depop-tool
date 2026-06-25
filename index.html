@@ -29,7 +29,6 @@
     min-height: 100vh;
   }
 
-  /* HEADER */
   header {
     background: var(--navy);
     padding: 0;
@@ -75,9 +74,7 @@
     letter-spacing: -1px;
   }
 
-  header h1 span {
-    color: var(--coral);
-  }
+  header h1 span { color: var(--coral); }
 
   header p {
     color: var(--seafoam);
@@ -95,14 +92,13 @@
     margin-top: -1px;
   }
 
-  /* MAIN LAYOUT */
   main {
     max-width: 900px;
     margin: 0 auto;
     padding: 8px 24px 60px;
   }
 
-  /* API KEY SECTION */
+  /* API KEY */
   .api-section {
     background: var(--deep-ocean);
     border-radius: 16px;
@@ -139,10 +135,7 @@
     transition: border-color 0.2s;
   }
 
-  .api-section input:focus {
-    border-color: var(--seafoam);
-  }
-
+  .api-section input:focus { border-color: var(--seafoam); }
   .api-section input::placeholder { color: rgba(255,255,255,0.3); }
 
   .api-hint {
@@ -150,14 +143,9 @@
     color: rgba(118,200,212,0.6);
     margin-top: 6px;
     width: 100%;
-    padding-left: 0;
   }
 
-  .api-hint a {
-    color: var(--seafoam);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  .api-hint a { color: var(--seafoam); text-decoration: underline; text-underline-offset: 2px; }
 
   /* CARD */
   .card {
@@ -198,11 +186,9 @@
     color: #fff;
   }
 
-  .card-body {
-    padding: 24px;
-  }
+  .card-body { padding: 24px; }
 
-  /* IMAGE UPLOAD */
+  /* DROP ZONE */
   .drop-zone {
     border: 2.5px dashed var(--border);
     border-radius: 14px;
@@ -228,12 +214,7 @@
     height: 100%;
   }
 
-  .drop-zone .dz-icon {
-    font-size: 36px;
-    margin-bottom: 10px;
-    display: block;
-    color: var(--teal);
-  }
+  .drop-zone .dz-icon { font-size: 36px; margin-bottom: 10px; display: block; }
 
   .drop-zone h3 {
     font-family: 'Barlow Condensed', sans-serif;
@@ -244,11 +225,7 @@
     letter-spacing: 0.5px;
   }
 
-  .drop-zone p {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
+  .drop-zone p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
   .paste-tip {
     display: inline-block;
@@ -261,7 +238,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* IMAGE PREVIEW */
   .preview-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -279,11 +255,7 @@
     border: 2px solid var(--border);
   }
 
-  .preview-item img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .preview-item .remove-btn {
     position: absolute;
@@ -298,27 +270,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
     font-weight: 700;
   }
 
-  /* FORM FIELDS */
+  /* FORM */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
 
-  @media (max-width: 560px) {
-    .form-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1 / -1; }
 
   label {
@@ -330,7 +294,7 @@
     color: var(--text-muted);
   }
 
-  input[type="text"], textarea, select {
+  input[type="text"], input[type="number"], textarea, select {
     border: 1.5px solid var(--border);
     border-radius: 10px;
     padding: 11px 14px;
@@ -343,33 +307,77 @@
     width: 100%;
   }
 
-  input[type="text"]:focus, textarea:focus, select:focus {
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
     border-color: var(--teal);
     box-shadow: 0 0 0 3px rgba(22,138,173,0.1);
   }
 
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-    line-height: 1.5;
-  }
-
-  .field-hint {
-    font-size: 11px;
-    color: var(--text-muted);
-    opacity: 0.75;
-  }
-
   /* MEASUREMENTS */
+  .measurements-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 24px 0 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* UNIT TOGGLE */
+  .unit-toggle {
+    display: flex;
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .unit-toggle button {
+    padding: 5px 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+
+  .unit-toggle button.active {
+    background: var(--ocean);
+    color: #fff;
+  }
+
   .measurements-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
 
-  @media (max-width: 480px) {
-    .measurements-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+  @media (max-width: 480px) { .measurements-grid { grid-template-columns: repeat(2, 1fr); } }
 
   .m-field label {
     font-size: 10px;
@@ -377,7 +385,77 @@
     color: var(--ocean);
   }
 
-  /* GENERATE BUTTON */
+  /* PRICING SECTION */
+  .pricing-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: end;
+  }
+
+  @media (max-width: 560px) { .pricing-row { grid-template-columns: 1fr; } }
+
+  /* BOOST TOGGLE */
+  .boost-toggle-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .boost-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+    user-select: none;
+  }
+
+  .boost-toggle:hover { border-color: var(--teal); }
+  .boost-toggle.active { border-color: var(--coral); background: #fff5f3; }
+
+  .boost-toggle .toggle-switch {
+    width: 36px;
+    height: 20px;
+    background: var(--border);
+    border-radius: 20px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .boost-toggle.active .toggle-switch { background: var(--coral); }
+
+  .boost-toggle .toggle-knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 14px; height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .boost-toggle.active .toggle-knob { left: 19px; }
+
+  .boost-toggle .toggle-label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .boost-toggle .toggle-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* GENERATE BTN */
   .generate-btn {
     width: 100%;
     padding: 18px;
@@ -396,25 +474,9 @@
     overflow: hidden;
   }
 
-  .generate-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(30,96,145,0.35);
-  }
-
+  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30,96,145,0.35); }
   .generate-btn:active { transform: translateY(0); }
-
-  .generate-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .generate-btn .btn-wave {
-    position: absolute;
-    bottom: 0; left: -10%;
-    width: 120%;
-    opacity: 0.15;
-  }
+  .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
   /* LOADING */
   .loading-state {
@@ -433,8 +495,7 @@
   }
 
   .wave-loader span {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     background: var(--teal);
     border-radius: 50%;
     animation: wave-bounce 1.2s ease-in-out infinite;
@@ -459,17 +520,12 @@
   }
 
   /* RESULT */
-  .result-section {
-    display: none;
-  }
-
+  .result-section { display: none; }
   .result-section.visible { display: block; }
 
   .result-tabs {
     display: flex;
-    gap: 0;
     border-bottom: 2px solid var(--border);
-    margin-bottom: 0;
   }
 
   .tab-btn {
@@ -488,15 +544,11 @@
     transition: all 0.2s;
   }
 
-  .tab-btn.active {
-    color: var(--ocean);
-    border-bottom-color: var(--coral);
-  }
+  .tab-btn.active { color: var(--ocean); border-bottom-color: var(--coral); }
 
   .tab-pane { display: none; padding: 20px 0 0; }
   .tab-pane.active { display: block; }
 
-  /* DESCRIPTION OUTPUT */
   .description-output {
     background: var(--warm-white);
     border: 1.5px solid var(--border);
@@ -532,7 +584,6 @@
   .copy-btn:hover { background: var(--ocean); }
   .copy-btn.copied { background: #2d8a5e; }
 
-  /* CATEGORIES OUTPUT */
   .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -557,11 +608,7 @@
     display: block;
   }
 
-  .cat-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-  }
+  .cat-value { font-size: 15px; font-weight: 600; color: var(--text); }
 
   .price-item {
     background: linear-gradient(135deg, var(--deep-ocean), var(--ocean));
@@ -572,7 +619,13 @@
   .price-item .cat-label { color: var(--seafoam); }
   .price-item .cat-value { font-size: 22px; font-weight: 800; color: #fff; }
 
-  /* ERROR */
+  .price-breakdown {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
   .error-box {
     display: none;
     background: #fef0ee;
@@ -586,26 +639,7 @@
 
   .error-box.visible { display: block; }
 
-  /* SECTION DIVIDER */
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin: 24px 0 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+  .field-hint { font-size: 11px; color: var(--text-muted); opacity: 0.75; }
 </style>
 </head>
 <body>
@@ -633,7 +667,7 @@
     <p class="api-hint">Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — saved in your browser automatically.</p>
   </div>
 
-  <!-- STEP 1: IMAGES -->
+  <!-- STEP 1: PHOTOS -->
   <div class="card">
     <div class="card-header">
       <span class="step">Step 1</span>
@@ -658,6 +692,7 @@
       <h2>Item Details</h2>
     </div>
     <div class="card-body">
+
       <div class="form-grid">
         <div class="form-group">
           <label for="size">Size *</label>
@@ -667,61 +702,68 @@
           <label for="material">Material</label>
           <input type="text" id="material" placeholder="e.g. Cotton, Polyester, Denim">
         </div>
-        <div class="form-group">
-          <label for="brand">Brand / Label</label>
-          <input type="text" id="brand" placeholder="e.g. Nike, Zara, unknown">
-        </div>
-        <div class="form-group">
-          <label for="notes">Extra Notes</label>
-          <input type="text" id="notes" placeholder="e.g. minor fading, cropped fit">
-        </div>
       </div>
 
-      <div class="section-label">Measurements <span style="font-size:10px;color:var(--text-muted);font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;">(optional — leave blank to skip)</span></div>
+      <!-- MEASUREMENTS -->
+      <div class="measurements-header">
+        <span class="section-label">Measurements <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
+        <div class="unit-toggle">
+          <button id="btnCm" class="active" onclick="setUnit('cm')">cm</button>
+          <button id="btnIn" onclick="setUnit('in')">in</button>
+        </div>
+      </div>
 
       <div class="measurements-grid">
         <div class="m-field form-group">
-          <label>Chest (cm)</label>
+          <label id="labelChest">Chest</label>
           <input type="text" id="mChest" placeholder="e.g. 116">
         </div>
         <div class="m-field form-group">
-          <label>Length (cm)</label>
+          <label id="labelLength">Length</label>
           <input type="text" id="mLength" placeholder="e.g. 68">
         </div>
         <div class="m-field form-group">
-          <label>Shoulder (cm)</label>
+          <label id="labelShoulder">Shoulder</label>
           <input type="text" id="mShoulder" placeholder="e.g. 55">
         </div>
         <div class="m-field form-group">
-          <label>Sleeve (cm)</label>
+          <label id="labelSleeve">Sleeve</label>
           <input type="text" id="mSleeve" placeholder="e.g. 52">
         </div>
-        <div class="m-field form-group">
-          <label>Waist (cm)</label>
-          <input type="text" id="mWaist" placeholder="e.g. 74">
+      </div>
+
+      <!-- PRICING -->
+      <div class="measurements-header" style="margin-top:24px;">
+        <span class="section-label">Pricing <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
+      </div>
+
+      <div class="pricing-row">
+        <div class="form-group">
+          <label for="originalPrice">Original / Cost Price (£)</label>
+          <input type="number" id="originalPrice" placeholder="e.g. 8.00" min="0" step="0.01">
+          <span class="field-hint">Used to calculate your suggested listing price with markup</span>
         </div>
-        <div class="m-field form-group">
-          <label>Hips (cm)</label>
-          <input type="text" id="mHips" placeholder="e.g. 88">
-        </div>
-        <div class="m-field form-group">
-          <label>Inseam (cm)</label>
-          <input type="text" id="mInseam" placeholder="e.g. 76">
-        </div>
-        <div class="m-field form-group">
-          <label>Rise (cm)</label>
-          <input type="text" id="mRise" placeholder="e.g. 28">
+
+        <div class="boost-toggle-wrap">
+          <label>Depop Boost</label>
+          <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()">
+            <div class="toggle-switch">
+              <div class="toggle-knob"></div>
+            </div>
+            <div>
+              <div class="toggle-label">Boosted listing</div>
+              <div class="toggle-sub">Adds 12% Depop commission to price</div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <!-- GENERATE -->
   <button class="generate-btn" id="generateBtn" onclick="generate()">
     ⚡ Generate Listing
-    <svg class="btn-wave" viewBox="0 0 400 30" fill="white" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 15C80 0 160 30 240 15C320 0 360 30 400 15V30H0V15Z"/>
-    </svg>
   </button>
 
   <div class="error-box" id="errorBox"></div>
@@ -742,8 +784,8 @@
     </div>
     <div class="card-body">
       <div class="result-tabs">
-        <button class="tab-btn active" onclick="switchTab('description')">Description</button>
-        <button class="tab-btn" onclick="switchTab('categories')">Categories & Price</button>
+        <button class="tab-btn active" onclick="switchTab('description', this)">Description</button>
+        <button class="tab-btn" onclick="switchTab('categories', this)">Categories & Price</button>
       </div>
 
       <div class="tab-pane active" id="tab-description">
@@ -763,14 +805,39 @@
 
 <script>
 // ─── STATE ───────────────────────────────────────────────
-const images = []; // {dataUrl, base64, mediaType}
+const images = [];
+let unit = 'cm';
+let boosted = false;
 
-// ─── PERSIST API KEY ─────────────────────────────────────
+// ─── API KEY PERSIST ─────────────────────────────────────
 const keyInput = document.getElementById('apiKey');
 keyInput.value = localStorage.getItem('depop_api_key') || '';
-keyInput.addEventListener('input', () => {
-  localStorage.setItem('depop_api_key', keyInput.value.trim());
-});
+keyInput.addEventListener('input', () => localStorage.setItem('depop_api_key', keyInput.value.trim()));
+
+// ─── UNIT TOGGLE ─────────────────────────────────────────
+function setUnit(u) {
+  unit = u;
+  document.getElementById('btnCm').classList.toggle('active', u === 'cm');
+  document.getElementById('btnIn').classList.toggle('active', u === 'in');
+  const suffix = u === 'cm' ? ' (cm)' : ' (in)';
+  const ph = u === 'cm'
+    ? { chest:'e.g. 116', length:'e.g. 68', shoulder:'e.g. 55', sleeve:'e.g. 52' }
+    : { chest:'e.g. 45.5', length:'e.g. 26.5', shoulder:'e.g. 21.5', sleeve:'e.g. 20.5' };
+  document.getElementById('labelChest').textContent = 'Chest' + suffix;
+  document.getElementById('labelLength').textContent = 'Length' + suffix;
+  document.getElementById('labelShoulder').textContent = 'Shoulder' + suffix;
+  document.getElementById('labelSleeve').textContent = 'Sleeve' + suffix;
+  document.getElementById('mChest').placeholder = ph.chest;
+  document.getElementById('mLength').placeholder = ph.length;
+  document.getElementById('mShoulder').placeholder = ph.shoulder;
+  document.getElementById('mSleeve').placeholder = ph.sleeve;
+}
+
+// ─── BOOST TOGGLE ────────────────────────────────────────
+function toggleBoost() {
+  boosted = !boosted;
+  document.getElementById('boostToggle').classList.toggle('active', boosted);
+}
 
 // ─── FILE HANDLING ────────────────────────────────────────
 const dropZone = document.getElementById('dropZone');
@@ -802,20 +869,14 @@ function addFiles(files) {
     if (images.length >= 4) break;
     const reader = new FileReader();
     reader.onload = e => {
-      const dataUrl = e.target.result;
-      const base64 = dataUrl.split(',')[1];
-      const mediaType = file.type;
-      images.push({ dataUrl, base64, mediaType });
+      images.push({ dataUrl: e.target.result, base64: e.target.result.split(',')[1], mediaType: file.type });
       renderPreviews();
     };
     reader.readAsDataURL(file);
   }
 }
 
-function removeImage(idx) {
-  images.splice(idx, 1);
-  renderPreviews();
-}
+function removeImage(idx) { images.splice(idx, 1); renderPreviews(); }
 
 function renderPreviews() {
   const grid = document.getElementById('previewGrid');
@@ -823,18 +884,17 @@ function renderPreviews() {
   images.forEach((img, i) => {
     const div = document.createElement('div');
     div.className = 'preview-item';
-    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}">
-      <button class="remove-btn" onclick="removeImage(${i})" title="Remove">✕</button>`;
+    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}"><button class="remove-btn" onclick="removeImage(${i})" title="Remove">✕</button>`;
     grid.appendChild(div);
   });
 }
 
 // ─── TAB SWITCHING ────────────────────────────────────────
-function switchTab(name) {
+function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
-  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
 }
 
 // ─── COPY ─────────────────────────────────────────────────
@@ -844,11 +904,48 @@ function copyDescription() {
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✓ Copied!';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = '📋 Copy Description';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(() => { btn.textContent = '📋 Copy Description'; btn.classList.remove('copied'); }, 2000);
   });
+}
+
+// ─── PRICE CALCULATOR ────────────────────────────────────
+function calcPrice(rawPriceStr) {
+  // rawPriceStr e.g. "£8–£14" or "£10-£18"
+  const nums = rawPriceStr.match(/[\d.]+/g);
+  if (!nums || nums.length < 2) return { display: rawPriceStr, breakdown: null };
+
+  const originalCost = parseFloat(document.getElementById('originalPrice').value) || null;
+  let low = parseFloat(nums[0]);
+  let high = parseFloat(nums[1]);
+
+  // If we have original price, use it to anchor the low end with a markup
+  if (originalCost) {
+    // Minimum 40% margin on cost price
+    const minFromCost = originalCost * 1.4;
+    if (minFromCost > low) low = Math.ceil(minFromCost);
+    if (low > high) high = Math.ceil(low * 1.25);
+  }
+
+  if (boosted) {
+    // Add 12% to cover Depop commission so seller keeps the same after fees
+    low = Math.ceil(low / (1 - 0.12));
+    high = Math.ceil(high / (1 - 0.12));
+  }
+
+  const display = `£${low}–£${high}`;
+  let breakdown = null;
+  if (boosted) {
+    const takeHomeLow = Math.round(low * (1 - 0.12));
+    const takeHomeHigh = Math.round(high * (1 - 0.12));
+    breakdown = `After 12% Depop boost fee: you keep £${takeHomeLow}–£${takeHomeHigh}`;
+  }
+  if (originalCost && !breakdown) {
+    const profitLow = (low - originalCost).toFixed(2);
+    const profitHigh = (high - originalCost).toFixed(2);
+    breakdown = `Est. profit: £${profitLow}–£${profitHigh} after £${originalCost.toFixed(2)} cost`;
+  }
+
+  return { display, breakdown };
 }
 
 // ─── GENERATE ─────────────────────────────────────────────
@@ -859,106 +956,75 @@ async function generate() {
   const errorBox = document.getElementById('errorBox');
   errorBox.className = 'error-box';
 
-  if (!apiKey) {
-    errorBox.textContent = 'Please enter your Anthropic API key above.';
-    errorBox.classList.add('visible');
-    return;
-  }
-  if (!size) {
-    errorBox.textContent = 'Please enter the size.';
-    errorBox.classList.add('visible');
-    return;
-  }
-  if (images.length === 0) {
-    errorBox.textContent = 'Please upload at least one photo so Claude can describe the item.';
-    errorBox.classList.add('visible');
-    return;
-  }
+  if (!apiKey) { errorBox.textContent = 'Please enter your Anthropic API key above.'; errorBox.classList.add('visible'); return; }
+  if (!size) { errorBox.textContent = 'Please enter the size.'; errorBox.classList.add('visible'); return; }
+  if (images.length === 0) { errorBox.textContent = 'Please upload at least one photo so Claude can describe the item.'; errorBox.classList.add('visible'); return; }
 
-  // Collect form values
   const material = document.getElementById('material').value.trim();
-  const brand = document.getElementById('brand').value.trim();
-  const notes = document.getElementById('notes').value.trim();
   const mChest = document.getElementById('mChest').value.trim();
   const mLength = document.getElementById('mLength').value.trim();
   const mShoulder = document.getElementById('mShoulder').value.trim();
   const mSleeve = document.getElementById('mSleeve').value.trim();
-  const mWaist = document.getElementById('mWaist').value.trim();
-  const mHips = document.getElementById('mHips').value.trim();
-  const mInseam = document.getElementById('mInseam').value.trim();
-  const mRise = document.getElementById('mRise').value.trim();
+  const unitLabel = unit;
 
-  // Build measurements string
   const mParts = [];
-  if (mChest) mParts.push(`Chest ${mChest}cm`);
-  if (mLength) mParts.push(`Length ${mLength}cm`);
-  if (mShoulder) mParts.push(`Shoulder ${mShoulder}cm`);
-  if (mSleeve) mParts.push(`Sleeve ${mSleeve}cm`);
-  if (mWaist) mParts.push(`Waist ${mWaist}cm`);
-  if (mHips) mParts.push(`Hips ${mHips}cm`);
-  if (mInseam) mParts.push(`Inseam ${mInseam}cm`);
-  if (mRise) mParts.push(`Rise ${mRise}cm`);
+  if (mChest) mParts.push(`Chest ${mChest}${unitLabel}`);
+  if (mLength) mParts.push(`Length ${mLength}${unitLabel}`);
+  if (mShoulder) mParts.push(`Shoulder ${mShoulder}${unitLabel}`);
+  if (mSleeve) mParts.push(`Sleeve ${mSleeve}${unitLabel}`);
   const measurementsLine = mParts.length ? `${size} — ${mParts.join(' · ')}` : null;
 
-  // Show loading
   document.getElementById('generateBtn').disabled = true;
   document.getElementById('loadingState').classList.add('visible');
   document.getElementById('resultSection').classList.remove('visible');
 
-  // Build content blocks
   const contentBlocks = [];
-
-  // Add all images
   for (const img of images) {
-    contentBlocks.push({
-      type: 'image',
-      source: { type: 'base64', media_type: img.mediaType, data: img.base64 }
-    });
+    contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
   }
 
-  // Build the prompt
   const detailLines = [
     `Size: ${size}`,
     material ? `Material: ${material}` : null,
-    brand ? `Brand: ${brand}` : null,
-    notes ? `Extra notes: ${notes}` : null,
     measurementsLine ? `Measurements: ${measurementsLine}` : null,
   ].filter(Boolean).join('\n');
 
-  const systemPrompt = `You are an expert Depop reseller who writes viral, accurate, conversion-optimised listings. You look carefully at photos to determine the item type, colour, any graphic or print, condition, era/age, and source. Your descriptions are concise, punchy, and match this exact format and length:
+  const systemPrompt = `You are an expert Depop reseller who writes viral, accurate, conversion-optimised listings. Study the photo(s) carefully to determine all item details. Your descriptions must match this EXACT format:
 
-DESCRIPTION FORMAT:
+---DESCRIPTION FORMAT---
 ‼️ DM FOR MORE SIZES ‼️
 
-[Colour] [Item Type] [Brief Descriptor] [Y2K/Vintage/etc if applicable]
+[Color] [Item Type] [Brief Descriptor] [era tag if applicable e.g. Y2K, Vintage]
 
-[2-3 sentence description of the item. Describe what it looks like, any graphic/print, the vibe, and who'd want it. Keep it punchy and appealing. Same length as the examples.]
+[2-3 sentences. Describe the item: what it looks like, any graphic/print/design, the vibe/aesthetic, and who'd want it. Punchy and appealing. Keep it SHORT — same length as these examples:
+"Grey zip-up hoodie featuring a unique graphic print of a Social Security card on the front. This comfortable hoodie is perfect for a casual, streetwear look."
+"White tank top with a striking CHOOSE JUICY graphic print, featuring a fitted silhouette and classic scoop neck. Made from comfortable polyester, perfect for a Y2K-inspired look or a casual summer day."]
 
 📏 MEASUREMENTS
 [MEASUREMENTS_LINE]
 
 Size: [SIZE]
 
-[5 hashtags as Depop-style links e.g. #hoodie #streetwear #graphictee #casual #cotton]
+[HASHTAGS]
 
-MEASUREMENTS RULE: If measurements are provided, format them exactly as: "📏 MEASUREMENTS\n[size] — Chest 116cm · Length 68cm" etc. If no measurements are provided, omit the measurements block entirely.
-
-HASHTAGS RULE: Exactly 5 hashtags. Format each one exactly like this (the full href Depop link format):
+---RULES---
+MEASUREMENTS: If measurements are given, format exactly as shown. If none, omit the entire measurements block including the emoji header.
+HASHTAGS: Exactly 5 hashtags. Format EVERY one like this — include the trailing space before the closing bracket:
 [#tagname ](https://www.depop.com/search/?q=%23tagname)
-Pick tags that match the item's style, type, era, and material.
+Choose tags that match item type, style, era, and material.
 
-Then return a JSON block AFTER the description (separated by ---JSON---) with these exact keys:
+---JSON BLOCK---
+After the description, output ---JSON--- on its own line, then a JSON object with EXACTLY these keys:
 {
-  "color": "main colour(s)",
-  "source": "Thrifted / Vintage Shop / Car Boot / Charity Shop / Unknown — infer from item age and condition",
-  "age": "Era e.g. Y2K (2000s), 90s, 80s, Vintage (pre-1980), Modern (2010s-now)",
-  "style": "e.g. Streetwear, Casual, Y2K, Preppy, Grunge, Gothic, Business Casual",
-  "condition": "New with tags / Like new / Good / Fair / Well worn — judge from photos",
-  "price": "£X–£Y (give highest realistic resale value on Depop, optimistic but achievable)"
+  "color": "1 or 2 dominant colors from photo only — single word colors e.g. 'Grey' or 'Black, White'. Max 2.",
+  "source": "1-2 from ONLY these options: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired. Usually preloved or vintage. Comma-separated if 2.",
+  "age": "EXACTLY ONE of: Modern, 00s, 90s, 80s, 70s, 60s, 50s, Antique",
+  "style": "EXACTLY 3 from this list only — comma-separated: Streetwear, Sportswear, Loungewear, Goth, Retro, Boho, Western, Indie, Skater, Rave, Costume, Cosplay, Grunge, Emo, Minimalist, Preppy, Avant Garde, Punk, Glam, Regency, Casual, Utility, Futuristic, Cottage, Fairy, Kidcore, Y2K, Biker, Gorpcore, Twee, Coquette, Whimsygoth",
+  "condition": "Exactly one of: New with tags, Like new, Good, Fair, Well worn — judge from photo",
+  "price": "£X–£Y format. Give optimistic but realistic Depop resale value."
 }`;
 
-  const userText = `Please write a Depop listing for this item.\n\n${detailLines}\n\nLook at the photo(s) carefully to determine the item type, colour, any graphic print, condition, source, and era. Generate the full listing in the exact format specified.`;
-
+  const userText = `Write a Depop listing for this item.\n\n${detailLines}\n\nStudy the photo(s) carefully. Generate the full listing in the exact format specified.`;
   contentBlocks.push({ type: 'text', text: userText });
 
   try {
@@ -986,33 +1052,31 @@ Then return a JSON block AFTER the description (separated by ---JSON---) with th
     const data = await response.json();
     const raw = data?.content?.[0]?.text || '';
 
-    // Split description and JSON
-    const parts = raw.split('---JSON---');
-    const description = parts[0].trim();
+    // Split on ---JSON---
+    const splitIdx = raw.indexOf('---JSON---');
+    const description = splitIdx !== -1 ? raw.slice(0, splitIdx).trim() : raw.trim();
     let categories = {};
 
-    if (parts[1]) {
+    if (splitIdx !== -1) {
+      const jsonPart = raw.slice(splitIdx + 10);
       try {
-        const jsonStr = parts[1].replace(/```json|```/g, '').trim();
-        categories = JSON.parse(jsonStr);
+        const clean = jsonPart.replace(/```json|```/g, '').trim();
+        categories = JSON.parse(clean);
       } catch {
-        // Try regex extract
-        const match = parts[1].match(/\{[\s\S]+\}/);
-        if (match) {
-          try { categories = JSON.parse(match[0]); } catch {}
-        }
+        const match = jsonPart.match(/\{[\s\S]+\}/);
+        if (match) { try { categories = JSON.parse(match[0]); } catch {} }
       }
     }
 
     // Show description
     document.getElementById('descriptionOutput').textContent = description;
 
-    // Show categories
+    // Build categories
     const catGrid = document.getElementById('categoriesGrid');
     catGrid.innerHTML = '';
 
     const catFields = [
-      { key: 'color', label: 'Colour' },
+      { key: 'color', label: 'Color' },
       { key: 'style', label: 'Style' },
       { key: 'age', label: 'Era / Age' },
       { key: 'source', label: 'Source' },
@@ -1029,9 +1093,10 @@ Then return a JSON block AFTER the description (separated by ---JSON---) with th
     }
 
     if (categories.price) {
+      const { display, breakdown } = calcPrice(categories.price);
       const div = document.createElement('div');
       div.className = 'cat-item price-item';
-      div.innerHTML = `<span class="cat-label">💰 Suggested Price</span><span class="cat-value">${categories.price}</span>`;
+      div.innerHTML = `<span class="cat-label">💰 Suggested Listing Price${boosted ? ' (Boosted)' : ''}</span><span class="cat-value">${display}</span>${breakdown ? `<div class="price-breakdown">${breakdown}</div>` : ''}`;
       catGrid.appendChild(div);
     }
 
