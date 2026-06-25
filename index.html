@@ -3,610 +3,1048 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Depop Lister</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Depop Listing Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0d1b2a;
+    --deep-ocean: #1a2f45;
+    --ocean: #1e6091;
+    --teal: #168aad;
+    --seafoam: #76c8d4;
+    --sand: #f4ede4;
+    --warm-white: #faf8f5;
+    --coral: #e07a5f;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --border: #d4e4ef;
+  }
 
-:root {
-  --navy:    #0f2340;
-  --navy2:   #1a3458;
-  --teal:    #2ec4b6;
-  --coral:   #ff6b6b;
-  --sand:    #fdf8f0;
-  --sand2:   #f5ede0;
-  --white:   #ffffff;
-  --ink:     #0f2340;
-  --muted:   #5a7a9a;
-  --border:  #d8e8f0;
-  --r:       12px;
-  --rs:      7px;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  font-family: 'Barlow', sans-serif;
-  background: var(--sand);
-  color: var(--ink);
-  min-height: 100vh;
-}
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--warm-white);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-/* ── Header ── */
-.site-header {
-  background: var(--navy);
-  padding: 1.4rem 1.5rem 1.2rem;
-  display: flex;
-  align-items: flex-end;
-  gap: 14px;
-}
-.site-header h1 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 36px;
-  font-weight: 800;
-  color: var(--white);
-  letter-spacing: -0.01em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-.site-header h1 span { color: var(--teal); }
-.site-header p {
-  font-size: 13px;
-  color: var(--teal);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  padding-bottom: 3px;
-}
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
 
-/* wave divider */
-.wave {
-  width: 100%;
-  display: block;
-  background: var(--navy);
-  line-height: 0;
-}
-.wave svg { display: block; width: 100%; }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 32px;
+    position: relative;
+    z-index: 1;
+  }
 
-/* ── Main layout ── */
-.main { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+  .wave-top {
+    display: block;
+    width: 100%;
+    color: var(--ocean);
+    opacity: 0.25;
+    position: absolute;
+    top: 0; left: 0;
+  }
 
-/* ── Section label ── */
-.label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
+  .logo-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--seafoam);
+    margin-bottom: 10px;
+    display: block;
+  }
 
-/* ── Card ── */
-.card {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r);
-  padding: 1.2rem;
-  margin-bottom: 1rem;
-}
+  header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+  }
 
-/* ── API key ── */
-.key-wrap { position: relative; }
-.key-wrap input {
-  width: 100%;
-  font-family: monospace;
-  font-size: 13px;
-  padding: 10px 60px 10px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--rs);
-  background: var(--sand);
-  color: var(--ink);
-  outline: none;
-  transition: border-color .15s;
-}
-.key-wrap input:focus { border-color: var(--teal); }
-.toggle-key {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  font-size: 12px; font-family: 'Barlow', sans-serif; font-weight: 600;
-  color: var(--muted); background: none; border: none; cursor: pointer;
-  letter-spacing: 0.04em; text-transform: uppercase;
-}
-.key-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  header h1 span {
+    color: var(--coral);
+  }
 
-/* ── Upload zone ── */
-.upload-zone {
-  border: 2px dashed var(--border);
-  border-radius: var(--rs);
-  padding: 1.8rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  background: var(--sand);
-  transition: background .15s, border-color .15s;
-  user-select: none;
-}
-.upload-zone:hover { background: var(--sand2); border-color: var(--teal); }
-.upload-zone.drag-over { background: #e8f8f7; border-color: var(--teal); }
-.upload-zone input { display: none; }
-.upload-icon { font-size: 32px; display: block; margin-bottom: 6px; }
-.upload-zone .up-text { font-size: 14px; font-weight: 600; color: var(--navy); }
-.upload-zone .up-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
-.thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-.thumb {
-  width: 78px; height: 78px; object-fit: cover;
-  border-radius: var(--rs); border: 2px solid var(--border);
-  cursor: pointer; transition: opacity .15s, border-color .15s;
-}
-.thumb:hover { opacity: .75; border-color: var(--coral); }
+  header p {
+    color: var(--seafoam);
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 12px;
+    opacity: 0.85;
+    max-width: 480px;
+  }
 
-/* ── Form fields ── */
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field + .field { margin-top: 10px; }
-.field-label {
-  font-size: 12px; font-weight: 600; color: var(--muted);
-  letter-spacing: 0.05em; text-transform: uppercase;
-}
-.field input {
-  width: 100%; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 500;
-  padding: 9px 12px;
-  border: 1.5px solid var(--border); border-radius: var(--rs);
-  background: var(--sand); color: var(--ink); outline: none;
-  transition: border-color .15s;
-}
-.field input:focus { border-color: var(--teal); background: var(--white); }
-.field input::placeholder { color: #a0b8cc; }
+  .wave-divider {
+    display: block;
+    width: 100%;
+    color: var(--warm-white);
+    margin-top: -1px;
+  }
 
-/* ── Generate button ── */
-.gen-btn {
-  width: 100%; padding: 1rem;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 22px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
-  background: var(--coral);
-  color: var(--white);
-  border: none; border-radius: var(--r);
-  cursor: pointer; margin-top: 4px;
-  transition: background .15s, transform .1s;
-  box-shadow: 0 4px 16px rgba(255,107,107,.3);
-}
-.gen-btn:hover { background: #ff4f4f; transform: translateY(-1px); }
-.gen-btn:active { transform: translateY(0); }
-.gen-btn:disabled {
-  background: #c0cdd8; box-shadow: none;
-  transform: none; cursor: not-allowed;
-}
+  /* MAIN LAYOUT */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 8px 24px 60px;
+  }
 
-/* ── Status ── */
-.status {
-  text-align: center; font-size: 13px; font-weight: 600;
-  color: var(--muted); margin-top: 10px; min-height: 18px;
-  letter-spacing: 0.04em;
-}
+  /* API KEY SECTION */
+  .api-section {
+    background: var(--deep-ocean);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
 
-/* ── Error ── */
-.error {
-  background: #fff0f0; border: 1.5px solid #ffb3b3;
-  color: #c0392b; border-radius: var(--rs);
-  padding: 12px 14px; font-size: 13px; line-height: 1.6;
-  margin-top: 10px; display: none; white-space: pre-wrap; word-break: break-all;
-}
-.raw {
-  background: var(--navy); color: #7fffdd;
-  font-family: monospace; font-size: 11px;
-  border-radius: var(--rs); padding: 10px;
-  margin-top: 8px; white-space: pre-wrap; word-break: break-all;
-  max-height: 180px; overflow-y: auto; display: none;
-}
+  .api-section label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--seafoam);
+    white-space: nowrap;
+  }
 
-/* ── Results ── */
-#results { display: none; margin-top: 1.5rem; }
+  .api-section input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(118,200,212,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
 
-.result-header {
-  background: var(--navy);
-  border-radius: var(--r) var(--r) 0 0;
-  padding: 1rem 1.2rem 0.9rem;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.result-header .rh-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 18px; font-weight: 700; text-transform: uppercase;
-  color: var(--teal); letter-spacing: 0.06em;
-}
-.copy-btn {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-  background: var(--teal); color: var(--navy);
-  border: none; border-radius: 6px; padding: 6px 16px;
-  cursor: pointer; transition: background .12s;
-}
-.copy-btn:hover { background: #25b0a3; }
+  .api-section input:focus {
+    border-color: var(--seafoam);
+  }
 
-.desc-box {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 var(--r) var(--r);
-  padding: 1.2rem 1.3rem;
-  font-size: 14px; line-height: 1.8; color: var(--ink);
-  white-space: pre-wrap; word-break: break-word;
-  margin-bottom: 1rem;
-}
+  .api-section input::placeholder { color: rgba(255,255,255,0.3); }
 
-.cats-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 15px; font-weight: 700; text-transform: uppercase;
-  color: var(--navy); letter-spacing: 0.07em; margin-bottom: 10px;
-}
-.cats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.cat-pill {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--rs); padding: 10px 13px;
-}
-.cat-pill .ck {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
-}
-.cat-pill .cv {
-  font-size: 15px; font-weight: 600; color: var(--navy);
-}
-.price-pill {
-  background: var(--navy);
-  border-color: var(--navy);
-}
-.price-pill .ck { color: var(--teal); }
-.price-pill .cv { color: var(--white); font-size: 17px; }
+  .api-hint {
+    font-size: 12px;
+    color: rgba(118,200,212,0.6);
+    margin-top: 6px;
+    width: 100%;
+    padding-left: 0;
+  }
 
-@media (max-width: 480px) {
-  .g2 { grid-template-columns: 1fr; }
-  .g4 { grid-template-columns: 1fr 1fr; }
-  .cats-grid { grid-template-columns: 1fr; }
-  .site-header h1 { font-size: 28px; }
-}
+  .api-hint a {
+    color: var(--seafoam);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* CARD */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 20px rgba(13,27,42,0.06);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, var(--deep-ocean), var(--ocean));
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-header .step {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--coral);
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+
+  .card-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  /* IMAGE UPLOAD */
+  .drop-zone {
+    border: 2.5px dashed var(--border);
+    border-radius: 14px;
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--warm-white);
+    position: relative;
+  }
+
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--teal);
+    background: #f0f8fb;
+  }
+
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drop-zone .dz-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+    display: block;
+    color: var(--teal);
+  }
+
+  .drop-zone h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ocean);
+    letter-spacing: 0.5px;
+  }
+
+  .drop-zone p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .paste-tip {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--seafoam);
+    background: var(--navy);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* IMAGE PREVIEW */
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .preview-grid:empty { display: none; }
+
+  .preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+
+  .preview-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .preview-item .remove-btn {
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 22px; height: 22px;
+    background: rgba(224,122,95,0.92);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  /* FORM FIELDS */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 560px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  input[type="text"], textarea, select {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(22,138,173,0.1);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.75;
+  }
+
+  /* MEASUREMENTS */
+  .measurements-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .measurements-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .m-field label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--ocean);
+  }
+
+  /* GENERATE BUTTON */
+  .generate-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--ocean), var(--teal));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(30,96,145,0.35);
+  }
+
+  .generate-btn:active { transform: translateY(0); }
+
+  .generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .generate-btn .btn-wave {
+    position: absolute;
+    bottom: 0; left: -10%;
+    width: 120%;
+    opacity: 0.15;
+  }
+
+  /* LOADING */
+  .loading-state {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+  }
+
+  .loading-state.visible { display: block; }
+
+  .wave-loader {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .wave-loader span {
+    width: 8px;
+    height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: wave-bounce 1.2s ease-in-out infinite;
+  }
+
+  .wave-loader span:nth-child(2) { animation-delay: 0.15s; }
+  .wave-loader span:nth-child(3) { animation-delay: 0.3s; }
+  .wave-loader span:nth-child(4) { animation-delay: 0.45s; }
+
+  @keyframes wave-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-12px); opacity: 1; }
+  }
+
+  .loading-state p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ocean);
+  }
+
+  /* RESULT */
+  .result-section {
+    display: none;
+  }
+
+  .result-section.visible { display: block; }
+
+  .result-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  .tab-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    color: var(--ocean);
+    border-bottom-color: var(--coral);
+  }
+
+  .tab-pane { display: none; padding: 20px 0 0; }
+  .tab-pane.active { display: block; }
+
+  /* DESCRIPTION OUTPUT */
+  .description-output {
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .copy-btn:hover { background: var(--ocean); }
+  .copy-btn.copied { background: #2d8a5e; }
+
+  /* CATEGORIES OUTPUT */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .cat-item {
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+
+  .cat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .cat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .price-item {
+    background: linear-gradient(135deg, var(--deep-ocean), var(--ocean));
+    color: #fff;
+    grid-column: 1 / -1;
+  }
+
+  .price-item .cat-label { color: var(--seafoam); }
+  .price-item .cat-value { font-size: 22px; font-weight: 800; color: #fff; }
+
+  /* ERROR */
+  .error-box {
+    display: none;
+    background: #fef0ee;
+    border: 1.5px solid #f5c0b8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  .error-box.visible { display: block; }
+
+  /* SECTION DIVIDER */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 24px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 </style>
 </head>
 <body>
 
-<div class="site-header">
-  <div>
-    <h1>Depop <span>Lister</span></h1>
-  </div>
-  <p>AI-powered listing generator</p>
-</div>
-<div class="wave">
-  <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,20 C200,40 400,0 600,20 C800,40 1000,0 1200,20 L1200,0 L0,0 Z" fill="#0f2340"/>
+<header>
+  <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
   </svg>
-</div>
+  <div class="header-inner">
+    <span class="logo-tag">Auto Caption Maker</span>
+    <h1>Depop<br><span>Listing</span><br>Generator</h1>
+    <p>Upload a photo, fill in the basics — get a ready-to-paste Depop listing in seconds.</p>
+  </div>
+  <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
+  </svg>
+</header>
 
-<div class="main">
+<main>
 
-  <!-- API Key -->
+  <!-- API KEY -->
+  <div class="api-section">
+    <label for="apiKey">🔑 Anthropic API Key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+    <p class="api-hint">Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — saved in your browser automatically.</p>
+  </div>
+
+  <!-- STEP 1: IMAGES -->
   <div class="card">
-    <p class="label">Anthropic API key</p>
-    <div class="key-wrap">
-      <input type="password" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off">
-      <button class="toggle-key" onclick="toggleKey()">show</button>
+    <div class="card-header">
+      <span class="step">Step 1</span>
+      <h2>Photos</h2>
     </div>
-    <p class="key-hint">Saved in your browser · sent only to Anthropic · get yours at console.anthropic.com</p>
+    <div class="card-body">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <span class="dz-icon">📸</span>
+        <h3>Drop photos here</h3>
+        <p>Front + back if there's a graphic · Up to 4 images</p>
+        <span class="paste-tip">Or paste with Ctrl+V / Cmd+V</span>
+      </div>
+      <div class="preview-grid" id="previewGrid"></div>
+    </div>
   </div>
 
-  <!-- Photos -->
+  <!-- STEP 2: DETAILS -->
   <div class="card">
-    <p class="label">Photos</p>
-    <div class="upload-zone" id="dropzone" onclick="document.getElementById('img-input').click()">
-      <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)">
-      <span class="upload-icon">📸</span>
-      <p class="up-text">Click, drag & drop, or paste (Ctrl/Cmd+V)</p>
-      <p class="up-hint">Front required · back/graphic optional · up to 4 · click thumb to remove</p>
+    <div class="card-header">
+      <span class="step">Step 2</span>
+      <h2>Item Details</h2>
     </div>
-    <div class="thumbs" id="thumbs"></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="size">Size *</label>
+          <input type="text" id="size" placeholder="e.g. M, L, XL, 12, One Size">
+        </div>
+        <div class="form-group">
+          <label for="material">Material</label>
+          <input type="text" id="material" placeholder="e.g. Cotton, Polyester, Denim">
+        </div>
+        <div class="form-group">
+          <label for="brand">Brand / Label</label>
+          <input type="text" id="brand" placeholder="e.g. Nike, Zara, unknown">
+        </div>
+        <div class="form-group">
+          <label for="notes">Extra Notes</label>
+          <input type="text" id="notes" placeholder="e.g. minor fading, cropped fit">
+        </div>
+      </div>
+
+      <div class="section-label">Measurements <span style="font-size:10px;color:var(--text-muted);font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;">(optional — leave blank to skip)</span></div>
+
+      <div class="measurements-grid">
+        <div class="m-field form-group">
+          <label>Chest (cm)</label>
+          <input type="text" id="mChest" placeholder="e.g. 116">
+        </div>
+        <div class="m-field form-group">
+          <label>Length (cm)</label>
+          <input type="text" id="mLength" placeholder="e.g. 68">
+        </div>
+        <div class="m-field form-group">
+          <label>Shoulder (cm)</label>
+          <input type="text" id="mShoulder" placeholder="e.g. 55">
+        </div>
+        <div class="m-field form-group">
+          <label>Sleeve (cm)</label>
+          <input type="text" id="mSleeve" placeholder="e.g. 52">
+        </div>
+        <div class="m-field form-group">
+          <label>Waist (cm)</label>
+          <input type="text" id="mWaist" placeholder="e.g. 74">
+        </div>
+        <div class="m-field form-group">
+          <label>Hips (cm)</label>
+          <input type="text" id="mHips" placeholder="e.g. 88">
+        </div>
+        <div class="m-field form-group">
+          <label>Inseam (cm)</label>
+          <input type="text" id="mInseam" placeholder="e.g. 76">
+        </div>
+        <div class="m-field form-group">
+          <label>Rise (cm)</label>
+          <input type="text" id="mRise" placeholder="e.g. 28">
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Details -->
-  <div class="card">
-    <p class="label">Item details</p>
+  <!-- GENERATE -->
+  <button class="generate-btn" id="generateBtn" onclick="generate()">
+    ⚡ Generate Listing
+    <svg class="btn-wave" viewBox="0 0 400 30" fill="white" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 15C80 0 160 30 240 15C320 0 360 30 400 15V30H0V15Z"/>
+    </svg>
+  </button>
 
-    <div class="g2" style="margin-bottom:10px">
-      <div class="field">
-        <span class="field-label">Size</span>
-        <input type="text" id="size" placeholder="e.g. Medium, L, XS">
-      </div>
-      <div class="field">
-        <span class="field-label">Material (optional)</span>
-        <input type="text" id="material" placeholder="e.g. 100% cotton">
-      </div>
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loadingState">
+    <div class="wave-loader">
+      <span></span><span></span><span></span><span></span>
     </div>
+    <p>Writing your listing...</p>
+  </div>
 
-    <div class="field" style="margin-bottom:10px">
-      <span class="field-label">Measurements (optional)</span>
-      <div class="g4" style="margin-top:4px">
-        <div class="field"><span class="field-label" style="font-size:10px">Chest cm</span><input type="text" id="m-chest" placeholder="116"></div>
-        <div class="field"><span class="field-label" style="font-size:10px">Length cm</span><input type="text" id="m-length" placeholder="68"></div>
-        <div class="field"><span class="field-label" style="font-size:10px">Shoulder cm</span><input type="text" id="m-shoulder" placeholder="55"></div>
-        <div class="field"><span class="field-label" style="font-size:10px">Sleeve cm</span><input type="text" id="m-sleeve" placeholder="52"></div>
-      </div>
+  <!-- RESULT -->
+  <div class="result-section card" id="resultSection">
+    <div class="card-header">
+      <span class="step">Done</span>
+      <h2>Your Listing</h2>
     </div>
-
-    <div class="g2">
-      <div class="field">
-        <span class="field-label">Brand (optional)</span>
-        <input type="text" id="brand" placeholder="e.g. Carhartt, no label">
+    <div class="card-body">
+      <div class="result-tabs">
+        <button class="tab-btn active" onclick="switchTab('description')">Description</button>
+        <button class="tab-btn" onclick="switchTab('categories')">Categories & Price</button>
       </div>
-      <div class="field">
-        <span class="field-label">Notes (optional)</span>
-        <input type="text" id="notes" placeholder="e.g. small mark on sleeve">
+
+      <div class="tab-pane active" id="tab-description">
+        <div class="description-output" id="descriptionOutput"></div>
+        <button class="copy-btn" id="copyBtn" onclick="copyDescription()">
+          📋 Copy Description
+        </button>
+      </div>
+
+      <div class="tab-pane" id="tab-categories">
+        <div class="categories-grid" id="categoriesGrid"></div>
       </div>
     </div>
   </div>
 
-  <button class="gen-btn" id="gen-btn" onclick="generate()">✦ Generate Listing</button>
-  <p class="status" id="status"></p>
-  <div class="error" id="error-box"></div>
-  <div class="raw" id="raw-box"></div>
-
-  <!-- Results -->
-  <div id="results">
-    <div class="result-header">
-      <span class="rh-label">Your listing</span>
-      <button class="copy-btn" onclick="copyDesc()">⎘ Copy</button>
-    </div>
-    <div class="desc-box" id="desc-output"></div>
-
-    <p class="cats-label">Categories & pricing</p>
-    <div class="cats-grid" id="cats-out"></div>
-  </div>
-
-</div>
+</main>
 
 <script>
-let imageDataList = [];
-let currentDesc = '';
+// ─── STATE ───────────────────────────────────────────────
+const images = []; // {dataUrl, base64, mediaType}
 
-// Persist API key
-const keyInput = document.getElementById('api-key');
-try { const s = localStorage.getItem('depop_ak'); if (s) keyInput.value = s; } catch(e){}
-keyInput.addEventListener('input', () => { try { localStorage.setItem('depop_ak', keyInput.value.trim()); } catch(e){} });
-function toggleKey() {
-  keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
-  document.querySelector('.toggle-key').textContent = keyInput.type === 'password' ? 'show' : 'hide';
-}
-
-// Images
-function handleFiles(files) {
-  [...files].filter(f => f.type.startsWith('image/')).forEach(file => {
-    if (imageDataList.length >= 4) return;
-    const r = new FileReader();
-    r.onload = e => { imageDataList.push({ data: e.target.result.split(',')[1], type: file.type }); renderThumbs(); };
-    r.readAsDataURL(file);
-  });
-}
-function removeImage(i) { imageDataList.splice(i, 1); renderThumbs(); }
-function renderThumbs() {
-  const el = document.getElementById('thumbs');
-  el.innerHTML = '';
-  imageDataList.forEach((img, i) => {
-    const t = document.createElement('img');
-    t.src = 'data:' + img.type + ';base64,' + img.data;
-    t.className = 'thumb'; t.title = 'Click to remove';
-    t.onclick = () => removeImage(i);
-    el.appendChild(t);
-  });
-}
-const zone = document.getElementById('dropzone');
-zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
-document.addEventListener('paste', e => {
-  const files = [...(e.clipboardData?.items||[])].filter(i=>i.type.startsWith('image/')).map(i=>i.getAsFile()).filter(Boolean);
-  if (files.length) handleFiles(files);
+// ─── PERSIST API KEY ─────────────────────────────────────
+const keyInput = document.getElementById('apiKey');
+keyInput.value = localStorage.getItem('depop_api_key') || '';
+keyInput.addEventListener('input', () => {
+  localStorage.setItem('depop_api_key', keyInput.value.trim());
 });
 
-// Measurements
-function getMeasurements() {
-  const c = document.getElementById('m-chest').value;
-  const l = document.getElementById('m-length').value;
-  const sh = document.getElementById('m-shoulder').value;
-  const sl = document.getElementById('m-sleeve').value;
-  const sz = document.getElementById('size').value || 'One size';
-  const parts = [];
-  if (c) parts.push(`Chest ${c}cm`);
-  if (l) parts.push(`Length ${l}cm`);
-  if (sh) parts.push(`Shoulder ${sh}cm`);
-  if (sl) parts.push(`Sleeve ${sl}cm`);
-  return parts.length ? `${sz} — ${parts.join(' · ')}` : '';
-}
+// ─── FILE HANDLING ────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
 
-// Error display
-function showError(msg, raw) {
-  const b = document.getElementById('error-box');
-  b.textContent = msg; b.style.display = 'block';
-  if (raw !== undefined) {
-    const rb = document.getElementById('raw-box');
-    rb.textContent = 'Raw API response:\n' + raw;
-    rb.style.display = 'block';
+fileInput.addEventListener('change', e => addFiles(e.target.files));
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  addFiles(e.dataTransfer.files);
+});
+
+document.addEventListener('paste', e => {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  const imageFiles = [];
+  for (const item of items) {
+    if (item.type.startsWith('image/')) imageFiles.push(item.getAsFile());
+  }
+  if (imageFiles.length) addFiles(imageFiles);
+});
+
+function addFiles(files) {
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    if (images.length >= 4) break;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const mediaType = file.type;
+      images.push({ dataUrl, base64, mediaType });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
   }
 }
 
-// Extract JSON robustly
-function extractJSON(text) {
-  try { return JSON.parse(text.trim()); } catch(e){}
-  const stripped = text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-  try { return JSON.parse(stripped); } catch(e){}
-  const s = stripped.indexOf('{'), end = stripped.lastIndexOf('}');
-  if (s !== -1 && end > s) { try { return JSON.parse(stripped.slice(s, end+1)); } catch(e){} }
-  return null;
+function removeImage(idx) {
+  images.splice(idx, 1);
+  renderPreviews();
 }
 
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  images.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}">
+      <button class="remove-btn" onclick="removeImage(${i})" title="Remove">✕</button>`;
+    grid.appendChild(div);
+  });
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── COPY ─────────────────────────────────────────────────
+function copyDescription() {
+  const text = document.getElementById('descriptionOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copy Description';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ─── GENERATE ─────────────────────────────────────────────
 async function generate() {
-  const apiKey = keyInput.value.trim();
-  if (!apiKey) { showError('Add your Anthropic API key above first.'); return; }
-  if (imageDataList.length === 0) { showError('Upload at least one photo so Claude can see the item.'); return; }
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const size = document.getElementById('size').value.trim();
 
-  const btn = document.getElementById('gen-btn');
-  const status = document.getElementById('status');
-  btn.disabled = true;
-  btn.textContent = '⏳ Generating…';
-  status.textContent = 'Analysing your photo…';
-  document.getElementById('error-box').style.display = 'none';
-  document.getElementById('raw-box').style.display = 'none';
-  document.getElementById('results').style.display = 'none';
+  const errorBox = document.getElementById('errorBox');
+  errorBox.className = 'error-box';
 
-  const size = document.getElementById('size').value || 'unknown';
-  const material = document.getElementById('material').value;
-  const brand = document.getElementById('brand').value;
-  const notes = document.getElementById('notes').value;
-  const measurements = getMeasurements();
+  if (!apiKey) {
+    errorBox.textContent = 'Please enter your Anthropic API key above.';
+    errorBox.classList.add('visible');
+    return;
+  }
+  if (!size) {
+    errorBox.textContent = 'Please enter the size.';
+    errorBox.classList.add('visible');
+    return;
+  }
+  if (images.length === 0) {
+    errorBox.textContent = 'Please upload at least one photo so Claude can describe the item.';
+    errorBox.classList.add('visible');
+    return;
+  }
 
-  const userContent = [];
-  imageDataList.forEach(img => userContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.data } }));
-  userContent.push({ type: 'text', text: `Write a Depop listing for this item. Look at the photo carefully.
+  // Collect form values
+  const material = document.getElementById('material').value.trim();
+  const brand = document.getElementById('brand').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const mChest = document.getElementById('mChest').value.trim();
+  const mLength = document.getElementById('mLength').value.trim();
+  const mShoulder = document.getElementById('mShoulder').value.trim();
+  const mSleeve = document.getElementById('mSleeve').value.trim();
+  const mWaist = document.getElementById('mWaist').value.trim();
+  const mHips = document.getElementById('mHips').value.trim();
+  const mInseam = document.getElementById('mInseam').value.trim();
+  const mRise = document.getElementById('mRise').value.trim();
 
-PROVIDED:
-- Size: ${size}${material ? '\n- Material: ' + material : ''}${brand ? '\n- Brand: ' + brand : ''}${notes ? '\n- Notes: ' + notes : ''}${measurements ? '\n- Measurements: ' + measurements : ''}
+  // Build measurements string
+  const mParts = [];
+  if (mChest) mParts.push(`Chest ${mChest}cm`);
+  if (mLength) mParts.push(`Length ${mLength}cm`);
+  if (mShoulder) mParts.push(`Shoulder ${mShoulder}cm`);
+  if (mSleeve) mParts.push(`Sleeve ${mSleeve}cm`);
+  if (mWaist) mParts.push(`Waist ${mWaist}cm`);
+  if (mHips) mParts.push(`Hips ${mHips}cm`);
+  if (mInseam) mParts.push(`Inseam ${mInseam}cm`);
+  if (mRise) mParts.push(`Rise ${mRise}cm`);
+  const measurementsLine = mParts.length ? `${size} — ${mParts.join(' · ')}` : null;
 
-FROM THE PHOTO determine: exact color, item type, any graphic/text/print on it, condition, source (thrifted/vintage/etc), era/style aesthetic.
+  // Show loading
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('loadingState').classList.add('visible');
+  document.getElementById('resultSection').classList.remove('visible');
 
-Return ONLY a raw JSON object — no markdown, no backticks, no text before or after. Just the JSON:
+  // Build content blocks
+  const contentBlocks = [];
 
-{"description":"...","color":"...","style":"...","age":"...","condition":"...","source":"...","price_min":0,"price_max":0}
+  // Add all images
+  for (const img of images) {
+    contentBlocks.push({
+      type: 'image',
+      source: { type: 'base64', media_type: img.mediaType, data: img.base64 }
+    });
+  }
 
-The description field must follow this EXACT structure and length:
+  // Build the prompt
+  const detailLines = [
+    `Size: ${size}`,
+    material ? `Material: ${material}` : null,
+    brand ? `Brand: ${brand}` : null,
+    notes ? `Extra notes: ${notes}` : null,
+    measurementsLine ? `Measurements: ${measurementsLine}` : null,
+  ].filter(Boolean).join('\n');
 
-‼️ DM FOR MORE SIZES ‼️ [Color] [Item type] [with "[Graphic text]" if graphic present] [era if obvious]
+  const systemPrompt = `You are an expert Depop reseller who writes viral, accurate, conversion-optimised listings. You look carefully at photos to determine the item type, colour, any graphic or print, condition, era/age, and source. Your descriptions are concise, punchy, and match this exact format and length:
 
-[One sentence: what it looks like, the print/graphic/detail, fit. One sentence: vibe or use case.]${measurements ? '\n\n📏 MEASUREMENTS\n' + measurements : ''}
+DESCRIPTION FORMAT:
+‼️ DM FOR MORE SIZES ‼️
 
-Size: [size written out e.g. Medium not M]
+[Colour] [Item Type] [Brief Descriptor] [Y2K/Vintage/etc if applicable]
 
-[#tag1 ](https://www.depop.com/search/?q=%23tag1)[#tag2 ](https://www.depop.com/search/?q=%23tag2)[#tag3 ](https://www.depop.com/search/?q=%23tag3)[#tag4 ](https://www.depop.com/search/?q=%23tag4)[#tag5](https://www.depop.com/search/?q=%23tag5)
-
-Hashtags: exactly 5, lowercase, no spaces. Tags 1-4 have a space before the ]. Tag 5 has NO trailing space. Price = optimistic high-end Depop resale value.` });
-
-  const SYSTEM = `You are a Depop resale expert. You write punchy accurate listings. You ALWAYS respond with ONLY a raw JSON object. No markdown. No backticks. No explanation. Nothing before or after the JSON. Just the JSON object.
-
-Your listing style matches these examples EXACTLY:
-
-EXAMPLE 1:
-‼️ DM FOR MORE SIZES ‼️ Grey Graphic Zip-Up Hoodie with "Social Security" Card Print, Medium
-
-Grey zip-up hoodie featuring a unique graphic print of a "Social Security" card on the front. This comfortable hoodie is perfect for a casual, streetwear look.
+[2-3 sentence description of the item. Describe what it looks like, any graphic/print, the vibe, and who'd want it. Keep it punchy and appealing. Same length as the examples.]
 
 📏 MEASUREMENTS
-M — Chest 124cm · Length 72cm · Shoulder 60cm · Sleeve 60cm
+[MEASUREMENTS_LINE]
 
-Size: Medium
+Size: [SIZE]
 
-[#hoodie ](https://www.depop.com/search/?q=%23hoodie)[#streetwear ](https://www.depop.com/search/?q=%23streetwear)[#graphicprint ](https://www.depop.com/search/?q=%23graphicprint)[#casual ](https://www.depop.com/search/?q=%23casual)[#fall](https://www.depop.com/search/?q=%23fall)
+[5 hashtags as Depop-style links e.g. #hoodie #streetwear #graphictee #casual #cotton]
 
-EXAMPLE 2:
-‼️ DM FOR MORE SIZES ‼️ White Choose Juicy Graphic Tank Top Y2K
+MEASUREMENTS RULE: If measurements are provided, format them exactly as: "📏 MEASUREMENTS\n[size] — Chest 116cm · Length 68cm" etc. If no measurements are provided, omit the measurements block entirely.
 
-White tank top with a striking "CHOOSE JUICY" graphic print, featuring a fitted silhouette and classic scoop neck. Made from comfortable polyester, this sleeveless top is perfect for a Y2K-inspired look or a casual summer day.
+HASHTAGS RULE: Exactly 5 hashtags. Format each one exactly like this (the full href Depop link format):
+[#tagname ](https://www.depop.com/search/?q=%23tagname)
+Pick tags that match the item's style, type, era, and material.
 
-📏 MEASUREMENTS
-M — Chest 71cm · Length 52cm
+Then return a JSON block AFTER the description (separated by ---JSON---) with these exact keys:
+{
+  "color": "main colour(s)",
+  "source": "Thrifted / Vintage Shop / Car Boot / Charity Shop / Unknown — infer from item age and condition",
+  "age": "Era e.g. Y2K (2000s), 90s, 80s, Vintage (pre-1980), Modern (2010s-now)",
+  "style": "e.g. Streetwear, Casual, Y2K, Preppy, Grunge, Gothic, Business Casual",
+  "condition": "New with tags / Like new / Good / Fair / Well worn — judge from photos",
+  "price": "£X–£Y (give highest realistic resale value on Depop, optimistic but achievable)"
+}`;
 
-Size: Medium
+  const userText = `Please write a Depop listing for this item.\n\n${detailLines}\n\nLook at the photo(s) carefully to determine the item type, colour, any graphic print, condition, source, and era. Generate the full listing in the exact format specified.`;
 
-[#tanktop ](https://www.depop.com/search/?q=%23tanktop)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#graphictee ](https://www.depop.com/search/?q=%23graphictee)[#summer ](https://www.depop.com/search/?q=%23summer)[#casual](https://www.depop.com/search/?q=%23casual)
-
-EXAMPLE 3:
-‼️ DM FOR MORE SIZES ‼️ White Graphic Camisole Top with Ornate Cross Print Y2K
-
-White fitted camisole top with a gothic-inspired ornate cross graphic print and delicate script details. Perfect for a Y2K aesthetic or a casual going-out look.
-
-📏 MEASUREMENTS
-M — Chest 72cm · Length 40cm
-
-Size: Medium
-
-[#camisole ](https://www.depop.com/search/?q=%23camisole)[#y2k ](https://www.depop.com/search/?q=%23y2k)[#gothic ](https://www.depop.com/search/?q=%23gothic)[#goingout ](https://www.depop.com/search/?q=%23goingout)[#graphictee](https://www.depop.com/search/?q=%23graphictee)`;
+  contentBlocks.push({ type: 'text', text: userText });
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        system: SYSTEM,
-        messages: [{ role: 'user', content: userContent }]
+        max_tokens: 1200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: contentBlocks }]
       })
     });
 
-    const responseText = await res.text();
-
-    if (!res.ok) {
-      showError(`API error ${res.status}`, responseText);
-      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${response.status}`);
     }
 
-    let data;
-    try { data = JSON.parse(responseText); }
-    catch(e) { showError('Could not parse API response', responseText); btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return; }
+    const data = await response.json();
+    const raw = data?.content?.[0]?.text || '';
 
-    if (data.error) {
-      showError(`Claude error: ${data.error.type} — ${data.error.message}`, responseText);
-      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
+    // Split description and JSON
+    const parts = raw.split('---JSON---');
+    const description = parts[0].trim();
+    let categories = {};
+
+    if (parts[1]) {
+      try {
+        const jsonStr = parts[1].replace(/```json|```/g, '').trim();
+        categories = JSON.parse(jsonStr);
+      } catch {
+        // Try regex extract
+        const match = parts[1].match(/\{[\s\S]+\}/);
+        if (match) {
+          try { categories = JSON.parse(match[0]); } catch {}
+        }
+      }
     }
 
-    const raw = data.content?.find(b => b.type === 'text')?.text || '';
-    if (!raw) {
-      showError('Empty response from Claude.', responseText);
-      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
-    }
+    // Show description
+    document.getElementById('descriptionOutput').textContent = description;
 
-    const parsed = extractJSON(raw);
-    if (!parsed || !parsed.description) {
-      showError('Could not extract listing from response.', raw);
-      btn.disabled = false; btn.textContent = '✦ Generate Listing'; status.textContent = ''; return;
-    }
+    // Show categories
+    const catGrid = document.getElementById('categoriesGrid');
+    catGrid.innerHTML = '';
 
-    // Success
-    currentDesc = parsed.description;
-    document.getElementById('desc-output').textContent = parsed.description;
-
-    const catsEl = document.getElementById('cats-out');
-    catsEl.innerHTML = '';
-    const cats = [
-      ['Color', parsed.color, false],
-      ['Style', parsed.style, false],
-      ['Era', parsed.age, false],
-      ['Condition', parsed.condition, false],
-      ['Source', parsed.source, false],
-      ['Price range', parsed.price_min && parsed.price_max ? `£${parsed.price_min} – £${parsed.price_max}` : null, true]
+    const catFields = [
+      { key: 'color', label: 'Colour' },
+      { key: 'style', label: 'Style' },
+      { key: 'age', label: 'Era / Age' },
+      { key: 'source', label: 'Source' },
+      { key: 'condition', label: 'Condition' },
     ];
-    cats.forEach(([k, v, isPrice]) => {
-      if (!v) return;
-      const d = document.createElement('div');
-      d.className = 'cat-pill' + (isPrice ? ' price-pill' : '');
-      d.innerHTML = `<div class="ck">${k}</div><div class="cv">${v}</div>`;
-      catsEl.appendChild(d);
-    });
 
-    document.getElementById('results').style.display = '';
-    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    status.textContent = '';
-  } catch(e) {
-    showError(`Unexpected error: ${e.message}\n\nCheck your API key and internet connection.`);
+    for (const f of catFields) {
+      if (categories[f.key]) {
+        const div = document.createElement('div');
+        div.className = 'cat-item';
+        div.innerHTML = `<span class="cat-label">${f.label}</span><span class="cat-value">${categories[f.key]}</span>`;
+        catGrid.appendChild(div);
+      }
+    }
+
+    if (categories.price) {
+      const div = document.createElement('div');
+      div.className = 'cat-item price-item';
+      div.innerHTML = `<span class="cat-label">💰 Suggested Price</span><span class="cat-value">${categories.price}</span>`;
+      catGrid.appendChild(div);
+    }
+
+    document.getElementById('resultSection').classList.add('visible');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    errorBox.textContent = `Error: ${err.message}`;
+    errorBox.classList.add('visible');
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('loadingState').classList.remove('visible');
   }
-
-  btn.disabled = false;
-  btn.textContent = '✦ Generate Listing';
-}
-
-function copyDesc() {
-  navigator.clipboard.writeText(currentDesc).then(() => {
-    const b = document.querySelector('.copy-btn');
-    b.textContent = '✓ Copied!';
-    setTimeout(() => b.textContent = '⎘ Copy', 2000);
-  });
 }
 </script>
 </body>
