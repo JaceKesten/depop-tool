@@ -12,638 +12,244 @@
     --ocean: #1e6091;
     --teal: #168aad;
     --seafoam: #76c8d4;
-    --sand: #f4ede4;
     --warm-white: #faf8f5;
     --coral: #e07a5f;
     --text: #1a1a2e;
     --text-muted: #5a6a7a;
     --border: #d4e4ef;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Barlow', sans-serif; background: var(--warm-white); color: var(--text); min-height: 100vh; }
 
-  body {
-    font-family: 'Barlow', sans-serif;
-    background: var(--warm-white);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  header {
+  /* ── PASSWORD SCREEN ── */
+  #pwScreen {
+    position: fixed; inset: 0; z-index: 9999;
     background: var(--navy);
-    padding: 0;
-    position: relative;
-    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0;
   }
-
-  .header-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 24px 32px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .wave-top {
-    display: block;
-    width: 100%;
-    color: var(--ocean);
-    opacity: 0.25;
-    position: absolute;
-    top: 0; left: 0;
-  }
-
-  .logo-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--seafoam);
-    margin-bottom: 10px;
-    display: block;
-  }
-
-  header h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 900;
-    color: #fff;
-    line-height: 0.95;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-  }
-
-  header h1 span { color: var(--coral); }
-
-  header p {
-    color: var(--seafoam);
-    font-size: 14px;
-    font-weight: 400;
-    margin-top: 12px;
-    opacity: 0.85;
-    max-width: 480px;
-  }
-
-  .wave-divider {
-    display: block;
-    width: 100%;
-    color: var(--warm-white);
-    margin-top: -1px;
-  }
-
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 8px 24px 60px;
-  }
-
-  /* API KEY */
-  .api-section {
+  #pwScreen.hidden { display: none; }
+  .pw-box {
     background: var(--deep-ocean);
-    border-radius: 16px;
-    padding: 20px 24px;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 44px 40px 36px;
+    width: 100%; max-width: 380px;
+    display: flex; flex-direction: column; gap: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    border: 1.5px solid rgba(118,200,212,0.15);
+    margin: 24px;
   }
-
-  .api-section label {
+  .pw-logo {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--seafoam);
-    white-space: nowrap;
+    font-size: 32px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.5px;
+    color: #fff; line-height: 1;
   }
-
-  .api-section input {
-    flex: 1;
-    min-width: 200px;
-    background: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(118,200,212,0.25);
-    border-radius: 8px;
-    padding: 10px 14px;
+  .pw-logo span { color: var(--coral); }
+  .pw-sub {
+    font-size: 13px; color: rgba(118,200,212,0.7);
+    margin-top: -10px;
+  }
+  .pw-input-wrap { position: relative; }
+  .pw-input-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(118,200,212,0.2);
+    border-radius: 10px;
+    padding: 13px 16px;
     color: #fff;
     font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 16px;
+    letter-spacing: 3px;
     outline: none;
     transition: border-color 0.2s;
   }
-
-  .api-section input:focus { border-color: var(--seafoam); }
-  .api-section input::placeholder { color: rgba(255,255,255,0.3); }
-
-  .api-hint {
-    font-size: 12px;
-    color: rgba(118,200,212,0.6);
-    margin-top: 6px;
+  .pw-input-wrap input:focus { border-color: var(--seafoam); }
+  .pw-input-wrap input::placeholder { letter-spacing: 1px; color: rgba(255,255,255,0.25); font-size: 13px; }
+  .pw-input-wrap input.shake {
+    animation: shake 0.4s ease;
+    border-color: var(--coral) !important;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  .pw-btn {
     width: 100%;
-  }
-
-  .api-hint a { color: var(--seafoam); text-decoration: underline; text-underline-offset: 2px; }
-
-  /* CARD */
-  .card {
-    background: #fff;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 20px rgba(13,27,42,0.06);
-  }
-
-  .card-header {
-    background: linear-gradient(135deg, var(--deep-ocean), var(--ocean));
-    padding: 18px 24px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .card-header .step {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    background: var(--coral);
-    color: #fff;
-    padding: 3px 9px;
-    border-radius: 4px;
-  }
-
-  .card-header h2 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #fff;
-  }
-
-  .card-body { padding: 24px; }
-
-  /* DROP ZONE */
-  .drop-zone {
-    border: 2.5px dashed var(--border);
-    border-radius: 14px;
-    padding: 36px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--warm-white);
-    position: relative;
-  }
-
-  .drop-zone:hover, .drop-zone.dragover {
-    border-color: var(--teal);
-    background: #f0f8fb;
-  }
-
-  .drop-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .drop-zone .dz-icon { font-size: 36px; margin-bottom: 10px; display: block; }
-
-  .drop-zone h3 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--ocean);
-    letter-spacing: 0.5px;
-  }
-
-  .drop-zone p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
-
-  .paste-tip {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 11px;
-    color: var(--seafoam);
-    background: var(--navy);
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-  }
-
-  .preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  .preview-grid:empty { display: none; }
-
-  .preview-item {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid var(--border);
-  }
-
-  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  .preview-item .remove-btn {
-    position: absolute;
-    top: 5px; right: 5px;
-    width: 22px; height: 22px;
-    background: rgba(224,122,95,0.92);
-    border: none;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-  }
-
-  /* FORM */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
-
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-
-  label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  input[type="text"], input[type="number"], textarea, select {
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    background: #fff;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
-  }
-
-  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(22,138,173,0.1);
-  }
-
-  /* MEASUREMENTS */
-  .measurements-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 24px 0 10px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* UNIT TOGGLE */
-  .unit-toggle {
-    display: flex;
-    background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .unit-toggle button {
-    padding: 5px 14px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.15s;
-  }
-
-  .unit-toggle button.active {
-    background: var(--ocean);
-    color: #fff;
-  }
-
-  .measurements-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  @media (max-width: 480px) { .measurements-grid { grid-template-columns: repeat(2, 1fr); } }
-
-  .m-field label {
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: var(--ocean);
-  }
-
-  /* PRICING SECTION */
-  .pricing-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    align-items: end;
-  }
-
-  @media (max-width: 560px) { .pricing-row { grid-template-columns: 1fr; } }
-
-  /* BOOST TOGGLE */
-  .boost-toggle-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .boost-toggle {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #fff;
-    user-select: none;
-  }
-
-  .boost-toggle:hover { border-color: var(--teal); }
-  .boost-toggle.active { border-color: var(--coral); background: #fff5f3; }
-
-  .boost-toggle .toggle-switch {
-    width: 36px;
-    height: 20px;
-    background: var(--border);
-    border-radius: 20px;
-    position: relative;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
-
-  .boost-toggle.active .toggle-switch { background: var(--coral); }
-
-  .boost-toggle .toggle-knob {
-    position: absolute;
-    top: 3px; left: 3px;
-    width: 14px; height: 14px;
-    background: #fff;
-    border-radius: 50%;
-    transition: left 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-
-  .boost-toggle.active .toggle-knob { left: 19px; }
-
-  .boost-toggle .toggle-label {
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .boost-toggle .toggle-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 1px;
-  }
-
-  /* GENERATE BTN */
-  .generate-btn {
-    width: 100%;
-    padding: 18px;
     background: linear-gradient(135deg, var(--ocean), var(--teal));
     color: #fff;
-    border: none;
-    border-radius: 14px;
+    border: none; border-radius: 10px;
+    padding: 14px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    font-size: 18px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
+    transition: opacity 0.2s;
   }
+  .pw-btn:hover { opacity: 0.88; }
+  .pw-stay {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .pw-stay-box {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(118,200,212,0.4);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .pw-stay-box.checked { background: var(--teal); border-color: var(--teal); }
+  .pw-stay-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+  .pw-stay-label { font-size: 13px; color: rgba(118,200,212,0.7); }
+  .pw-error { color: var(--coral); font-size: 12px; text-align: center; min-height: 16px; }
 
+  /* ── HEADER ── */
+  header { background: var(--navy); padding: 0; position: relative; overflow: hidden; }
+  .header-inner { max-width: 900px; margin: 0 auto; padding: 40px 24px 32px; position: relative; z-index: 1; }
+  .wave-top { display: block; width: 100%; color: var(--ocean); opacity: 0.25; position: absolute; top: 0; left: 0; }
+  .logo-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--seafoam); margin-bottom: 10px; display: block; }
+  header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(36px, 6vw, 64px); font-weight: 900; color: #fff; line-height: 0.95; text-transform: uppercase; letter-spacing: -1px; }
+  header h1 span { color: var(--coral); }
+  header p { color: var(--seafoam); font-size: 14px; font-weight: 400; margin-top: 12px; opacity: 0.85; max-width: 480px; }
+  .wave-divider { display: block; width: 100%; color: var(--warm-white); margin-top: -1px; }
+
+  /* ── MAIN ── */
+  main { max-width: 900px; margin: 0 auto; padding: 8px 24px 60px; }
+
+  /* ── API KEY ── */
+  .api-section { background: var(--deep-ocean); border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .api-section label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--seafoam); white-space: nowrap; }
+  .api-section input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(118,200,212,0.25); border-radius: 8px; padding: 10px 14px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 13px; letter-spacing: 1px; outline: none; transition: border-color 0.2s; }
+  .api-section input:focus { border-color: var(--seafoam); }
+  .api-section input::placeholder { color: rgba(255,255,255,0.3); }
+  .api-hint { font-size: 12px; color: rgba(118,200,212,0.6); margin-top: 6px; width: 100%; }
+  .api-hint a { color: var(--seafoam); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ── CARD ── */
+  .card { background: #fff; border-radius: 20px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 20px rgba(13,27,42,0.06); }
+  .card-header { background: linear-gradient(135deg, var(--deep-ocean), var(--ocean)); padding: 18px 24px; display: flex; align-items: center; gap: 10px; }
+  .card-header .step { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: var(--coral); color: #fff; padding: 3px 9px; border-radius: 4px; }
+  .card-header h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; }
+  .card-body { padding: 24px; }
+
+  /* ── DROP ZONE ── */
+  .drop-zone { border: 2.5px dashed var(--border); border-radius: 14px; padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); position: relative; }
+  .drop-zone:hover, .drop-zone.dragover { border-color: var(--teal); background: #f0f8fb; }
+  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .drop-zone .dz-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+  .drop-zone h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--ocean); letter-spacing: 0.5px; }
+  .drop-zone p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .paste-tip { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--seafoam); background: var(--navy); padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; }
+  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 16px; }
+  .preview-grid:empty { display: none; }
+  .preview-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid var(--border); }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .preview-item .remove-btn { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; background: rgba(224,122,95,0.92); border: none; border-radius: 50%; color: #fff; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+  input[type="text"], input[type="number"], textarea, select { border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--text); background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22,138,173,0.1); }
+  .field-hint { font-size: 11px; color: var(--text-muted); opacity: 0.75; }
+
+  /* ── MEASUREMENTS ── */
+  .measurements-header { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 10px; flex-wrap: wrap; gap: 8px; }
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex: 1; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .unit-toggle { display: flex; background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .unit-toggle button { padding: 5px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: none; background: none; cursor: pointer; color: var(--text-muted); transition: all 0.15s; }
+  .unit-toggle button.active { background: var(--ocean); color: #fff; }
+  .measurements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 480px) { .measurements-grid { grid-template-columns: repeat(2, 1fr); } }
+  .m-field label { font-size: 10px; letter-spacing: 1px; color: var(--ocean); }
+
+  /* ── PRICING ── */
+  .pricing-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; }
+  @media (max-width: 560px) { .pricing-row { grid-template-columns: 1fr; } }
+  .boost-toggle-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .boost-toggle { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; background: #fff; user-select: none; }
+  .boost-toggle:hover { border-color: var(--teal); }
+  .boost-toggle.active { border-color: var(--coral); background: #fff5f3; }
+  .boost-toggle .toggle-switch { width: 36px; height: 20px; background: var(--border); border-radius: 20px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .boost-toggle.active .toggle-switch { background: var(--coral); }
+  .boost-toggle .toggle-knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .boost-toggle.active .toggle-knob { left: 19px; }
+  .boost-toggle .toggle-label { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 500; color: var(--text); }
+  .boost-toggle .toggle-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  /* ── GENERATE BTN ── */
+  .generate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--ocean), var(--teal)); color: #fff; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; }
   .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30,96,145,0.35); }
   .generate-btn:active { transform: translateY(0); }
   .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  /* LOADING */
-  .loading-state {
-    display: none;
-    text-align: center;
-    padding: 48px 24px;
-  }
-
+  /* ── LOADING ── */
+  .loading-state { display: none; text-align: center; padding: 48px 24px; }
   .loading-state.visible { display: block; }
-
-  .wave-loader {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-
-  .wave-loader span {
-    width: 8px; height: 8px;
-    background: var(--teal);
-    border-radius: 50%;
-    animation: wave-bounce 1.2s ease-in-out infinite;
-  }
-
+  .wave-loader { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+  .wave-loader span { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; animation: wave-bounce 1.2s ease-in-out infinite; }
   .wave-loader span:nth-child(2) { animation-delay: 0.15s; }
   .wave-loader span:nth-child(3) { animation-delay: 0.3s; }
   .wave-loader span:nth-child(4) { animation-delay: 0.45s; }
+  @keyframes wave-bounce { 0%,80%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-12px); opacity: 1; } }
+  .loading-state p { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--ocean); }
 
-  @keyframes wave-bounce {
-    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-    40% { transform: translateY(-12px); opacity: 1; }
-  }
-
-  .loading-state p {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--ocean);
-  }
-
-  /* RESULT */
+  /* ── RESULT ── */
   .result-section { display: none; }
   .result-section.visible { display: block; }
-
-  .result-tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .tab-btn {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 12px 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s;
-  }
-
+  .result-tabs { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 12px 20px; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
   .tab-btn.active { color: var(--ocean); border-bottom-color: var(--coral); }
-
   .tab-pane { display: none; padding: 20px 0 0; }
   .tab-pane.active { display: block; }
-
-  .description-output {
-    background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .copy-btn {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--navy);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
+  .description-output { background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; font-family: 'Barlow', sans-serif; font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+  .copy-btn { margin-top: 12px; display: flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
   .copy-btn:hover { background: var(--ocean); }
   .copy-btn.copied { background: #2d8a5e; }
-
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
-
-  .cat-item {
-    background: var(--warm-white);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-  }
-
-  .cat-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 4px;
-    display: block;
-  }
-
+  .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .cat-item { background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .cat-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 4px; display: block; }
   .cat-value { font-size: 15px; font-weight: 600; color: var(--text); }
-
-  .price-item {
-    background: linear-gradient(135deg, var(--deep-ocean), var(--ocean));
-    color: #fff;
-    grid-column: 1 / -1;
-  }
-
+  .price-item { background: linear-gradient(135deg, var(--deep-ocean), var(--ocean)); color: #fff; grid-column: 1 / -1; }
   .price-item .cat-label { color: var(--seafoam); }
   .price-item .cat-value { font-size: 22px; font-weight: 800; color: #fff; }
-
-  .price-breakdown {
-    font-size: 12px;
-    color: rgba(255,255,255,0.65);
-    margin-top: 4px;
-    font-weight: 400;
-  }
-
-  .error-box {
-    display: none;
-    background: #fef0ee;
-    border: 1.5px solid #f5c0b8;
-    border-radius: 10px;
-    padding: 14px 16px;
-    color: #c0392b;
-    font-size: 13px;
-    margin-top: 12px;
-  }
-
+  .price-breakdown { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 4px; font-weight: 400; }
+  .error-box { display: none; background: #fef0ee; border: 1.5px solid #f5c0b8; border-radius: 10px; padding: 14px 16px; color: #c0392b; font-size: 13px; margin-top: 12px; }
   .error-box.visible { display: block; }
-
-  .field-hint { font-size: 11px; color: var(--text-muted); opacity: 0.75; }
 </style>
 </head>
 <body>
 
+<!-- PASSWORD SCREEN -->
+<div id="pwScreen">
+  <div class="pw-box">
+    <div>
+      <div class="pw-logo">Depop<br><span>Listing</span></div>
+      <div class="pw-sub">Enter password to continue</div>
+    </div>
+    <div class="pw-input-wrap">
+      <input type="password" id="pwInput" placeholder="Password" autocomplete="off"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+    </div>
+    <div class="pw-stay" onclick="toggleStay()">
+      <div class="pw-stay-box" id="stayBox"></div>
+      <span class="pw-stay-label">Stay signed in on this device</span>
+    </div>
+    <button class="pw-btn" onclick="checkPassword()">Enter →</button>
+    <div class="pw-error" id="pwError"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
 <header>
   <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
@@ -659,7 +265,6 @@
 </header>
 
 <main>
-
   <!-- API KEY -->
   <div class="api-section">
     <label for="apiKey">🔑 Anthropic API Key</label>
@@ -669,10 +274,7 @@
 
   <!-- STEP 1: PHOTOS -->
   <div class="card">
-    <div class="card-header">
-      <span class="step">Step 1</span>
-      <h2>Photos</h2>
-    </div>
+    <div class="card-header"><span class="step">Step 1</span><h2>Photos</h2></div>
     <div class="card-body">
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept="image/*" multiple>
@@ -687,12 +289,8 @@
 
   <!-- STEP 2: DETAILS -->
   <div class="card">
-    <div class="card-header">
-      <span class="step">Step 2</span>
-      <h2>Item Details</h2>
-    </div>
+    <div class="card-header"><span class="step">Step 2</span><h2>Item Details</h2></div>
     <div class="card-body">
-
       <div class="form-grid">
         <div class="form-group">
           <label for="size">Size *</label>
@@ -704,7 +302,6 @@
         </div>
       </div>
 
-      <!-- MEASUREMENTS -->
       <div class="measurements-header">
         <span class="section-label">Measurements <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
         <div class="unit-toggle">
@@ -712,44 +309,26 @@
           <button id="btnIn" onclick="setUnit('in')">in</button>
         </div>
       </div>
-
       <div class="measurements-grid">
-        <div class="m-field form-group">
-          <label id="labelChest">Chest</label>
-          <input type="text" id="mChest" placeholder="e.g. 116">
-        </div>
-        <div class="m-field form-group">
-          <label id="labelLength">Length</label>
-          <input type="text" id="mLength" placeholder="e.g. 68">
-        </div>
-        <div class="m-field form-group">
-          <label id="labelShoulder">Shoulder</label>
-          <input type="text" id="mShoulder" placeholder="e.g. 55">
-        </div>
-        <div class="m-field form-group">
-          <label id="labelSleeve">Sleeve</label>
-          <input type="text" id="mSleeve" placeholder="e.g. 52">
-        </div>
+        <div class="m-field form-group"><label id="labelChest">Chest (cm)</label><input type="text" id="mChest" placeholder="e.g. 116"></div>
+        <div class="m-field form-group"><label id="labelLength">Length (cm)</label><input type="text" id="mLength" placeholder="e.g. 68"></div>
+        <div class="m-field form-group"><label id="labelShoulder">Shoulder (cm)</label><input type="text" id="mShoulder" placeholder="e.g. 55"></div>
+        <div class="m-field form-group"><label id="labelSleeve">Sleeve (cm)</label><input type="text" id="mSleeve" placeholder="e.g. 52"></div>
       </div>
 
-      <!-- PRICING -->
       <div class="measurements-header" style="margin-top:24px;">
         <span class="section-label">Pricing <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
       </div>
-
       <div class="pricing-row">
         <div class="form-group">
-          <label for="originalPrice">Original / Cost Price (£)</label>
+          <label for="originalPrice">Cost Price ($)</label>
           <input type="number" id="originalPrice" placeholder="e.g. 8.00" min="0" step="0.01">
-          <span class="field-hint">Used to calculate your suggested listing price with markup</span>
+          <span class="field-hint">Used to calculate your suggested listing price</span>
         </div>
-
         <div class="boost-toggle-wrap">
           <label>Depop Boost</label>
           <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()">
-            <div class="toggle-switch">
-              <div class="toggle-knob"></div>
-            </div>
+            <div class="toggle-switch"><div class="toggle-knob"></div></div>
             <div>
               <div class="toggle-label">Boosted listing</div>
               <div class="toggle-sub">Adds 12% Depop commission to price</div>
@@ -757,116 +336,117 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- GENERATE -->
-  <button class="generate-btn" id="generateBtn" onclick="generate()">
-    ⚡ Generate Listing
-  </button>
-
+  <button class="generate-btn" id="generateBtn" onclick="generate()">⚡ Generate Listing</button>
   <div class="error-box" id="errorBox"></div>
 
-  <!-- LOADING -->
   <div class="loading-state" id="loadingState">
-    <div class="wave-loader">
-      <span></span><span></span><span></span><span></span>
-    </div>
+    <div class="wave-loader"><span></span><span></span><span></span><span></span></div>
     <p>Writing your listing...</p>
   </div>
 
-  <!-- RESULT -->
   <div class="result-section card" id="resultSection">
-    <div class="card-header">
-      <span class="step">Done</span>
-      <h2>Your Listing</h2>
-    </div>
+    <div class="card-header"><span class="step">Done</span><h2>Your Listing</h2></div>
     <div class="card-body">
       <div class="result-tabs">
-        <button class="tab-btn active" onclick="switchTab('description', this)">Description</button>
-        <button class="tab-btn" onclick="switchTab('categories', this)">Categories & Price</button>
+        <button class="tab-btn active" onclick="switchTab('description',this)">Description</button>
+        <button class="tab-btn" onclick="switchTab('categories',this)">Categories & Price</button>
       </div>
-
       <div class="tab-pane active" id="tab-description">
         <div class="description-output" id="descriptionOutput"></div>
-        <button class="copy-btn" id="copyBtn" onclick="copyDescription()">
-          📋 Copy Description
-        </button>
+        <button class="copy-btn" id="copyBtn" onclick="copyDescription()">📋 Copy Description</button>
       </div>
-
       <div class="tab-pane" id="tab-categories">
         <div class="categories-grid" id="categoriesGrid"></div>
       </div>
     </div>
   </div>
-
 </main>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────
+// ── PASSWORD ──────────────────────────────────────────────
+const PASS = '2LIVECREW';
+let stayChecked = false;
+
+// Check if already authenticated
+if (localStorage.getItem('depop_auth') === 'yes') {
+  document.getElementById('pwScreen').classList.add('hidden');
+}
+
+function toggleStay() {
+  stayChecked = !stayChecked;
+  document.getElementById('stayBox').classList.toggle('checked', stayChecked);
+}
+
+function checkPassword() {
+  const val = document.getElementById('pwInput').value;
+  if (val === PASS) {
+    if (stayChecked) localStorage.setItem('depop_auth', 'yes');
+    document.getElementById('pwScreen').classList.add('hidden');
+  } else {
+    const inp = document.getElementById('pwInput');
+    inp.classList.remove('shake');
+    void inp.offsetWidth; // reflow
+    inp.classList.add('shake');
+    document.getElementById('pwError').textContent = 'Incorrect password. Try again.';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('shake'), 400);
+  }
+}
+
+// ── STATE ─────────────────────────────────────────────────
 const images = [];
 let unit = 'cm';
 let boosted = false;
 
-// ─── API KEY PERSIST ─────────────────────────────────────
+// ── API KEY PERSIST ───────────────────────────────────────
 const keyInput = document.getElementById('apiKey');
 keyInput.value = localStorage.getItem('depop_api_key') || '';
 keyInput.addEventListener('input', () => localStorage.setItem('depop_api_key', keyInput.value.trim()));
 
-// ─── UNIT TOGGLE ─────────────────────────────────────────
+// ── UNIT TOGGLE ───────────────────────────────────────────
 function setUnit(u) {
   unit = u;
   document.getElementById('btnCm').classList.toggle('active', u === 'cm');
   document.getElementById('btnIn').classList.toggle('active', u === 'in');
-  const suffix = u === 'cm' ? ' (cm)' : ' (in)';
+  const s = u === 'cm' ? 'cm' : 'in';
   const ph = u === 'cm'
-    ? { chest:'e.g. 116', length:'e.g. 68', shoulder:'e.g. 55', sleeve:'e.g. 52' }
-    : { chest:'e.g. 45.5', length:'e.g. 26.5', shoulder:'e.g. 21.5', sleeve:'e.g. 20.5' };
-  document.getElementById('labelChest').textContent = 'Chest' + suffix;
-  document.getElementById('labelLength').textContent = 'Length' + suffix;
-  document.getElementById('labelShoulder').textContent = 'Shoulder' + suffix;
-  document.getElementById('labelSleeve').textContent = 'Sleeve' + suffix;
-  document.getElementById('mChest').placeholder = ph.chest;
-  document.getElementById('mLength').placeholder = ph.length;
-  document.getElementById('mShoulder').placeholder = ph.shoulder;
-  document.getElementById('mSleeve').placeholder = ph.sleeve;
+    ? ['e.g. 116','e.g. 68','e.g. 55','e.g. 52']
+    : ['e.g. 45.5','e.g. 26.5','e.g. 21.5','e.g. 20.5'];
+  document.getElementById('labelChest').textContent = `Chest (${s})`;
+  document.getElementById('labelLength').textContent = `Length (${s})`;
+  document.getElementById('labelShoulder').textContent = `Shoulder (${s})`;
+  document.getElementById('labelSleeve').textContent = `Sleeve (${s})`;
+  ['mChest','mLength','mShoulder','mSleeve'].forEach((id,i) => document.getElementById(id).placeholder = ph[i]);
 }
 
-// ─── BOOST TOGGLE ────────────────────────────────────────
+// ── BOOST TOGGLE ─────────────────────────────────────────
 function toggleBoost() {
   boosted = !boosted;
   document.getElementById('boostToggle').classList.toggle('active', boosted);
 }
 
-// ─── FILE HANDLING ────────────────────────────────────────
+// ── FILE HANDLING ─────────────────────────────────────────
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 
 fileInput.addEventListener('change', e => addFiles(e.target.files));
-
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
-  addFiles(e.dataTransfer.files);
-});
-
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
 document.addEventListener('paste', e => {
-  const items = e.clipboardData?.items;
-  if (!items) return;
-  const imageFiles = [];
-  for (const item of items) {
-    if (item.type.startsWith('image/')) imageFiles.push(item.getAsFile());
+  const files = [];
+  for (const item of (e.clipboardData?.items || [])) {
+    if (item.type.startsWith('image/')) files.push(item.getAsFile());
   }
-  if (imageFiles.length) addFiles(imageFiles);
+  if (files.length) addFiles(files);
 });
 
 function addFiles(files) {
   for (const file of files) {
-    if (!file.type.startsWith('image/')) continue;
-    if (images.length >= 4) break;
+    if (!file.type.startsWith('image/') || images.length >= 4) continue;
     const reader = new FileReader();
     reader.onload = e => {
       images.push({ dataUrl: e.target.result, base64: e.target.result.split(',')[1], mediaType: file.type });
@@ -884,12 +464,12 @@ function renderPreviews() {
   images.forEach((img, i) => {
     const div = document.createElement('div');
     div.className = 'preview-item';
-    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}"><button class="remove-btn" onclick="removeImage(${i})" title="Remove">✕</button>`;
+    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}"><button class="remove-btn" onclick="removeImage(${i})">✕</button>`;
     grid.appendChild(div);
   });
 }
 
-// ─── TAB SWITCHING ────────────────────────────────────────
+// ── TAB SWITCHING ─────────────────────────────────────────
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -897,10 +477,9 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
-// ─── COPY ─────────────────────────────────────────────────
+// ── COPY ─────────────────────────────────────────────────
 function copyDescription() {
-  const text = document.getElementById('descriptionOutput').textContent;
-  navigator.clipboard.writeText(text).then(() => {
+  navigator.clipboard.writeText(document.getElementById('descriptionOutput').textContent).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✓ Copied!';
     btn.classList.add('copied');
@@ -908,123 +487,135 @@ function copyDescription() {
   });
 }
 
-// ─── PRICE CALCULATOR ────────────────────────────────────
+// ── PRICE CALCULATOR ─────────────────────────────────────
 function calcPrice(rawPriceStr) {
-  // rawPriceStr e.g. "£8–£14" or "£10-£18"
-  const nums = rawPriceStr.match(/[\d.]+/g);
-  if (!nums || nums.length < 2) return { display: rawPriceStr, breakdown: null };
-
   const originalCost = parseFloat(document.getElementById('originalPrice').value) || null;
-  let low = parseFloat(nums[0]);
-  let high = parseFloat(nums[1]);
+  let low, high;
 
-  // If we have original price, use it to anchor the low end with a markup
   if (originalCost) {
-    // Minimum 40% margin on cost price
-    const minFromCost = originalCost * 1.4;
-    if (minFromCost > low) low = Math.ceil(minFromCost);
-    if (low > high) high = Math.ceil(low * 1.25);
+    // 2x to 2.5x cost — sensible Depop resell margins
+    low = Math.round(originalCost * 2);
+    high = Math.round(originalCost * 2.5);
+  } else {
+    // Strip any currency symbols, parse Claude's suggestion as USD base
+    const nums = rawPriceStr.replace(/[£$€]/g, '').match(/[\d.]+/g);
+    if (!nums || nums.length < 2) return { display: rawPriceStr, breakdown: null };
+    low = Math.round(parseFloat(nums[0]));
+    high = Math.round(parseFloat(nums[1]));
   }
 
+  let finalLow = low, finalHigh = high;
   if (boosted) {
-    // Add 12% to cover Depop commission so seller keeps the same after fees
-    low = Math.ceil(low / (1 - 0.12));
-    high = Math.ceil(high / (1 - 0.12));
+    // Divide by 0.88 so after 12% fee the seller nets the base amount
+    finalLow = Math.ceil(low / 0.88);
+    finalHigh = Math.ceil(high / 0.88);
   }
 
-  const display = `£${low}–£${high}`;
+  const display = `$${finalLow}–$${finalHigh}`;
   let breakdown = null;
-  if (boosted) {
-    const takeHomeLow = Math.round(low * (1 - 0.12));
-    const takeHomeHigh = Math.round(high * (1 - 0.12));
-    breakdown = `After 12% Depop boost fee: you keep £${takeHomeLow}–£${takeHomeHigh}`;
-  }
-  if (originalCost && !breakdown) {
-    const profitLow = (low - originalCost).toFixed(2);
-    const profitHigh = (high - originalCost).toFixed(2);
-    breakdown = `Est. profit: £${profitLow}–£${profitHigh} after £${originalCost.toFixed(2)} cost`;
+
+  if (boosted && originalCost) {
+    const netLow = Math.round(finalLow * 0.88);
+    const netHigh = Math.round(finalHigh * 0.88);
+    breakdown = `After 12% boost fee you keep ~$${netLow}–$${netHigh} · Profit ~$${netLow - originalCost}–$${netHigh - originalCost}`;
+  } else if (boosted) {
+    breakdown = `After 12% Depop boost fee: you keep ~$${Math.round(finalLow * 0.88)}–$${Math.round(finalHigh * 0.88)}`;
+  } else if (originalCost) {
+    breakdown = `Est. profit: $${low - originalCost}–$${high - originalCost} after $${originalCost.toFixed(2)} cost`;
   }
 
   return { display, breakdown };
 }
 
-// ─── GENERATE ─────────────────────────────────────────────
+// ── CLEAN DESCRIPTION ─────────────────────────────────────
+function cleanDescription(raw) {
+  return raw
+    // Remove any markdown link format: [text](url) → just the text
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, (_, text) => text.trim())
+    // Remove any bare URLs that might appear after hashtags
+    .replace(/https?:\/\/\S+/g, '')
+    // Remove any stray 📏 MEASUREMENTS header that has no measurement data on the next line
+    // (i.e., followed immediately by blank line or Size:)
+    .replace(/📏 MEASUREMENTS\s*\n(\s*\n|\s*Size:)/g, '$1')
+    // Clean up any double blank lines caused by removals
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+// ── GENERATE ─────────────────────────────────────────────
 async function generate() {
   const apiKey = document.getElementById('apiKey').value.trim();
   const size = document.getElementById('size').value.trim();
-
   const errorBox = document.getElementById('errorBox');
   errorBox.className = 'error-box';
 
   if (!apiKey) { errorBox.textContent = 'Please enter your Anthropic API key above.'; errorBox.classList.add('visible'); return; }
   if (!size) { errorBox.textContent = 'Please enter the size.'; errorBox.classList.add('visible'); return; }
-  if (images.length === 0) { errorBox.textContent = 'Please upload at least one photo so Claude can describe the item.'; errorBox.classList.add('visible'); return; }
+  if (!images.length) { errorBox.textContent = 'Please upload at least one photo.'; errorBox.classList.add('visible'); return; }
 
   const material = document.getElementById('material').value.trim();
   const mChest = document.getElementById('mChest').value.trim();
   const mLength = document.getElementById('mLength').value.trim();
   const mShoulder = document.getElementById('mShoulder').value.trim();
   const mSleeve = document.getElementById('mSleeve').value.trim();
-  const unitLabel = unit;
+  const hasMeasurements = mChest || mLength || mShoulder || mSleeve;
 
   const mParts = [];
-  if (mChest) mParts.push(`Chest ${mChest}${unitLabel}`);
-  if (mLength) mParts.push(`Length ${mLength}${unitLabel}`);
-  if (mShoulder) mParts.push(`Shoulder ${mShoulder}${unitLabel}`);
-  if (mSleeve) mParts.push(`Sleeve ${mSleeve}${unitLabel}`);
-  const measurementsLine = mParts.length ? `${size} — ${mParts.join(' · ')}` : null;
+  if (mChest) mParts.push(`Chest ${mChest}${unit}`);
+  if (mLength) mParts.push(`Length ${mLength}${unit}`);
+  if (mShoulder) mParts.push(`Shoulder ${mShoulder}${unit}`);
+  if (mSleeve) mParts.push(`Sleeve ${mSleeve}${unit}`);
+  const measurementsLine = hasMeasurements ? `${size} — ${mParts.join(' · ')}` : null;
 
   document.getElementById('generateBtn').disabled = true;
   document.getElementById('loadingState').classList.add('visible');
   document.getElementById('resultSection').classList.remove('visible');
 
-  const contentBlocks = [];
-  for (const img of images) {
-    contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
-  }
+  const contentBlocks = images.map(img => ({
+    type: 'image',
+    source: { type: 'base64', media_type: img.mediaType, data: img.base64 }
+  }));
 
-  const detailLines = [
-    `Size: ${size}`,
-    material ? `Material: ${material}` : null,
-    measurementsLine ? `Measurements: ${measurementsLine}` : null,
-  ].filter(Boolean).join('\n');
+  // Build user details text
+  const detailParts = [`Size: ${size}`];
+  if (material) detailParts.push(`Material: ${material}`);
+  if (measurementsLine) detailParts.push(`Measurements: ${measurementsLine}`);
+  const detailLines = detailParts.join('\n');
 
-  const systemPrompt = `You are an expert Depop reseller who writes viral, accurate, conversion-optimised listings. Study the photo(s) carefully to determine all item details. Your descriptions must match this EXACT format:
+  // Build the measurements block conditionally RIGHT IN THE PROMPT so Claude can't get it wrong
+  const measurementsBlock = hasMeasurements
+    ? `\n📏 MEASUREMENTS\n${measurementsLine}\n`
+    : '';
 
----DESCRIPTION FORMAT---
+  const systemPrompt = `You are an expert Depop reseller writing viral, accurate listings. Study the photo(s) carefully.
+
+Output the listing in EXACTLY this format — no deviations, no extra text:
+
 ‼️ DM FOR MORE SIZES ‼️
 
-[Color] [Item Type] [Brief Descriptor] [era tag if applicable e.g. Y2K, Vintage]
+[Color] [Item Type] [Brief Descriptor] [era if applicable e.g. Y2K, Vintage]
 
-[2-3 sentences. Describe the item: what it looks like, any graphic/print/design, the vibe/aesthetic, and who'd want it. Punchy and appealing. Keep it SHORT — same length as these examples:
-"Grey zip-up hoodie featuring a unique graphic print of a Social Security card on the front. This comfortable hoodie is perfect for a casual, streetwear look."
-"White tank top with a striking CHOOSE JUICY graphic print, featuring a fitted silhouette and classic scoop neck. Made from comfortable polyester, perfect for a Y2K-inspired look or a casual summer day."]
-
-📏 MEASUREMENTS
-[MEASUREMENTS_LINE]
-
+[2-3 punchy sentences describing the item: what it looks like, any graphic/print, the vibe, who'd want it. Short and appealing like these examples:
+"Grey zip-up hoodie featuring a unique graphic print of a Social Security card on the front. Perfect for a casual streetwear look."
+"White tank top with a striking CHOOSE JUICY graphic print, fitted silhouette and classic scoop neck. Perfect for Y2K-inspired looks or casual summer days."]
+${measurementsBlock}
 Size: [SIZE]
 
-[HASHTAGS]
+#tag1 #tag2 #tag3 #tag4 #tag5
 
----RULES---
-MEASUREMENTS: If measurements are given, format exactly as shown. If none, omit the entire measurements block including the emoji header.
-HASHTAGS: Exactly 5 hashtags. Format EVERY one like this — include the trailing space before the closing bracket:
-[#tagname ](https://www.depop.com/search/?q=%23tagname)
-Choose tags that match item type, style, era, and material.
+HASHTAG RULE: Output exactly 5 hashtags as plain text separated by spaces — like "#hoodie #streetwear #graphictee #casual #cotton". No links, no brackets, no URLs, no markdown. Just plain hashtags.
 
----JSON BLOCK---
-After the description, output ---JSON--- on its own line, then a JSON object with EXACTLY these keys:
+Then output ---JSON--- on its own line followed by:
 {
-  "color": "1 or 2 dominant colors from photo only — single word colors e.g. 'Grey' or 'Black, White'. Max 2.",
-  "source": "1-2 from ONLY these options: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired. Usually preloved or vintage. Comma-separated if 2.",
-  "age": "EXACTLY ONE of: Modern, 00s, 90s, 80s, 70s, 60s, 50s, Antique",
-  "style": "EXACTLY 3 from this list only — comma-separated: Streetwear, Sportswear, Loungewear, Goth, Retro, Boho, Western, Indie, Skater, Rave, Costume, Cosplay, Grunge, Emo, Minimalist, Preppy, Avant Garde, Punk, Glam, Regency, Casual, Utility, Futuristic, Cottage, Fairy, Kidcore, Y2K, Biker, Gorpcore, Twee, Coquette, Whimsygoth",
-  "condition": "Exactly one of: New with tags, Like new, Good, Fair, Well worn — judge from photo",
-  "price": "£X–£Y format. Give optimistic but realistic Depop resale value."
+  "color": "1 or 2 dominant colors max, single words e.g. Grey or Black, White",
+  "source": "1-2 from: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired — usually preloved or vintage",
+  "age": "exactly one of: Modern, 00s, 90s, 80s, 70s, 60s, 50s, Antique",
+  "style": "exactly 3 comma-separated from: Streetwear, Sportswear, Loungewear, Goth, Retro, Boho, Western, Indie, Skater, Rave, Costume, Cosplay, Grunge, Emo, Minimalist, Preppy, Avant Garde, Punk, Glam, Regency, Casual, Utility, Futuristic, Cottage, Fairy, Kidcore, Y2K, Biker, Gorpcore, Twee, Coquette, Whimsygoth",
+  "condition": "one of: New with tags, Like new, Good, Fair, Well worn",
+  "price": "$X-$Y in US dollars, realistic Depop secondhand value"
 }`;
 
-  const userText = `Write a Depop listing for this item.\n\n${detailLines}\n\nStudy the photo(s) carefully. Generate the full listing in the exact format specified.`;
+  const userText = `Write a Depop listing for this item.\n\n${detailLines}\n\nUse size "${size}" in the listing. Generate the full listing now.`;
   contentBlocks.push({ type: 'text', text: userText });
 
   try {
@@ -1052,29 +643,25 @@ After the description, output ---JSON--- on its own line, then a JSON object wit
     const data = await response.json();
     const raw = data?.content?.[0]?.text || '';
 
-    // Split on ---JSON---
     const splitIdx = raw.indexOf('---JSON---');
-    const description = splitIdx !== -1 ? raw.slice(0, splitIdx).trim() : raw.trim();
+    const descRaw = splitIdx !== -1 ? raw.slice(0, splitIdx).trim() : raw.trim();
+    const desc = cleanDescription(descRaw);
     let categories = {};
 
     if (splitIdx !== -1) {
-      const jsonPart = raw.slice(splitIdx + 10);
+      const jsonPart = raw.slice(splitIdx + 10).replace(/```json|```/g, '').trim();
       try {
-        const clean = jsonPart.replace(/```json|```/g, '').trim();
-        categories = JSON.parse(clean);
+        categories = JSON.parse(jsonPart);
       } catch {
-        const match = jsonPart.match(/\{[\s\S]+\}/);
-        if (match) { try { categories = JSON.parse(match[0]); } catch {} }
+        const m = jsonPart.match(/\{[\s\S]+\}/);
+        if (m) { try { categories = JSON.parse(m[0]); } catch {} }
       }
     }
 
-    // Show description
-    document.getElementById('descriptionOutput').textContent = description;
+    document.getElementById('descriptionOutput').textContent = desc;
 
-    // Build categories
     const catGrid = document.getElementById('categoriesGrid');
     catGrid.innerHTML = '';
-
     const catFields = [
       { key: 'color', label: 'Color' },
       { key: 'style', label: 'Style' },
@@ -1096,7 +683,7 @@ After the description, output ---JSON--- on its own line, then a JSON object wit
       const { display, breakdown } = calcPrice(categories.price);
       const div = document.createElement('div');
       div.className = 'cat-item price-item';
-      div.innerHTML = `<span class="cat-label">💰 Suggested Listing Price${boosted ? ' (Boosted)' : ''}</span><span class="cat-value">${display}</span>${breakdown ? `<div class="price-breakdown">${breakdown}</div>` : ''}`;
+      div.innerHTML = `<span class="cat-label">💰 Suggested Price${boosted ? ' (Boosted)' : ''}</span><span class="cat-value">${display}</span>${breakdown ? `<div class="price-breakdown">${breakdown}</div>` : ''}`;
       catGrid.appendChild(div);
     }
 
