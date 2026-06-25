@@ -7,229 +7,208 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0d1b2a;
-    --deep-ocean: #1a2f45;
-    --ocean: #1e6091;
-    --teal: #168aad;
-    --seafoam: #76c8d4;
-    --warm-white: #faf8f5;
-    --coral: #e07a5f;
-    --text: #1a1a2e;
-    --text-muted: #5a6a7a;
-    --border: #d4e4ef;
+    --navy: #0d1b2a; --deep-ocean: #1a2f45; --ocean: #1e6091; --teal: #168aad;
+    --seafoam: #76c8d4; --warm-white: #faf8f5; --coral: #e07a5f;
+    --text: #1a1a2e; --text-muted: #5a6a7a; --border: #d4e4ef;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Barlow', sans-serif; background: var(--warm-white); color: var(--text); min-height: 100vh; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Barlow',sans-serif; background:var(--warm-white); color:var(--text); min-height:100vh; }
 
   /* ── PASSWORD SCREEN ── */
-  #pwScreen {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--navy);
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 0;
+  #pwScreen { position:fixed; inset:0; z-index:9999; background:var(--navy); display:flex; align-items:center; justify-content:center; }
+  #pwScreen.hidden { display:none; }
+  .pw-box { background:var(--deep-ocean); border-radius:20px; padding:44px 40px 36px; width:100%; max-width:380px; display:flex; flex-direction:column; gap:20px; box-shadow:0 24px 60px rgba(0,0,0,0.4); border:1.5px solid rgba(118,200,212,0.15); margin:24px; }
+  .pw-logo { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; letter-spacing:-0.5px; color:#fff; line-height:1; }
+  .pw-logo span { color:var(--coral); }
+  .pw-sub { font-size:13px; color:rgba(118,200,212,0.7); margin-top:-10px; }
+  .pw-input-wrap input { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(118,200,212,0.2); border-radius:10px; padding:13px 16px; color:#fff; font-family:'Barlow',sans-serif; font-size:16px; letter-spacing:3px; outline:none; transition:border-color 0.2s; }
+  .pw-input-wrap input:focus { border-color:var(--seafoam); }
+  .pw-input-wrap input::placeholder { letter-spacing:1px; color:rgba(255,255,255,0.25); font-size:13px; }
+  .pw-input-wrap input.shake { animation:shake 0.4s ease; border-color:var(--coral)!important; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  .pw-btn { width:100%; background:linear-gradient(135deg,var(--ocean),var(--teal)); color:#fff; border:none; border-radius:10px; padding:14px; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:opacity 0.2s; }
+  .pw-btn:hover { opacity:0.88; }
+  .pw-stay { display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
+  .pw-stay-box { width:18px; height:18px; border:2px solid rgba(118,200,212,0.4); border-radius:4px; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+  .pw-stay-box.checked { background:var(--teal); border-color:var(--teal); }
+  .pw-stay-box.checked::after { content:'✓'; color:#fff; font-size:11px; font-weight:700; }
+  .pw-stay-label { font-size:13px; color:rgba(118,200,212,0.7); }
+  .pw-error { color:var(--coral); font-size:12px; text-align:center; min-height:16px; }
+
+  /* ── ADMIN BUTTON (corner) ── */
+  #adminBtn {
+    position:fixed; bottom:20px; right:20px; z-index:8000;
+    width:40px; height:40px;
+    background:var(--deep-ocean);
+    border:1.5px solid rgba(118,200,212,0.2);
+    border-radius:50%;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+    transition:all 0.2s;
+    opacity:0.5;
   }
-  #pwScreen.hidden { display: none; }
-  .pw-box {
-    background: var(--deep-ocean);
-    border-radius: 20px;
-    padding: 44px 40px 36px;
-    width: 100%; max-width: 380px;
-    display: flex; flex-direction: column; gap: 20px;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-    border: 1.5px solid rgba(118,200,212,0.15);
-    margin: 24px;
-  }
-  .pw-logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: -0.5px;
-    color: #fff; line-height: 1;
-  }
-  .pw-logo span { color: var(--coral); }
-  .pw-sub {
-    font-size: 13px; color: rgba(118,200,212,0.7);
-    margin-top: -10px;
-  }
-  .pw-input-wrap { position: relative; }
-  .pw-input-wrap input {
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border: 1.5px solid rgba(118,200,212,0.2);
-    border-radius: 10px;
-    padding: 13px 16px;
-    color: #fff;
-    font-family: 'Barlow', sans-serif;
-    font-size: 16px;
-    letter-spacing: 3px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .pw-input-wrap input:focus { border-color: var(--seafoam); }
-  .pw-input-wrap input::placeholder { letter-spacing: 1px; color: rgba(255,255,255,0.25); font-size: 13px; }
-  .pw-input-wrap input.shake {
-    animation: shake 0.4s ease;
-    border-color: var(--coral) !important;
-  }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-  }
-  .pw-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--ocean), var(--teal));
-    color: #fff;
-    border: none; border-radius: 10px;
-    padding: 14px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 2px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .pw-btn:hover { opacity: 0.88; }
-  .pw-stay {
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer; user-select: none;
-  }
-  .pw-stay-box {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(118,200,212,0.4);
-    border-radius: 4px;
-    background: rgba(255,255,255,0.04);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s;
-  }
-  .pw-stay-box.checked { background: var(--teal); border-color: var(--teal); }
-  .pw-stay-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
-  .pw-stay-label { font-size: 13px; color: rgba(118,200,212,0.7); }
-  .pw-error { color: var(--coral); font-size: 12px; text-align: center; min-height: 16px; }
+  #adminBtn:hover { opacity:1; border-color:var(--seafoam); transform:scale(1.08); }
+
+  /* ── ADMIN SCREEN ── */
+  #adminScreen { position:fixed; inset:0; z-index:9000; background:rgba(13,27,42,0.85); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; }
+  #adminScreen.hidden { display:none; }
+  .admin-box { background:var(--deep-ocean); border-radius:20px; padding:36px; width:100%; max-width:500px; margin:24px; border:1.5px solid rgba(118,200,212,0.2); box-shadow:0 24px 60px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto; }
+  .admin-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+  .admin-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:#fff; }
+  .admin-title span { color:var(--coral); }
+  .admin-close { background:none; border:none; color:rgba(255,255,255,0.4); font-size:22px; cursor:pointer; transition:color 0.2s; line-height:1; padding:4px; }
+  .admin-close:hover { color:#fff; }
+  .admin-section { margin-bottom:28px; }
+  .admin-section-title { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--seafoam); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid rgba(118,200,212,0.15); }
+  .admin-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .admin-stat { background:rgba(255,255,255,0.05); border-radius:10px; padding:14px; }
+  .admin-stat-val { font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; color:#fff; line-height:1; }
+  .admin-stat-lbl { font-size:11px; color:rgba(118,200,212,0.6); margin-top:4px; }
+  .admin-input { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(118,200,212,0.2); border-radius:10px; padding:11px 14px; color:#fff; font-family:'Barlow',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; margin-bottom:10px; }
+  .admin-input:focus { border-color:var(--seafoam); }
+  .admin-input::placeholder { color:rgba(255,255,255,0.25); }
+  .admin-row { display:flex; gap:10px; }
+  .admin-btn { flex:1; padding:11px 16px; border:none; border-radius:9px; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+  .admin-btn-primary { background:linear-gradient(135deg,var(--ocean),var(--teal)); color:#fff; }
+  .admin-btn-primary:hover { opacity:0.85; }
+  .admin-btn-danger { background:rgba(224,122,95,0.15); color:var(--coral); border:1.5px solid rgba(224,122,95,0.3); }
+  .admin-btn-danger:hover { background:rgba(224,122,95,0.25); }
+  .admin-msg { font-size:12px; margin-top:8px; min-height:16px; color:var(--seafoam); }
+  .admin-msg.error { color:var(--coral); }
+  .admin-session-item { background:rgba(255,255,255,0.04); border-radius:8px; padding:10px 14px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
+  .admin-session-info { font-size:13px; color:rgba(255,255,255,0.7); }
+  .admin-session-date { font-size:11px; color:rgba(118,200,212,0.5); margin-top:2px; }
+  .admin-revoke-all { width:100%; padding:12px; background:rgba(224,122,95,0.12); border:1.5px solid rgba(224,122,95,0.25); border-radius:10px; color:var(--coral); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+  .admin-revoke-all:hover { background:rgba(224,122,95,0.22); }
+
+  /* ── ADMIN PASSWORD GATE ── */
+  #adminAuthWrap.hidden { display:none; }
+  #adminContentWrap.hidden { display:none; }
 
   /* ── HEADER ── */
-  header { background: var(--navy); padding: 0; position: relative; overflow: hidden; }
-  .header-inner { max-width: 900px; margin: 0 auto; padding: 40px 24px 32px; position: relative; z-index: 1; }
-  .wave-top { display: block; width: 100%; color: var(--ocean); opacity: 0.25; position: absolute; top: 0; left: 0; }
-  .logo-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--seafoam); margin-bottom: 10px; display: block; }
-  header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(36px, 6vw, 64px); font-weight: 900; color: #fff; line-height: 0.95; text-transform: uppercase; letter-spacing: -1px; }
-  header h1 span { color: var(--coral); }
-  header p { color: var(--seafoam); font-size: 14px; font-weight: 400; margin-top: 12px; opacity: 0.85; max-width: 480px; }
-  .wave-divider { display: block; width: 100%; color: var(--warm-white); margin-top: -1px; }
+  header { background:var(--navy); padding:0; position:relative; overflow:hidden; }
+  .header-inner { max-width:900px; margin:0 auto; padding:40px 24px 32px; position:relative; z-index:1; }
+  .wave-top { display:block; width:100%; color:var(--ocean); opacity:0.25; position:absolute; top:0; left:0; }
+  .logo-tag { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--seafoam); margin-bottom:10px; display:block; }
+  header h1 { font-family:'Barlow Condensed',sans-serif; font-size:clamp(36px,6vw,64px); font-weight:900; color:#fff; line-height:0.95; text-transform:uppercase; letter-spacing:-1px; }
+  header h1 span { color:var(--coral); }
+  header p { color:var(--seafoam); font-size:14px; font-weight:400; margin-top:12px; opacity:0.85; max-width:480px; }
+  .wave-divider { display:block; width:100%; color:var(--warm-white); margin-top:-1px; }
 
   /* ── MAIN ── */
-  main { max-width: 900px; margin: 0 auto; padding: 8px 24px 60px; }
+  main { max-width:900px; margin:0 auto; padding:8px 24px 60px; }
 
   /* ── API KEY ── */
-  .api-section { background: var(--deep-ocean); border-radius: 16px; padding: 20px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .api-section label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--seafoam); white-space: nowrap; }
-  .api-section input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(118,200,212,0.25); border-radius: 8px; padding: 10px 14px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 13px; letter-spacing: 1px; outline: none; transition: border-color 0.2s; }
-  .api-section input:focus { border-color: var(--seafoam); }
-  .api-section input::placeholder { color: rgba(255,255,255,0.3); }
-  .api-hint { font-size: 12px; color: rgba(118,200,212,0.6); margin-top: 6px; width: 100%; }
-  .api-hint a { color: var(--seafoam); text-decoration: underline; text-underline-offset: 2px; }
+  .api-section { background:var(--deep-ocean); border-radius:16px; padding:20px 24px; margin-bottom:28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .api-section label { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--seafoam); white-space:nowrap; }
+  .api-section input { flex:1; min-width:200px; background:rgba(255,255,255,0.07); border:1.5px solid rgba(118,200,212,0.25); border-radius:8px; padding:10px 14px; color:#fff; font-family:'Barlow',sans-serif; font-size:13px; letter-spacing:1px; outline:none; transition:border-color 0.2s; }
+  .api-section input:focus { border-color:var(--seafoam); }
+  .api-section input::placeholder { color:rgba(255,255,255,0.3); }
+  .api-hint { font-size:12px; color:rgba(118,200,212,0.6); margin-top:6px; width:100%; }
+  .api-hint a { color:var(--seafoam); text-decoration:underline; text-underline-offset:2px; }
 
   /* ── CARD ── */
-  .card { background: #fff; border-radius: 20px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 20px rgba(13,27,42,0.06); }
-  .card-header { background: linear-gradient(135deg, var(--deep-ocean), var(--ocean)); padding: 18px 24px; display: flex; align-items: center; gap: 10px; }
-  .card-header .step { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: var(--coral); color: #fff; padding: 3px 9px; border-radius: 4px; }
-  .card-header h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; }
-  .card-body { padding: 24px; }
+  .card { background:#fff; border-radius:20px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:24px; box-shadow:0 2px 20px rgba(13,27,42,0.06); }
+  .card-header { background:linear-gradient(135deg,var(--deep-ocean),var(--ocean)); padding:18px 24px; display:flex; align-items:center; gap:10px; }
+  .card-header .step { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:var(--coral); color:#fff; padding:3px 9px; border-radius:4px; }
+  .card-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#fff; }
+  .card-body { padding:24px; }
 
   /* ── DROP ZONE ── */
-  .drop-zone { border: 2.5px dashed var(--border); border-radius: 14px; padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--warm-white); position: relative; }
-  .drop-zone:hover, .drop-zone.dragover { border-color: var(--teal); background: #f0f8fb; }
-  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .drop-zone .dz-icon { font-size: 36px; margin-bottom: 10px; display: block; }
-  .drop-zone h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--ocean); letter-spacing: 0.5px; }
-  .drop-zone p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
-  .paste-tip { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--seafoam); background: var(--navy); padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; }
-  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 16px; }
-  .preview-grid:empty { display: none; }
-  .preview-item { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid var(--border); }
-  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .preview-item .remove-btn { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; background: rgba(224,122,95,0.92); border: none; border-radius: 50%; color: #fff; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .drop-zone { border:2.5px dashed var(--border); border-radius:14px; padding:36px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--warm-white); position:relative; }
+  .drop-zone:hover,.drop-zone.dragover { border-color:var(--teal); background:#f0f8fb; }
+  .drop-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .drop-zone .dz-icon { font-size:36px; margin-bottom:10px; display:block; }
+  .drop-zone h3 { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; text-transform:uppercase; color:var(--ocean); letter-spacing:0.5px; }
+  .drop-zone p { font-size:13px; color:var(--text-muted); margin-top:4px; }
+  .paste-tip { display:inline-block; margin-top:10px; font-size:11px; color:var(--seafoam); background:var(--navy); padding:3px 10px; border-radius:20px; letter-spacing:0.5px; }
+  .preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:16px; }
+  .preview-grid:empty { display:none; }
+  .preview-item { position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; border:2px solid var(--border); }
+  .preview-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .preview-item .remove-btn { position:absolute; top:5px; right:5px; width:22px; height:22px; background:rgba(224,122,95,0.92); border:none; border-radius:50%; color:#fff; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:700; }
 
   /* ── FORM ── */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-  label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
-  input[type="text"], input[type="number"], textarea, select { border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--text); background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
-  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22,138,173,0.1); }
-  .field-hint { font-size: 11px; color: var(--text-muted); opacity: 0.75; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  label { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); }
+  input[type="text"],input[type="number"],textarea,select { border:1.5px solid var(--border); border-radius:10px; padding:11px 14px; font-family:'Barlow',sans-serif; font-size:14px; color:var(--text); background:#fff; outline:none; transition:border-color 0.2s,box-shadow 0.2s; width:100%; }
+  input[type="text"]:focus,input[type="number"]:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(22,138,173,0.1); }
+  .field-hint { font-size:11px; color:var(--text-muted); opacity:0.75; }
 
   /* ── MEASUREMENTS ── */
-  .measurements-header { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 10px; flex-wrap: wrap; gap: 8px; }
-  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex: 1; }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .unit-toggle { display: flex; background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-  .unit-toggle button { padding: 5px 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: none; background: none; cursor: pointer; color: var(--text-muted); transition: all 0.15s; }
-  .unit-toggle button.active { background: var(--ocean); color: #fff; }
-  .measurements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  @media (max-width: 480px) { .measurements-grid { grid-template-columns: repeat(2, 1fr); } }
-  .m-field label { font-size: 10px; letter-spacing: 1px; color: var(--ocean); }
+  .measurements-header { display:flex; align-items:center; justify-content:space-between; margin:24px 0 10px; flex-wrap:wrap; gap:8px; }
+  .section-label { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex:1; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .unit-toggle { display:flex; background:var(--warm-white); border:1.5px solid var(--border); border-radius:8px; overflow:hidden; flex-shrink:0; }
+  .unit-toggle button { padding:5px 14px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border:none; background:none; cursor:pointer; color:var(--text-muted); transition:all 0.15s; }
+  .unit-toggle button.active { background:var(--ocean); color:#fff; }
+  .measurements-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  @media(max-width:480px){.measurements-grid{grid-template-columns:repeat(2,1fr);}}
+  .m-field label { font-size:10px; letter-spacing:1px; color:var(--ocean); }
 
   /* ── PRICING ── */
-  .pricing-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; }
-  @media (max-width: 560px) { .pricing-row { grid-template-columns: 1fr; } }
-  .boost-toggle-wrap { display: flex; flex-direction: column; gap: 8px; }
-  .boost-toggle { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; background: #fff; user-select: none; }
-  .boost-toggle:hover { border-color: var(--teal); }
-  .boost-toggle.active { border-color: var(--coral); background: #fff5f3; }
-  .boost-toggle .toggle-switch { width: 36px; height: 20px; background: var(--border); border-radius: 20px; position: relative; transition: background 0.2s; flex-shrink: 0; }
-  .boost-toggle.active .toggle-switch { background: var(--coral); }
-  .boost-toggle .toggle-knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-  .boost-toggle.active .toggle-knob { left: 19px; }
-  .boost-toggle .toggle-label { font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 500; color: var(--text); }
-  .boost-toggle .toggle-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .pricing-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:end; }
+  @media(max-width:560px){.pricing-row{grid-template-columns:1fr;}}
+  .boost-toggle-wrap { display:flex; flex-direction:column; gap:8px; }
+  .boost-toggle { display:flex; align-items:center; gap:10px; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; background:#fff; user-select:none; }
+  .boost-toggle:hover { border-color:var(--teal); }
+  .boost-toggle.active { border-color:var(--coral); background:#fff5f3; }
+  .boost-toggle .toggle-switch { width:36px; height:20px; background:var(--border); border-radius:20px; position:relative; transition:background 0.2s; flex-shrink:0; }
+  .boost-toggle.active .toggle-switch { background:var(--coral); }
+  .boost-toggle .toggle-knob { position:absolute; top:3px; left:3px; width:14px; height:14px; background:#fff; border-radius:50%; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+  .boost-toggle.active .toggle-knob { left:19px; }
+  .boost-toggle .toggle-label { font-family:'Barlow',sans-serif; font-size:13px; font-weight:500; color:var(--text); }
+  .boost-toggle .toggle-sub { font-size:11px; color:var(--text-muted); margin-top:1px; }
 
   /* ── GENERATE BTN ── */
-  .generate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--ocean), var(--teal)); color: #fff; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; }
-  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30,96,145,0.35); }
-  .generate-btn:active { transform: translateY(0); }
-  .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .generate-btn { width:100%; padding:18px; background:linear-gradient(135deg,var(--ocean),var(--teal)); color:#fff; border:none; border-radius:14px; font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:all 0.2s; }
+  .generate-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(30,96,145,0.35); }
+  .generate-btn:active { transform:translateY(0); }
+  .generate-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+
+  /* ── RESULT SPACING ── */
+  .result-gap { margin-top:32px; }
 
   /* ── LOADING ── */
-  .loading-state { display: none; text-align: center; padding: 48px 24px; }
-  .loading-state.visible { display: block; }
-  .wave-loader { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
-  .wave-loader span { width: 8px; height: 8px; background: var(--teal); border-radius: 50%; animation: wave-bounce 1.2s ease-in-out infinite; }
-  .wave-loader span:nth-child(2) { animation-delay: 0.15s; }
-  .wave-loader span:nth-child(3) { animation-delay: 0.3s; }
-  .wave-loader span:nth-child(4) { animation-delay: 0.45s; }
-  @keyframes wave-bounce { 0%,80%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-12px); opacity: 1; } }
-  .loading-state p { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--ocean); }
+  .loading-state { display:none; text-align:center; padding:48px 24px; }
+  .loading-state.visible { display:block; }
+  .wave-loader { display:flex; justify-content:center; gap:6px; margin-bottom:16px; }
+  .wave-loader span { width:8px; height:8px; background:var(--teal); border-radius:50%; animation:wave-bounce 1.2s ease-in-out infinite; }
+  .wave-loader span:nth-child(2){animation-delay:0.15s;} .wave-loader span:nth-child(3){animation-delay:0.3s;} .wave-loader span:nth-child(4){animation-delay:0.45s;}
+  @keyframes wave-bounce{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-12px);opacity:1;}}
+  .loading-state p { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--ocean); }
 
   /* ── RESULT ── */
-  .result-section { display: none; }
-  .result-section.visible { display: block; }
-  .result-tabs { display: flex; border-bottom: 2px solid var(--border); }
-  .tab-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 12px 20px; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
-  .tab-btn.active { color: var(--ocean); border-bottom-color: var(--coral); }
-  .tab-pane { display: none; padding: 20px 0 0; }
-  .tab-pane.active { display: block; }
-  .description-output { background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; font-family: 'Barlow', sans-serif; font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-  .copy-btn { margin-top: 12px; display: flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-  .copy-btn:hover { background: var(--ocean); }
-  .copy-btn.copied { background: #2d8a5e; }
-  .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  .cat-item { background: var(--warm-white); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-  .cat-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 4px; display: block; }
-  .cat-value { font-size: 15px; font-weight: 600; color: var(--text); }
-  .price-item { background: linear-gradient(135deg, var(--deep-ocean), var(--ocean)); color: #fff; grid-column: 1 / -1; }
-  .price-item .cat-label { color: var(--seafoam); }
-  .price-item .cat-value { font-size: 22px; font-weight: 800; color: #fff; }
-  .price-breakdown { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 4px; font-weight: 400; }
-  .error-box { display: none; background: #fef0ee; border: 1.5px solid #f5c0b8; border-radius: 10px; padding: 14px 16px; color: #c0392b; font-size: 13px; margin-top: 12px; }
-  .error-box.visible { display: block; }
+  .result-section { display:none; }
+  .result-section.visible { display:block; }
+  .result-tabs { display:flex; border-bottom:2px solid var(--border); }
+  .tab-btn { font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:12px 20px; background:none; border:none; cursor:pointer; color:var(--text-muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
+  .tab-btn.active { color:var(--ocean); border-bottom-color:var(--coral); }
+  .tab-pane { display:none; padding:20px 0 0; }
+  .tab-pane.active { display:block; }
+  .description-output { background:var(--warm-white); border:1.5px solid var(--border); border-radius:12px; padding:20px; font-family:'Barlow',sans-serif; font-size:14px; line-height:1.65; color:var(--text); white-space:pre-wrap; word-break:break-word; }
+  .copy-btn { margin-top:12px; display:flex; align-items:center; gap:8px; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+  .copy-btn:hover { background:var(--ocean); }
+  .copy-btn.copied { background:#2d8a5e; }
+  .categories-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+  .cat-item { background:var(--warm-white); border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; }
+  .cat-label { font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--teal); margin-bottom:4px; display:block; }
+  .cat-value { font-size:15px; font-weight:600; color:var(--text); }
+  .price-item { background:linear-gradient(135deg,var(--deep-ocean),var(--ocean)); color:#fff; grid-column:1/-1; }
+  .price-item .cat-label { color:var(--seafoam); }
+  .price-item .cat-value { font-size:22px; font-weight:800; color:#fff; }
+  .price-breakdown { font-size:12px; color:rgba(255,255,255,0.65); margin-top:4px; font-weight:400; }
+  .error-box { display:none; background:#fef0ee; border:1.5px solid #f5c0b8; border-radius:10px; padding:14px 16px; color:#c0392b; font-size:13px; margin-top:12px; }
+  .error-box.visible { display:block; }
 </style>
 </head>
 <body>
 
-<!-- PASSWORD SCREEN -->
+<!-- ── PASSWORD SCREEN ── -->
 <div id="pwScreen">
   <div class="pw-box">
     <div>
@@ -249,7 +228,95 @@
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ── ADMIN BUTTON ── -->
+<button id="adminBtn" onclick="openAdmin()" title="Admin">⚙️</button>
+
+<!-- ── ADMIN PANEL ── -->
+<div id="adminScreen" class="hidden">
+  <div class="admin-box">
+    <div class="admin-header">
+      <div class="admin-title">Admin <span>Panel</span></div>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+
+    <!-- Admin auth gate -->
+    <div id="adminAuthWrap">
+      <div class="admin-section">
+        <div class="admin-section-title">Admin Login</div>
+        <input class="admin-input" type="password" id="adminPwInput" placeholder="Admin password"
+          onkeydown="if(event.key==='Enter')checkAdminPassword()">
+        <button class="admin-btn admin-btn-primary" onclick="checkAdminPassword()">Unlock</button>
+        <div class="admin-msg error" id="adminPwError"></div>
+      </div>
+    </div>
+
+    <!-- Admin content (shown after auth) -->
+    <div id="adminContentWrap" class="hidden">
+
+      <!-- Stats -->
+      <div class="admin-section">
+        <div class="admin-section-title">Usage Stats</div>
+        <div class="admin-stat-grid">
+          <div class="admin-stat">
+            <div class="admin-stat-val" id="statListings">0</div>
+            <div class="admin-stat-lbl">Listings generated</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-val" id="statSessions">0</div>
+            <div class="admin-stat-lbl">Saved sessions</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-val" id="statFirstUsed">—</div>
+            <div class="admin-stat-lbl">First used</div>
+          </div>
+          <div class="admin-stat">
+            <div class="admin-stat-val" id="statLastUsed">—</div>
+            <div class="admin-stat-lbl">Last used</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sessions -->
+      <div class="admin-section">
+        <div class="admin-section-title">Sessions</div>
+        <div id="sessionList"></div>
+        <button class="admin-revoke-all" onclick="revokeAllSessions()">⛔ Revoke All Sessions (force re-login)</button>
+        <div class="admin-msg" id="sessionMsg"></div>
+      </div>
+
+      <!-- Change user password -->
+      <div class="admin-section">
+        <div class="admin-section-title">Change User Password</div>
+        <input class="admin-input" type="text" id="newUserPw" placeholder="New user password">
+        <div class="admin-row">
+          <button class="admin-btn admin-btn-primary" onclick="changeUserPassword()">Save Password</button>
+          <button class="admin-btn admin-btn-danger" onclick="resetUserPassword()">Reset to Default</button>
+        </div>
+        <div class="admin-msg" id="pwChangeMsg"></div>
+      </div>
+
+      <!-- Change admin password -->
+      <div class="admin-section">
+        <div class="admin-section-title">Change Admin Password</div>
+        <input class="admin-input" type="text" id="newAdminPw" placeholder="New admin password">
+        <button class="admin-btn admin-btn-primary" onclick="changeAdminPassword()">Save Admin Password</button>
+        <div class="admin-msg" id="adminPwChangeMsg"></div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="admin-section">
+        <div class="admin-section-title">Danger Zone</div>
+        <div class="admin-row">
+          <button class="admin-btn admin-btn-danger" onclick="clearStats()">Clear Stats</button>
+          <button class="admin-btn admin-btn-danger" onclick="clearAllData()">Reset Everything</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
 <header>
   <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
@@ -265,14 +332,12 @@
 </header>
 
 <main>
-  <!-- API KEY -->
   <div class="api-section">
     <label for="apiKey">🔑 Anthropic API Key</label>
     <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
     <p class="api-hint">Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — saved in your browser automatically.</p>
   </div>
 
-  <!-- STEP 1: PHOTOS -->
   <div class="card">
     <div class="card-header"><span class="step">Step 1</span><h2>Photos</h2></div>
     <div class="card-body">
@@ -287,7 +352,6 @@
     </div>
   </div>
 
-  <!-- STEP 2: DETAILS -->
   <div class="card">
     <div class="card-header"><span class="step">Step 2</span><h2>Item Details</h2></div>
     <div class="card-body">
@@ -301,7 +365,6 @@
           <input type="text" id="material" placeholder="e.g. Cotton, Polyester, Denim">
         </div>
       </div>
-
       <div class="measurements-header">
         <span class="section-label">Measurements <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
         <div class="unit-toggle">
@@ -315,7 +378,6 @@
         <div class="m-field form-group"><label id="labelShoulder">Shoulder (cm)</label><input type="text" id="mShoulder" placeholder="e.g. 55"></div>
         <div class="m-field form-group"><label id="labelSleeve">Sleeve (cm)</label><input type="text" id="mSleeve" placeholder="e.g. 52"></div>
       </div>
-
       <div class="measurements-header" style="margin-top:24px;">
         <span class="section-label">Pricing <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
       </div>
@@ -347,7 +409,7 @@
     <p>Writing your listing...</p>
   </div>
 
-  <div class="result-section card" id="resultSection">
+  <div class="result-section card result-gap" id="resultSection">
     <div class="card-header"><span class="step">Done</span><h2>Your Listing</h2></div>
     <div class="card-body">
       <div class="result-tabs">
@@ -366,12 +428,24 @@
 </main>
 
 <script>
-// ── PASSWORD ──────────────────────────────────────────────
-const PASS = '2LIVECREW';
+// ── CONSTANTS ─────────────────────────────────────────────
+const DEFAULT_USER_PASS = '2LIVECREW';
+const DEFAULT_ADMIN_PASS = '2NOTLIVECREW';
+
+// ── HELPERS: get/set stored values ────────────────────────
+const store = {
+  get: k => localStorage.getItem(k),
+  set: (k,v) => localStorage.setItem(k, v),
+  del: k => localStorage.removeItem(k),
+};
+
+function getUserPass() { return store.get('depop_user_pass') || DEFAULT_USER_PASS; }
+function getAdminPass() { return store.get('depop_admin_pass') || DEFAULT_ADMIN_PASS; }
+
+// ── PASSWORD SCREEN ───────────────────────────────────────
 let stayChecked = false;
 
-// Check if already authenticated
-if (localStorage.getItem('depop_auth') === 'yes') {
+if (store.get('depop_auth') === 'yes') {
   document.getElementById('pwScreen').classList.add('hidden');
 }
 
@@ -382,13 +456,21 @@ function toggleStay() {
 
 function checkPassword() {
   const val = document.getElementById('pwInput').value;
-  if (val === PASS) {
-    if (stayChecked) localStorage.setItem('depop_auth', 'yes');
+  if (val === getUserPass()) {
+    if (stayChecked) {
+      store.set('depop_auth', 'yes');
+      store.set('depop_session_time', new Date().toISOString());
+      // increment session count
+      const sc = parseInt(store.get('depop_session_count') || '0') + 1;
+      store.set('depop_session_count', sc);
+    }
+    if (!store.get('depop_first_used')) store.set('depop_first_used', new Date().toISOString());
+    store.set('depop_last_used', new Date().toISOString());
     document.getElementById('pwScreen').classList.add('hidden');
   } else {
     const inp = document.getElementById('pwInput');
     inp.classList.remove('shake');
-    void inp.offsetWidth; // reflow
+    void inp.offsetWidth;
     inp.classList.add('shake');
     document.getElementById('pwError').textContent = 'Incorrect password. Try again.';
     inp.value = '';
@@ -396,15 +478,133 @@ function checkPassword() {
   }
 }
 
-// ── STATE ─────────────────────────────────────────────────
+// ── ADMIN PANEL ───────────────────────────────────────────
+let adminUnlocked = false;
+
+function openAdmin() {
+  document.getElementById('adminScreen').classList.remove('hidden');
+  document.getElementById('adminAuthWrap').classList.remove('hidden');
+  document.getElementById('adminContentWrap').classList.add('hidden');
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('adminPwError').textContent = '';
+  adminUnlocked = false;
+}
+
+function closeAdmin() {
+  document.getElementById('adminScreen').classList.add('hidden');
+  adminUnlocked = false;
+}
+
+// Close on backdrop click
+document.getElementById('adminScreen').addEventListener('click', function(e) {
+  if (e.target === this) closeAdmin();
+});
+
+function checkAdminPassword() {
+  const val = document.getElementById('adminPwInput').value;
+  if (val === getAdminPass()) {
+    adminUnlocked = true;
+    document.getElementById('adminAuthWrap').classList.add('hidden');
+    document.getElementById('adminContentWrap').classList.remove('hidden');
+    loadAdminStats();
+  } else {
+    document.getElementById('adminPwError').textContent = 'Incorrect admin password.';
+    document.getElementById('adminPwInput').value = '';
+  }
+}
+
+function loadAdminStats() {
+  // Stats
+  const listings = store.get('depop_listing_count') || '0';
+  const sessions = store.get('depop_session_count') || '0';
+  const firstUsed = store.get('depop_first_used');
+  const lastUsed = store.get('depop_last_used');
+
+  document.getElementById('statListings').textContent = listings;
+  document.getElementById('statSessions').textContent = sessions;
+  document.getElementById('statFirstUsed').textContent = firstUsed ? new Date(firstUsed).toLocaleDateString() : '—';
+  document.getElementById('statLastUsed').textContent = lastUsed ? new Date(lastUsed).toLocaleDateString() : '—';
+
+  // Sessions
+  const sessionList = document.getElementById('sessionList');
+  const hasSession = store.get('depop_auth') === 'yes';
+  const sessionTime = store.get('depop_session_time');
+
+  if (hasSession) {
+    sessionList.innerHTML = `
+      <div class="admin-session-item">
+        <div>
+          <div class="admin-session-info">📱 This device — saved session</div>
+          <div class="admin-session-date">${sessionTime ? 'Signed in ' + new Date(sessionTime).toLocaleString() : 'Session active'}</div>
+        </div>
+      </div>`;
+  } else {
+    sessionList.innerHTML = `<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:12px;">No saved sessions on this device.</div>`;
+  }
+}
+
+function revokeAllSessions() {
+  store.del('depop_auth');
+  store.del('depop_session_time');
+  document.getElementById('sessionMsg').textContent = '✓ All sessions revoked. Users must re-enter password next visit.';
+  loadAdminStats();
+  setTimeout(() => document.getElementById('sessionMsg').textContent = '', 3000);
+}
+
+function changeUserPassword() {
+  const val = document.getElementById('newUserPw').value.trim();
+  if (!val) { document.getElementById('pwChangeMsg').textContent = 'Password cannot be empty.'; document.getElementById('pwChangeMsg').className = 'admin-msg error'; return; }
+  store.set('depop_user_pass', val);
+  document.getElementById('newUserPw').value = '';
+  document.getElementById('pwChangeMsg').textContent = `✓ User password changed to "${val}"`;
+  document.getElementById('pwChangeMsg').className = 'admin-msg';
+  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
+}
+
+function resetUserPassword() {
+  store.del('depop_user_pass');
+  document.getElementById('pwChangeMsg').textContent = `✓ User password reset to default (${DEFAULT_USER_PASS})`;
+  document.getElementById('pwChangeMsg').className = 'admin-msg';
+  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
+}
+
+function changeAdminPassword() {
+  const val = document.getElementById('newAdminPw').value.trim();
+  if (!val) { document.getElementById('adminPwChangeMsg').textContent = 'Password cannot be empty.'; document.getElementById('adminPwChangeMsg').className = 'admin-msg error'; return; }
+  store.set('depop_admin_pass', val);
+  document.getElementById('newAdminPw').value = '';
+  document.getElementById('adminPwChangeMsg').textContent = `✓ Admin password updated. Remember the new password!`;
+  document.getElementById('adminPwChangeMsg').className = 'admin-msg';
+  setTimeout(() => document.getElementById('adminPwChangeMsg').textContent = '', 3000);
+}
+
+function clearStats() {
+  store.del('depop_listing_count');
+  store.del('depop_session_count');
+  store.del('depop_first_used');
+  store.del('depop_last_used');
+  loadAdminStats();
+}
+
+function clearAllData() {
+  if (!confirm('Reset EVERYTHING including passwords, sessions, and stats?')) return;
+  const keysToKeep = ['depop_api_key']; // keep the API key
+  const keep = {};
+  keysToKeep.forEach(k => { const v = store.get(k); if (v) keep[k] = v; });
+  localStorage.clear();
+  Object.entries(keep).forEach(([k,v]) => store.set(k,v));
+  loadAdminStats();
+}
+
+// ── APP STATE ─────────────────────────────────────────────
 const images = [];
 let unit = 'cm';
 let boosted = false;
 
 // ── API KEY PERSIST ───────────────────────────────────────
 const keyInput = document.getElementById('apiKey');
-keyInput.value = localStorage.getItem('depop_api_key') || '';
-keyInput.addEventListener('input', () => localStorage.setItem('depop_api_key', keyInput.value.trim()));
+keyInput.value = store.get('depop_api_key') || '';
+keyInput.addEventListener('input', () => store.set('depop_api_key', keyInput.value.trim()));
 
 // ── UNIT TOGGLE ───────────────────────────────────────────
 function setUnit(u) {
@@ -412,13 +612,8 @@ function setUnit(u) {
   document.getElementById('btnCm').classList.toggle('active', u === 'cm');
   document.getElementById('btnIn').classList.toggle('active', u === 'in');
   const s = u === 'cm' ? 'cm' : 'in';
-  const ph = u === 'cm'
-    ? ['e.g. 116','e.g. 68','e.g. 55','e.g. 52']
-    : ['e.g. 45.5','e.g. 26.5','e.g. 21.5','e.g. 20.5'];
-  document.getElementById('labelChest').textContent = `Chest (${s})`;
-  document.getElementById('labelLength').textContent = `Length (${s})`;
-  document.getElementById('labelShoulder').textContent = `Shoulder (${s})`;
-  document.getElementById('labelSleeve').textContent = `Sleeve (${s})`;
+  const ph = u === 'cm' ? ['e.g. 116','e.g. 68','e.g. 55','e.g. 52'] : ['e.g. 45.5','e.g. 26.5','e.g. 21.5','e.g. 20.5'];
+  ['Chest','Length','Shoulder','Sleeve'].forEach((n,i) => document.getElementById('label'+n).textContent = `${n} (${s})`);
   ['mChest','mLength','mShoulder','mSleeve'].forEach((id,i) => document.getElementById(id).placeholder = ph[i]);
 }
 
@@ -493,12 +688,10 @@ function calcPrice(rawPriceStr) {
   let low, high;
 
   if (originalCost) {
-    // 2x to 2.5x cost — sensible Depop resell margins
     low = Math.round(originalCost * 2);
     high = Math.round(originalCost * 2.5);
   } else {
-    // Strip any currency symbols, parse Claude's suggestion as USD base
-    const nums = rawPriceStr.replace(/[£$€]/g, '').match(/[\d.]+/g);
+    const nums = rawPriceStr.replace(/[£$€]/g,'').match(/[\d.]+/g);
     if (!nums || nums.length < 2) return { display: rawPriceStr, breakdown: null };
     low = Math.round(parseFloat(nums[0]));
     high = Math.round(parseFloat(nums[1]));
@@ -506,12 +699,11 @@ function calcPrice(rawPriceStr) {
 
   let finalLow = low, finalHigh = high;
   if (boosted) {
-    // Divide by 0.88 so after 12% fee the seller nets the base amount
     finalLow = Math.ceil(low / 0.88);
     finalHigh = Math.ceil(high / 0.88);
   }
 
-  const display = `$${finalLow}–$${finalHigh}`;
+  const display = `$${boosted ? finalLow : low}–$${boosted ? finalHigh : high}`;
   let breakdown = null;
 
   if (boosted && originalCost) {
@@ -530,14 +722,9 @@ function calcPrice(rawPriceStr) {
 // ── CLEAN DESCRIPTION ─────────────────────────────────────
 function cleanDescription(raw) {
   return raw
-    // Remove any markdown link format: [text](url) → just the text
     .replace(/\[([^\]]*)\]\([^)]*\)/g, (_, text) => text.trim())
-    // Remove any bare URLs that might appear after hashtags
     .replace(/https?:\/\/\S+/g, '')
-    // Remove any stray 📏 MEASUREMENTS header that has no measurement data on the next line
-    // (i.e., followed immediately by blank line or Size:)
     .replace(/📏 MEASUREMENTS\s*\n(\s*\n|\s*Size:)/g, '$1')
-    // Clean up any double blank lines caused by removals
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -576,16 +763,11 @@ async function generate() {
     source: { type: 'base64', media_type: img.mediaType, data: img.base64 }
   }));
 
-  // Build user details text
   const detailParts = [`Size: ${size}`];
   if (material) detailParts.push(`Material: ${material}`);
   if (measurementsLine) detailParts.push(`Measurements: ${measurementsLine}`);
-  const detailLines = detailParts.join('\n');
 
-  // Build the measurements block conditionally RIGHT IN THE PROMPT so Claude can't get it wrong
-  const measurementsBlock = hasMeasurements
-    ? `\n📏 MEASUREMENTS\n${measurementsLine}\n`
-    : '';
+  const measurementsBlock = hasMeasurements ? `\n📏 MEASUREMENTS\n${measurementsLine}\n` : '';
 
   const systemPrompt = `You are an expert Depop reseller writing viral, accurate listings. Study the photo(s) carefully.
 
@@ -615,7 +797,7 @@ Then output ---JSON--- on its own line followed by:
   "price": "$X-$Y in US dollars, realistic Depop secondhand value"
 }`;
 
-  const userText = `Write a Depop listing for this item.\n\n${detailLines}\n\nUse size "${size}" in the listing. Generate the full listing now.`;
+  const userText = `Write a Depop listing for this item.\n\n${detailParts.join('\n')}\n\nUse size "${size}" in the listing. Generate the full listing now.`;
   contentBlocks.push({ type: 'text', text: userText });
 
   try {
@@ -643,19 +825,21 @@ Then output ---JSON--- on its own line followed by:
     const data = await response.json();
     const raw = data?.content?.[0]?.text || '';
 
+    // Track usage
+    const count = parseInt(store.get('depop_listing_count') || '0') + 1;
+    store.set('depop_listing_count', count);
+    store.set('depop_last_used', new Date().toISOString());
+    if (!store.get('depop_first_used')) store.set('depop_first_used', new Date().toISOString());
+
     const splitIdx = raw.indexOf('---JSON---');
     const descRaw = splitIdx !== -1 ? raw.slice(0, splitIdx).trim() : raw.trim();
     const desc = cleanDescription(descRaw);
     let categories = {};
 
     if (splitIdx !== -1) {
-      const jsonPart = raw.slice(splitIdx + 10).replace(/```json|```/g, '').trim();
-      try {
-        categories = JSON.parse(jsonPart);
-      } catch {
-        const m = jsonPart.match(/\{[\s\S]+\}/);
-        if (m) { try { categories = JSON.parse(m[0]); } catch {} }
-      }
+      const jsonPart = raw.slice(splitIdx + 10).replace(/```json|```/g,'').trim();
+      try { categories = JSON.parse(jsonPart); }
+      catch { const m = jsonPart.match(/\{[\s\S]+\}/); if (m) { try { categories = JSON.parse(m[0]); } catch {} } }
     }
 
     document.getElementById('descriptionOutput').textContent = desc;
@@ -663,13 +847,10 @@ Then output ---JSON--- on its own line followed by:
     const catGrid = document.getElementById('categoriesGrid');
     catGrid.innerHTML = '';
     const catFields = [
-      { key: 'color', label: 'Color' },
-      { key: 'style', label: 'Style' },
-      { key: 'age', label: 'Era / Age' },
-      { key: 'source', label: 'Source' },
-      { key: 'condition', label: 'Condition' },
+      { key:'color', label:'Color' }, { key:'style', label:'Style' },
+      { key:'age', label:'Era / Age' }, { key:'source', label:'Source' },
+      { key:'condition', label:'Condition' },
     ];
-
     for (const f of catFields) {
       if (categories[f.key]) {
         const div = document.createElement('div');
@@ -678,7 +859,6 @@ Then output ---JSON--- on its own line followed by:
         catGrid.appendChild(div);
       }
     }
-
     if (categories.price) {
       const { display, breakdown } = calcPrice(categories.price);
       const div = document.createElement('div');
@@ -688,7 +868,7 @@ Then output ---JSON--- on its own line followed by:
     }
 
     document.getElementById('resultSection').classList.add('visible');
-    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('resultSection').scrollIntoView({ behavior:'smooth', block:'start' });
 
   } catch (err) {
     errorBox.textContent = `Error: ${err.message}`;
