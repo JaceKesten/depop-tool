@@ -1155,22 +1155,22 @@ async function generate() {
 
   const measurementsBlock = hasMeasurements ? `\n📏 MEASUREMENTS\n${measurementsLine}\n` : '';
 
-  const systemPrompt = `You are an expert Depop reseller writing viral, highly-converting listings. Study every detail of the photo(s) carefully — notice specific details like ribbons, lace trim, buttons, stitching, neckline shapes, fabric texture.
+  const systemPrompt = `You are an expert Depop reseller writing concise, accurate listings. Study the photo(s) carefully — notice specific details like ribbons, lace trim, buttons, stitching, neckline, fabric texture.
 
 Output the listing in EXACTLY this format:
 
 ‼️ DM FOR MORE SIZES ‼️
 
-[Color] [Item Type] [Brief Descriptor] [era if applicable e.g. Y2K, Vintage]
+[Color] [Item Type] [Brief Descriptor] [era e.g. Y2K, Vintage] Top
 
-[2-3 sentences. Be SPECIFIC about what you see — call out the exact details (ribbon bow, lace trim, ruffled cap sleeves, lace-up bust, etc). Then add one sentence of vibe/aesthetic language that makes it feel desirable — something like "giving main character energy", "perfect for chasing that coquette vintage look", "a standout piece for festival season". Make it sound like a cool person wrote it, not a product listing bot. Match the length and energy of this example:
-"Black and white gingham top with an adorable ruffled off-shoulder neckline, delicate lace trim detail, and a dainty black ribbon bow at the bust. Fitted silhouette with a sweet cottage-meets-Y2K aesthetic that's giving main character energy. Perfect for anyone chasing that coquette, vintage-inspired look."]
+[EXACTLY 2 sentences. Sentence 1: describe the item with specific visual details you can actually see (lace trim, spaghetti straps, ribbed fabric, gingham pattern, ruffled sleeves, etc). Sentence 2: one punchy line about the vibe or who it's for — keep it natural, not over the top. NO filler phrases like "hugs in all the right places", "effortlessly put together", "pair with X for the full moment", "giving X energy". Match the length and simplicity of this example exactly:
+"Navy blue camisole top with delicate lace trim along the neckline. This fitted spaghetti strap top has a Y2K aesthetic, perfect for a casual summer look or layering."]
 ${measurementsBlock}
 Size: [SIZE]
 
 #tag1 #tag2 #tag3 #tag4 #tag5
 
-HASHTAG RULE: Exactly 5 hashtags as plain text separated by spaces. No links, no brackets, no URLs. Just plain hashtags like "#hoodie #streetwear #graphictee #casual #cotton".
+HASHTAG RULE: Exactly 5 hashtags as plain text separated by spaces. No links, no brackets, no URLs. Just plain hashtags like "#cami #y2k #summertop #casual #vintage".
 
 Then output ---JSON--- on its own line followed by:
 {
@@ -1235,7 +1235,7 @@ Then output ---JSON--- on its own line followed by:
     const catFields = [
       { key:'color', label:'Color' }, { key:'style', label:'Style' },
       { key:'age', label:'Era / Age' }, { key:'source', label:'Source' },
-      { key:'condition', label:'Condition' },
+      { key:'occasion', label:'Occasion' }, { key:'condition', label:'Condition' },
     ];
     for (const f of catFields) {
       if (categories[f.key]) {
