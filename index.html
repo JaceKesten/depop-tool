@@ -251,6 +251,93 @@
   .price-breakdown { font-size:12px; color:rgba(255,255,255,0.65); margin-top:4px; font-weight:400; }
   .error-box { display:none; background:rgba(244,114,182,0.08); border:1.5px solid rgba(244,114,182,0.3); border-radius:10px; padding:14px 16px; color:#f9a8d4; font-size:13px; margin-top:12px; }
   .error-box.visible { display:block; }
+  /* ── APP CHOOSER ── */
+  #appChooser { position:fixed; inset:0; z-index:9998; background:var(--navy); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:32px; }
+  #appChooser.hidden { display:none; }
+  .chooser-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--text-muted); }
+  .chooser-cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; padding:0 24px; }
+  .chooser-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:20px; padding:36px 32px; width:200px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:14px; transition:all 0.2s; box-shadow:0 8px 32px rgba(0,0,0,0.3); text-align:center; }
+  .chooser-card:hover { border-color:var(--ocean); transform:translateY(-4px); box-shadow:0 16px 48px rgba(107,53,200,0.3); }
+  .chooser-card .cc-icon { font-size:40px; line-height:1; }
+  .chooser-card .cc-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#fff; }
+  .chooser-card .cc-sub { font-size:12px; color:var(--text-muted); line-height:1.4; }
+  .chooser-card.active-choice { border-color:var(--teal); background:rgba(107,53,200,0.15); }
+
+  /* ── SALES TRACKER PAGE ── */
+  #salesPage { display:none; }
+  #salesPage.visible { display:block; }
+  #captionPage { display:block; }
+  #captionPage.hidden { display:none; }
+
+  /* back button */
+  .back-btn { display:inline-flex; align-items:center; gap:8px; background:none; border:1.5px solid var(--border); border-radius:10px; padding:8px 16px; color:var(--text-muted); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; margin-bottom:20px; }
+  .back-btn:hover { border-color:var(--seafoam); color:var(--seafoam); }
+
+  /* stats bar */
+  .stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+  @media(max-width:600px){ .stats-bar { grid-template-columns:repeat(2,1fr); } }
+  .stat-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:14px; padding:16px; text-align:center; }
+  .stat-card.profit-card { background:linear-gradient(135deg,#1e0a3c,#3b1278); border-color:rgba(192,132,252,0.3); }
+  .stat-num { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#fff; line-height:1; }
+  .stat-num.green { color:#4ade80; }
+  .stat-lbl { font-size:11px; color:var(--text-muted); margin-top:4px; letter-spacing:0.5px; }
+
+  /* chart */
+  .chart-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:16px; padding:20px; margin-bottom:24px; }
+  .chart-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; }
+  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:80px; }
+  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+  .chart-bar { width:100%; background:linear-gradient(180deg,var(--teal),var(--ocean)); border-radius:4px 4px 0 0; min-height:2px; transition:height 0.4s ease; }
+  .chart-bar.zero { background:var(--border); }
+  .chart-bar-lbl { font-size:9px; color:var(--text-muted); white-space:nowrap; }
+
+  /* add sale form */
+  .add-sale-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:24px; }
+  .add-sale-header { background:linear-gradient(135deg,#1e0a3c,#3b1278); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+  .add-sale-header h3 { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#fff; }
+  .add-sale-header .toggle-icon { color:var(--seafoam); font-size:18px; transition:transform 0.2s; }
+  .add-sale-header.open .toggle-icon { transform:rotate(45deg); }
+  .add-sale-body { padding:20px; display:none; }
+  .add-sale-body.open { display:block; }
+  .sale-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  @media(max-width:500px){ .sale-form-grid { grid-template-columns:1fr; } }
+  .sale-photo-zone { border:2px dashed var(--border); border-radius:10px; padding:16px; text-align:center; cursor:pointer; position:relative; font-size:12px; color:var(--text-muted); transition:all 0.2s; }
+  .sale-photo-zone:hover { border-color:var(--teal); }
+  .sale-photo-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .sale-photo-preview { width:100%; height:80px; object-fit:cover; border-radius:8px; display:none; }
+  .add-sale-btn { width:100%; padding:13px; background:linear-gradient(135deg,#6b35c8,#c084fc); color:#fff; border:none; border-radius:10px; font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-top:4px; }
+  .add-sale-btn:hover { opacity:0.88; }
+
+  /* sales list */
+  .sales-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:10px; }
+  .sales-list-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); }
+  .sales-actions { display:flex; gap:8px; }
+  .sales-action-btn { padding:7px 14px; border-radius:8px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border:1.5px solid var(--border); background:none; color:var(--text-muted); }
+  .sales-action-btn:hover { border-color:var(--seafoam); color:var(--seafoam); }
+  .sales-action-btn.import-btn { position:relative; }
+  .sales-action-btn.import-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
+  .sale-item { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:14px; padding:16px; display:flex; align-items:center; gap:14px; margin-bottom:10px; transition:all 0.2s; }
+  .sale-item:hover { border-color:rgba(107,53,200,0.4); }
+  .sale-thumb { width:52px; height:52px; border-radius:8px; object-fit:cover; flex-shrink:0; background:rgba(107,53,200,0.15); display:flex; align-items:center; justify-content:center; font-size:20px; border:1px solid var(--border); overflow:hidden; }
+  .sale-thumb img { width:100%; height:100%; object-fit:cover; }
+  .sale-info { flex:1; min-width:0; }
+  .sale-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sale-meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .sale-profit { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; color:#4ade80; white-space:nowrap; }
+  .sale-profit.loss { color:#f87171; }
+  .sale-date { font-size:11px; color:var(--text-muted); text-align:right; margin-top:2px; }
+  .sale-delete { background:none; border:none; color:rgba(244,114,182,0.4); font-size:18px; cursor:pointer; padding:4px 8px; transition:color 0.2s; flex-shrink:0; }
+  .sale-delete:hover { color:var(--coral); }
+  .empty-state { text-align:center; padding:48px 20px; color:var(--text-muted); }
+  .empty-state .empty-icon { font-size:40px; margin-bottom:12px; }
+  .empty-state p { font-size:14px; }
+
+  /* search/filter bar */
+  .filter-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .filter-search { flex:1; min-width:140px; background:#1a1135; border:1.5px solid var(--border); border-radius:10px; padding:9px 14px; color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
+  .filter-search:focus { border-color:var(--teal); }
+  .filter-search::placeholder { color:var(--text-muted); }
+  .filter-select { background:#1a1135; border:1.5px solid var(--border); border-radius:10px; padding:9px 12px; color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; outline:none; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -274,6 +361,23 @@
     </div>
     <button class="pw-btn" onclick="checkPassword()">Enter →</button>
     <div class="pw-error" id="pwError"></div>
+  </div>
+</div>
+
+<!-- ── APP CHOOSER ── -->
+<div id="appChooser" class="hidden">
+  <div class="chooser-title">What would you like to do?</div>
+  <div class="chooser-cards">
+    <div class="chooser-card" onclick="launchApp('caption')">
+      <div class="cc-icon">✍️</div>
+      <div class="cc-title">Caption Builder</div>
+      <div class="cc-sub">Generate Depop listings from photos</div>
+    </div>
+    <div class="chooser-card" onclick="launchApp('sales')">
+      <div class="cc-icon">💰</div>
+      <div class="cc-title">Sales Tracker</div>
+      <div class="cc-sub">Track sales & calculate your profit</div>
+    </div>
   </div>
 </div>
 
@@ -366,6 +470,8 @@
 </div>
 
 <!-- ── MAIN APP ── -->
+<!-- ── CAPTION BUILDER PAGE ── -->
+<div id="captionPage" class="hidden">
 <header>
   <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
@@ -475,6 +581,110 @@
     </div>
   </div>
 </main>
+</div><!-- end captionPage -->
+
+<!-- ── SALES TRACKER PAGE ── -->
+<div id="salesPage">
+  <header>
+    <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
+    </svg>
+    <div class="header-inner">
+      <span class="logo-tag">Depop Tools</span>
+      <h1>Sales<br><span>Tracker</span></h1>
+      <p>Log your sales, track profit, and see how your shop is performing.</p>
+    </div>
+    <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
+    </svg>
+  </header>
+
+  <main>
+    <button class="back-btn" onclick="goHome()">← Back to Menu</button>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-num" id="stTotalSales">0</div><div class="stat-lbl">Total Sales</div></div>
+      <div class="stat-card"><div class="stat-num" id="stTotalRevenue">$0</div><div class="stat-lbl">Total Revenue</div></div>
+      <div class="stat-card profit-card"><div class="stat-num green" id="stTotalProfit">$0</div><div class="stat-lbl">Total Profit</div></div>
+      <div class="stat-card"><div class="stat-num" id="stAvgProfit">$0</div><div class="stat-lbl">Avg Profit / Item</div></div>
+    </div>
+
+    <!-- Monthly Chart -->
+    <div class="chart-card">
+      <div class="chart-title">Monthly Profit</div>
+      <div class="chart-bars" id="profitChart"></div>
+    </div>
+
+    <!-- Add Sale -->
+    <div class="add-sale-card">
+      <div class="add-sale-header" id="addSaleToggle" onclick="toggleAddSale()">
+        <h3>+ Add New Sale</h3>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="add-sale-body" id="addSaleBody">
+        <div class="sale-form-grid">
+          <div class="form-group" style="grid-column:1/-1">
+            <label for="saleItemName">Item Name *</label>
+            <input type="text" id="saleItemName" placeholder="e.g. Grey Graphic Hoodie">
+          </div>
+          <div class="form-group">
+            <label for="saleCostPrice">Cost Price ($) *</label>
+            <input type="number" id="saleCostPrice" placeholder="e.g. 8.00" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="saleSoldPrice">Sold For ($) *</label>
+            <input type="number" id="saleSoldPrice" placeholder="e.g. 22.00" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="salePlatform">Platform</label>
+            <select id="salePlatform">
+              <option value="Depop">Depop</option>
+              <option value="eBay">eBay</option>
+              <option value="Vinted">Vinted</option>
+              <option value="Poshmark">Poshmark</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Photo (optional)</label>
+            <div class="sale-photo-zone" id="salePhotoZone">
+              <input type="file" id="salePhotoInput" accept="image/*" onchange="handleSalePhoto(this)">
+              <img class="sale-photo-preview" id="salePhotoPreview">
+              <span id="salePhotoText">📷 Tap to add photo</span>
+            </div>
+          </div>
+        </div>
+        <div class="error-box" id="saleError"></div>
+        <button class="add-sale-btn" onclick="addSale()">Add Sale</button>
+      </div>
+    </div>
+
+    <!-- Filter & List -->
+    <div class="sales-list-header">
+      <div class="sales-list-title">Your Sales</div>
+      <div class="sales-actions">
+        <button class="sales-action-btn" onclick="exportSales()">⬇ Export</button>
+        <div class="sales-action-btn import-btn">
+          ⬆ Import
+          <input type="file" accept=".json" onchange="importSales(this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <input class="filter-search" type="text" id="saleSearch" placeholder="Search sales..." oninput="renderSales()">
+      <select class="filter-select" id="saleSortBy" onchange="renderSales()">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="profit-high">Highest profit</option>
+        <option value="profit-low">Lowest profit</option>
+      </select>
+    </div>
+
+    <div id="salesList"></div>
+  </main>
+</div>
 
 <script>
 // ── CONSTANTS ─────────────────────────────────────────────
@@ -496,6 +706,7 @@ let stayChecked = false;
 
 if (store.get('depop_auth') === 'yes') {
   document.getElementById('pwScreen').classList.add('hidden');
+  document.getElementById('appChooser').classList.remove('hidden');
 }
 
 function toggleStay() {
@@ -509,13 +720,13 @@ function checkPassword() {
     if (stayChecked) {
       store.set('depop_auth', 'yes');
       store.set('depop_session_time', new Date().toISOString());
-      // increment session count
       const sc = parseInt(store.get('depop_session_count') || '0') + 1;
       store.set('depop_session_count', sc);
     }
     if (!store.get('depop_first_used')) store.set('depop_first_used', new Date().toISOString());
     store.set('depop_last_used', new Date().toISOString());
     document.getElementById('pwScreen').classList.add('hidden');
+    document.getElementById('appChooser').classList.remove('hidden');
   } else {
     const inp = document.getElementById('pwInput');
     inp.classList.remove('shake');
@@ -927,6 +1138,231 @@ Then output ---JSON--- on its own line followed by:
     document.getElementById('loadingState').classList.remove('visible');
   }
 }
+// ── APP ROUTING ───────────────────────────────────────────
+function launchApp(app) {
+  document.getElementById('appChooser').classList.add('hidden');
+  if (app === 'caption') {
+    document.getElementById('captionPage').classList.remove('hidden');
+    document.getElementById('salesPage').style.display = 'none';
+  } else {
+    document.getElementById('captionPage').classList.add('hidden');
+    document.getElementById('salesPage').style.display = 'block';
+    renderSales();
+    renderChart();
+  }
+}
+
+function goHome() {
+  document.getElementById('captionPage').classList.add('hidden');
+  document.getElementById('salesPage').style.display = 'none';
+  document.getElementById('appChooser').classList.remove('hidden');
+}
+
+// ── SALES TRACKER ─────────────────────────────────────────
+let salePhotoData = null;
+
+function getSales() {
+  try { return JSON.parse(store.get('depop_sales') || '[]'); } catch { return []; }
+}
+function saveSales(sales) { store.set('depop_sales', JSON.stringify(sales)); }
+
+function toggleAddSale() {
+  const body = document.getElementById('addSaleBody');
+  const hdr = document.getElementById('addSaleToggle');
+  const open = body.classList.toggle('open');
+  hdr.classList.toggle('open', open);
+}
+
+function handleSalePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    salePhotoData = e.target.result;
+    const preview = document.getElementById('salePhotoPreview');
+    preview.src = salePhotoData;
+    preview.style.display = 'block';
+    document.getElementById('salePhotoText').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function addSale() {
+  const name = document.getElementById('saleItemName').value.trim();
+  const cost = parseFloat(document.getElementById('saleCostPrice').value);
+  const sold = parseFloat(document.getElementById('saleSoldPrice').value);
+  const platform = document.getElementById('salePlatform').value;
+  const errBox = document.getElementById('saleError');
+  errBox.className = 'error-box';
+
+  if (!name) { errBox.textContent = 'Please enter an item name.'; errBox.classList.add('visible'); return; }
+  if (isNaN(cost) || cost < 0) { errBox.textContent = 'Please enter a valid cost price.'; errBox.classList.add('visible'); return; }
+  if (isNaN(sold) || sold < 0) { errBox.textContent = 'Please enter a valid sold price.'; errBox.classList.add('visible'); return; }
+
+  const profit = parseFloat((sold - cost).toFixed(2));
+  const sale = {
+    id: Date.now().toString(),
+    name, cost, sold, profit, platform,
+    photo: salePhotoData || null,
+    date: new Date().toISOString(),
+  };
+
+  const sales = getSales();
+  sales.unshift(sale);
+  saveSales(sales);
+
+  // Reset form
+  document.getElementById('saleItemName').value = '';
+  document.getElementById('saleCostPrice').value = '';
+  document.getElementById('saleSoldPrice').value = '';
+  document.getElementById('salePlatform').value = 'Depop';
+  document.getElementById('salePhotoPreview').style.display = 'none';
+  document.getElementById('salePhotoText').style.display = '';
+  document.getElementById('salePhotoInput').value = '';
+  salePhotoData = null;
+  errBox.className = 'error-box';
+
+  // Close form, refresh
+  document.getElementById('addSaleBody').classList.remove('open');
+  document.getElementById('addSaleToggle').classList.remove('open');
+  renderSales();
+  renderChart();
+}
+
+function deleteSale(id) {
+  if (!confirm('Delete this sale?')) return;
+  const sales = getSales().filter(s => s.id !== id);
+  saveSales(sales);
+  renderSales();
+  renderChart();
+}
+
+function renderSales() {
+  const search = (document.getElementById('saleSearch')?.value || '').toLowerCase();
+  const sort = document.getElementById('saleSortBy')?.value || 'newest';
+  let sales = getSales();
+
+  if (search) sales = sales.filter(s => s.name.toLowerCase().includes(search));
+
+  sales.sort((a, b) => {
+    if (sort === 'newest') return new Date(b.date) - new Date(a.date);
+    if (sort === 'oldest') return new Date(a.date) - new Date(b.date);
+    if (sort === 'profit-high') return b.profit - a.profit;
+    if (sort === 'profit-low') return a.profit - b.profit;
+    return 0;
+  });
+
+  // Update stats from ALL sales (not filtered)
+  const allSales = getSales();
+  const totalSales = allSales.length;
+  const totalRevenue = allSales.reduce((s, x) => s + x.sold, 0);
+  const totalProfit = allSales.reduce((s, x) => s + x.profit, 0);
+  const avgProfit = totalSales > 0 ? totalProfit / totalSales : 0;
+  document.getElementById('stTotalSales').textContent = totalSales;
+  document.getElementById('stTotalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+  document.getElementById('stTotalProfit').textContent = (totalProfit >= 0 ? '+' : '') + '$' + totalProfit.toFixed(2);
+  document.getElementById('stAvgProfit').textContent = '$' + avgProfit.toFixed(2);
+
+  const list = document.getElementById('salesList');
+  if (!sales.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">${search ? '🔍' : '📦'}</div><p>${search ? 'No sales match your search.' : 'No sales yet. Add your first sale above!'}</p></div>`;
+    return;
+  }
+
+  list.innerHTML = sales.map(s => {
+    const profitClass = s.profit < 0 ? 'loss' : '';
+    const profitSign = s.profit >= 0 ? '+' : '';
+    const dateStr = new Date(s.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const thumbHtml = s.photo
+      ? `<div class="sale-thumb"><img src="${s.photo}" alt="${s.name}"></div>`
+      : `<div class="sale-thumb" style="font-size:22px;">👕</div>`;
+    return `<div class="sale-item">
+      ${thumbHtml}
+      <div class="sale-info">
+        <div class="sale-name">${s.name}</div>
+        <div class="sale-meta">Cost $${s.cost.toFixed(2)} · Sold $${s.sold.toFixed(2)} · ${s.platform}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="sale-profit ${profitClass}">${profitSign}$${s.profit.toFixed(2)}</div>
+        <div class="sale-date">${dateStr}</div>
+      </div>
+      <button class="sale-delete" onclick="deleteSale('${s.id}')" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function renderChart() {
+  const sales = getSales();
+  const chart = document.getElementById('profitChart');
+  if (!chart) return;
+
+  // Get last 6 months
+  const months = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({
+      key: `${d.getFullYear()}-${d.getMonth()}`,
+      label: d.toLocaleString('en-US', { month: 'short' }),
+      profit: 0,
+    });
+  }
+
+  sales.forEach(s => {
+    const d = new Date(s.date);
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    const m = months.find(m => m.key === key);
+    if (m) m.profit += s.profit;
+  });
+
+  const max = Math.max(...months.map(m => m.profit), 1);
+
+  chart.innerHTML = months.map(m => {
+    const pct = Math.max(0, (m.profit / max) * 100);
+    const isZero = m.profit === 0;
+    return `<div class="chart-bar-wrap">
+      <div class="chart-bar ${isZero ? 'zero' : ''}" style="height:${pct}%;" title="$${m.profit.toFixed(2)}"></div>
+      <div class="chart-bar-lbl">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function exportSales() {
+  const sales = getSales();
+  if (!sales.length) { alert('No sales to export.'); return; }
+  const json = JSON.stringify(sales, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `depop-sales-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importSales(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Invalid format');
+      const existing = getSales();
+      const existingIds = new Set(existing.map(s => s.id));
+      const newSales = imported.filter(s => !existingIds.has(s.id));
+      saveSales([...existing, ...newSales]);
+      renderSales();
+      renderChart();
+      alert(`✓ Imported ${newSales.length} new sale(s). ${imported.length - newSales.length} duplicate(s) skipped.`);
+    } catch {
+      alert('Import failed — make sure the file is a valid export from this tool.');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
 // ── TWINKLING STAR CANVAS ────────────────────────────────
 (function() {
   const canvas = document.getElementById('starCanvas');
