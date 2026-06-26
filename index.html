@@ -367,7 +367,7 @@
 
 <!-- ── APP CHOOSER ── -->
 <div id="appChooser" class="hidden">
-  <div class="chooser-title">AI Depop<br><span>Directory</span></div>
+  <div class="chooser-title">Depop<br><span>Directory</span></div>
   <div class="chooser-cards">
     <div class="chooser-card" onclick="launchApp('caption')">
       <div class="cc-icon">✍️</div>
@@ -1155,23 +1155,22 @@ async function generate() {
 
   const measurementsBlock = hasMeasurements ? `\n📏 MEASUREMENTS\n${measurementsLine}\n` : '';
 
-  const systemPrompt = `You are an expert Depop reseller writing viral, accurate listings. Study the photo(s) carefully.
+  const systemPrompt = `You are an expert Depop reseller writing viral, highly-converting listings. Study every detail of the photo(s) carefully — notice specific details like ribbons, lace trim, buttons, stitching, neckline shapes, fabric texture.
 
-Output the listing in EXACTLY this format — no deviations, no extra text:
+Output the listing in EXACTLY this format:
 
 ‼️ DM FOR MORE SIZES ‼️
 
 [Color] [Item Type] [Brief Descriptor] [era if applicable e.g. Y2K, Vintage]
 
-[2-3 punchy sentences describing the item: what it looks like, any graphic/print, the vibe, who'd want it. Short and appealing like these examples:
-"Grey zip-up hoodie featuring a unique graphic print of a Social Security card on the front. Perfect for a casual streetwear look."
-"White tank top with a striking CHOOSE JUICY graphic print, fitted silhouette and classic scoop neck. Perfect for Y2K-inspired looks or casual summer days."]
+[2-3 sentences. Be SPECIFIC about what you see — call out the exact details (ribbon bow, lace trim, ruffled cap sleeves, lace-up bust, etc). Then add one sentence of vibe/aesthetic language that makes it feel desirable — something like "giving main character energy", "perfect for chasing that coquette vintage look", "a standout piece for festival season". Make it sound like a cool person wrote it, not a product listing bot. Match the length and energy of this example:
+"Black and white gingham top with an adorable ruffled off-shoulder neckline, delicate lace trim detail, and a dainty black ribbon bow at the bust. Fitted silhouette with a sweet cottage-meets-Y2K aesthetic that's giving main character energy. Perfect for anyone chasing that coquette, vintage-inspired look."]
 ${measurementsBlock}
 Size: [SIZE]
 
 #tag1 #tag2 #tag3 #tag4 #tag5
 
-HASHTAG RULE: Output exactly 5 hashtags as plain text separated by spaces — like "#hoodie #streetwear #graphictee #casual #cotton". No links, no brackets, no URLs, no markdown. Just plain hashtags.
+HASHTAG RULE: Exactly 5 hashtags as plain text separated by spaces. No links, no brackets, no URLs. Just plain hashtags like "#hoodie #streetwear #graphictee #casual #cotton".
 
 Then output ---JSON--- on its own line followed by:
 {
@@ -1179,6 +1178,7 @@ Then output ---JSON--- on its own line followed by:
   "source": "1-2 from: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired — usually preloved or vintage",
   "age": "exactly one of: Modern, 00s, 90s, 80s, 70s, 60s, 50s, Antique",
   "style": "exactly 3 comma-separated from: Streetwear, Sportswear, Loungewear, Goth, Retro, Boho, Western, Indie, Skater, Rave, Costume, Cosplay, Grunge, Emo, Minimalist, Preppy, Avant Garde, Punk, Glam, Regency, Casual, Utility, Futuristic, Cottage, Fairy, Kidcore, Y2K, Biker, Gorpcore, Twee, Coquette, Whimsygoth",
+  "occasion": "1-3 comma-separated from ONLY: Casual, Festival, Gifting, Going Out, Outdoors, Party, Relaxation, School, Ski, Special Occasion, Summer, Holiday, Winter, Work, Workout",
   "condition": "one of: New with tags, Like new, Good, Fair, Well worn",
   "price": "$X-$Y in US dollars, realistic Depop secondhand value"
 }`;
