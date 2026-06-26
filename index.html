@@ -254,7 +254,8 @@
   /* ── APP CHOOSER ── */
   #appChooser { position:fixed; inset:0; z-index:9998; background:var(--navy); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:32px; }
   #appChooser.hidden { display:none; }
-  .chooser-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--text-muted); }
+  .chooser-title { font-family:'Barlow Condensed',sans-serif; font-size:clamp(48px,9vw,88px); font-weight:900; letter-spacing:-1px; text-transform:uppercase; color:#fff; line-height:0.9; text-align:center; }
+  .chooser-title span { color:var(--coral); }
   .chooser-cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; padding:0 24px; }
   .chooser-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:20px; padding:36px 32px; width:200px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:14px; transition:all 0.2s; box-shadow:0 8px 32px rgba(0,0,0,0.3); text-align:center; }
   .chooser-card:hover { border-color:var(--ocean); transform:translateY(-4px); box-shadow:0 16px 48px rgba(107,53,200,0.3); }
@@ -366,7 +367,7 @@
 
 <!-- ── APP CHOOSER ── -->
 <div id="appChooser" class="hidden">
-  <div class="chooser-title">What would you like to do?</div>
+  <div class="chooser-title">Depop<br><span>Directory</span></div>
   <div class="chooser-cards">
     <div class="chooser-card" onclick="launchApp('caption')">
       <div class="cc-icon">✍️</div>
@@ -377,6 +378,11 @@
       <div class="cc-icon">💰</div>
       <div class="cc-title">Sales Tracker</div>
       <div class="cc-sub">Track sales & calculate your profit</div>
+    </div>
+    <div class="chooser-card" onclick="launchApp('pricing')">
+      <div class="cc-icon">🏷️</div>
+      <div class="cc-title">Pricing Calculator</div>
+      <div class="cc-sub">Find the perfect listing price with margin sliders</div>
     </div>
   </div>
   <button onclick="backToPassword()" style="background:none;border:1.5px solid rgba(107,53,200,0.3);border-radius:10px;padding:9px 20px;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:8px;" onmouseover="this.style.borderColor='var(--seafoam)';this.style.color='var(--seafoam)'" onmouseout="this.style.borderColor='rgba(107,53,200,0.3)';this.style.color='var(--text-muted)'">🔒 Back to Password</button>
@@ -685,6 +691,124 @@
     </div>
 
     <div id="salesList"></div>
+  </main>
+</div>
+
+<!-- ── PRICING CALCULATOR PAGE ── -->
+<div id="pricingPage" style="display:none;">
+  <header>
+    <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
+    </svg>
+    <div class="header-inner">
+      <span class="logo-tag">Depop Tools</span>
+      <h1>Pricing<br><span>Calculator</span></h1>
+      <p>Find the perfect listing price and see your profit in real time.</p>
+    </div>
+    <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
+    </svg>
+  </header>
+  <main>
+    <button class="back-btn" onclick="goHome()">← Back to Menu</button>
+
+    <!-- Result Display -->
+    <div style="background:linear-gradient(135deg,#1e0a3c,#3b1278);border-radius:20px;padding:32px;text-align:center;margin-bottom:24px;border:1.5px solid rgba(192,132,252,0.2);">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--seafoam);margin-bottom:8px;">Suggested Listing Price</div>
+      <div id="pcListingPrice" style="font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;color:#fff;line-height:1;">$0</div>
+      <div style="display:flex;justify-content:center;gap:32px;margin-top:20px;flex-wrap:wrap;">
+        <div>
+          <div id="pcProfit" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#4ade80;">+$0</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Your Profit</div>
+        </div>
+        <div>
+          <div id="pcMarginPct" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--seafoam);">0%</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Profit Margin</div>
+        </div>
+        <div>
+          <div id="pcROI" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--coral);">0x</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Return on Cost</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="card">
+      <div class="card-header"><span class="step">1</span><h2>Cost Price</h2></div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;">
+            <label for="pcCostInput">What did you pay? ($)</label>
+            <input type="number" id="pcCostInput" placeholder="e.g. 8.00" min="0" step="0.01" oninput="calcPricing()" style="margin-top:6px;">
+          </div>
+          <div style="flex:1;min-width:120px;">
+            <label for="pcShippingInput">Shipping cost ($) <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(optional)</span></label>
+            <input type="number" id="pcShippingInput" placeholder="e.g. 4.00" min="0" step="0.01" oninput="calcPricing()" style="margin-top:6px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="step">2</span><h2>Target Profit Margin</h2></div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <label style="margin:0;">Desired margin</label>
+          <span id="pcMarginLabel" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--seafoam);">50%</span>
+        </div>
+        <input type="range" id="pcMarginSlider" min="10" max="300" value="50" step="5" oninput="calcPricing()" style="width:100%;accent-color:var(--teal);height:6px;cursor:pointer;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;">
+          <span>10% (Low)</span><span>150% (Good)</span><span>300% (Max)</span>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <label style="margin:0;">Depop fee (10%)</label>
+            <div id="pcFeeToggle" onclick="togglePcFee()" style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+              <div id="pcFeeSwitch" style="width:36px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0;">
+                <div id="pcFeeKnob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+              </div>
+              <span id="pcFeeLbl" style="font-size:13px;color:var(--text-muted);">Off</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <label style="margin:0;">Depop Boost (12%)</label>
+            <div id="pcBoostToggle" onclick="togglePcBoost()" style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+              <div id="pcBoostSwitch" style="width:36px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0;">
+                <div id="pcBoostKnob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+              </div>
+              <span id="pcBoostLbl" style="font-size:13px;color:var(--text-muted);">Off</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="card">
+      <div class="card-header"><span class="step">3</span><h2>Breakdown</h2></div>
+      <div class="card-body" id="pcBreakdown">
+        <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px 0;">Enter a cost price above to see the breakdown.</div>
+      </div>
+    </div>
+
+    <!-- What-if slider -->
+    <div class="card">
+      <div class="card-header"><span class="step">✦</span><h2>What If I Listed at...</h2></div>
+      <div class="card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <label style="margin:0;">Custom price</label>
+          <span id="pcWhatIfPrice" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#fff;">$0</span>
+        </div>
+        <input type="range" id="pcWhatIfSlider" min="1" max="200" value="20" step="1" oninput="calcWhatIf()" style="width:100%;accent-color:var(--coral);height:6px;cursor:pointer;">
+        <div style="background:#1a1135;border-radius:12px;padding:16px;margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;" id="pcWhatIfResult">
+          <div><div id="wiProfit" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:#4ade80;">$0</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Profit</div></div>
+          <div><div id="wiMargin" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--seafoam);">0%</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Margin</div></div>
+          <div><div id="wiVerdict" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;padding-top:3px;">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Verdict</div></div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1143,20 +1267,26 @@ Then output ---JSON--- on its own line followed by:
 // ── APP ROUTING ───────────────────────────────────────────
 function launchApp(app) {
   document.getElementById('appChooser').classList.add('hidden');
+  document.getElementById('captionPage').classList.add('hidden');
+  document.getElementById('salesPage').style.display = 'none';
+  document.getElementById('pricingPage').style.display = 'none';
+
   if (app === 'caption') {
     document.getElementById('captionPage').classList.remove('hidden');
-    document.getElementById('salesPage').style.display = 'none';
-  } else {
-    document.getElementById('captionPage').classList.add('hidden');
+  } else if (app === 'sales') {
     document.getElementById('salesPage').style.display = 'block';
     renderSales();
     renderChart();
+  } else if (app === 'pricing') {
+    document.getElementById('pricingPage').style.display = 'block';
+    calcPricing();
   }
 }
 
 function goHome() {
   document.getElementById('captionPage').classList.add('hidden');
   document.getElementById('salesPage').style.display = 'none';
+  document.getElementById('pricingPage').style.display = 'none';
   document.getElementById('appChooser').classList.remove('hidden');
 }
 
@@ -1372,6 +1502,122 @@ function importSales(input) {
   };
   reader.readAsText(file);
   input.value = '';
+}
+
+// ── PRICING CALCULATOR ───────────────────────────────────
+let pcFeeOn = false;
+let pcBoostOn = false;
+
+function togglePcFee() {
+  pcFeeOn = !pcFeeOn;
+  document.getElementById('pcFeeSwitch').style.background = pcFeeOn ? 'var(--teal)' : 'var(--border)';
+  document.getElementById('pcFeeKnob').style.left = pcFeeOn ? '19px' : '3px';
+  document.getElementById('pcFeeLbl').textContent = pcFeeOn ? 'On' : 'Off';
+  document.getElementById('pcFeeLbl').style.color = pcFeeOn ? 'var(--seafoam)' : 'var(--text-muted)';
+  calcPricing();
+}
+
+function togglePcBoost() {
+  pcBoostOn = !pcBoostOn;
+  document.getElementById('pcBoostSwitch').style.background = pcBoostOn ? 'var(--coral)' : 'var(--border)';
+  document.getElementById('pcBoostKnob').style.left = pcBoostOn ? '19px' : '3px';
+  document.getElementById('pcBoostLbl').textContent = pcBoostOn ? 'On' : 'Off';
+  document.getElementById('pcBoostLbl').style.color = pcBoostOn ? 'var(--coral)' : 'var(--text-muted)';
+  calcPricing();
+}
+
+function calcPricing() {
+  const cost = parseFloat(document.getElementById('pcCostInput')?.value) || 0;
+  const shipping = parseFloat(document.getElementById('pcShippingInput')?.value) || 0;
+  const margin = parseInt(document.getElementById('pcMarginSlider')?.value) || 50;
+  document.getElementById('pcMarginLabel').textContent = margin + '%';
+
+  const totalCost = cost + shipping;
+
+  if (totalCost <= 0) {
+    document.getElementById('pcListingPrice').textContent = '$0';
+    document.getElementById('pcProfit').textContent = '+$0';
+    document.getElementById('pcMarginPct').textContent = '0%';
+    document.getElementById('pcROI').textContent = '0x';
+    document.getElementById('pcBreakdown').innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px 0;">Enter a cost price above to see the breakdown.</div>';
+    updateWhatIfSlider(totalCost);
+    return;
+  }
+
+  // Work out target profit then gross up for fees
+  const targetProfit = totalCost * (margin / 100);
+  let feeMultiplier = 1;
+  if (pcFeeOn) feeMultiplier += 0.10;
+  if (pcBoostOn) feeMultiplier += 0.12;
+
+  // Listing price needed so after fees you net targetProfit over cost
+  const listing = Math.ceil(((totalCost + targetProfit) / (1 - (feeMultiplier - 1))) * 100) / 100;
+  const depopFee = pcFeeOn ? listing * 0.10 : 0;
+  const boostFee = pcBoostOn ? listing * 0.12 : 0;
+  const actualProfit = listing - totalCost - depopFee - boostFee;
+  const actualMargin = totalCost > 0 ? (actualProfit / totalCost) * 100 : 0;
+  const roi = totalCost > 0 ? (listing / totalCost) : 0;
+
+  document.getElementById('pcListingPrice').textContent = '$' + listing.toFixed(2);
+  const profitEl = document.getElementById('pcProfit');
+  profitEl.textContent = (actualProfit >= 0 ? '+' : '') + '$' + actualProfit.toFixed(2);
+  profitEl.style.color = actualProfit >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('pcMarginPct').textContent = actualMargin.toFixed(0) + '%';
+  document.getElementById('pcROI').textContent = roi.toFixed(1) + 'x';
+
+  // Breakdown rows
+  const rows = [
+    { label: 'Cost Price', val: `$${cost.toFixed(2)}`, color: '#f87171' },
+    shipping > 0 ? { label: 'Shipping Cost', val: `$${shipping.toFixed(2)}`, color: '#f87171' } : null,
+    { label: 'Listing Price', val: `$${listing.toFixed(2)}`, color: '#fff', bold: true },
+    pcFeeOn ? { label: 'Depop Fee (10%)', val: `-$${depopFee.toFixed(2)}`, color: '#f87171' } : null,
+    pcBoostOn ? { label: 'Boost Fee (12%)', val: `-$${boostFee.toFixed(2)}`, color: '#fbbf24' } : null,
+    { label: 'Your Profit', val: `${actualProfit >= 0 ? '+' : ''}$${actualProfit.toFixed(2)}`, color: actualProfit >= 0 ? '#4ade80' : '#f87171', bold: true },
+  ].filter(Boolean);
+
+  document.getElementById('pcBreakdown').innerHTML = rows.map(r =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:13px;color:var(--text-muted);">${r.label}</span>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:${r.bold ? '20' : '16'}px;font-weight:${r.bold ? '900' : '600'};color:${r.color};">${r.val}</span>
+    </div>`
+  ).join('').replace(/border-bottom[^;]+;(?=[^<]*<\/div>[^<]*$)/, '');
+
+  updateWhatIfSlider(totalCost);
+}
+
+function updateWhatIfSlider(totalCost) {
+  const slider = document.getElementById('pcWhatIfSlider');
+  if (!slider) return;
+  const max = Math.max(200, Math.ceil(totalCost * 5));
+  slider.max = max;
+  if (parseFloat(slider.value) < 1) slider.value = Math.max(1, Math.ceil(totalCost * 1.5));
+  calcWhatIf();
+}
+
+function calcWhatIf() {
+  const cost = (parseFloat(document.getElementById('pcCostInput')?.value) || 0) +
+               (parseFloat(document.getElementById('pcShippingInput')?.value) || 0);
+  const price = parseFloat(document.getElementById('pcWhatIfSlider')?.value) || 0;
+  document.getElementById('pcWhatIfPrice').textContent = '$' + price.toFixed(0);
+
+  const depopFee = pcFeeOn ? price * 0.10 : 0;
+  const boostFee = pcBoostOn ? price * 0.12 : 0;
+  const profit = price - cost - depopFee - boostFee;
+  const margin = cost > 0 ? (profit / cost) * 100 : 0;
+
+  const profitEl = document.getElementById('wiProfit');
+  profitEl.textContent = (profit >= 0 ? '+' : '') + '$' + profit.toFixed(2);
+  profitEl.style.color = profit >= 0 ? '#4ade80' : '#f87171';
+
+  document.getElementById('wiMargin').textContent = margin.toFixed(0) + '%';
+
+  const verdictEl = document.getElementById('wiVerdict');
+  if (cost <= 0) { verdictEl.textContent = '—'; verdictEl.style.color = 'var(--text-muted)'; }
+  else if (profit < 0) { verdictEl.textContent = '❌ Loss'; verdictEl.style.color = '#f87171'; }
+  else if (margin < 20) { verdictEl.textContent = '⚠️ Thin'; verdictEl.style.color = '#fbbf24'; }
+  else if (margin < 60) { verdictEl.textContent = '✓ Fair'; verdictEl.style.color = '#4ade80'; }
+  else if (margin < 150) { verdictEl.textContent = '🔥 Great'; verdictEl.style.color = '#4ade80'; }
+  else { verdictEl.textContent = '🚀 Excellent'; verdictEl.style.color = 'var(--seafoam)'; }
 }
 
 // ── TWINKLING STAR CANVAS ────────────────────────────────
