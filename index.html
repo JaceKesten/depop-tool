@@ -379,6 +379,7 @@
       <div class="cc-sub">Track sales & calculate your profit</div>
     </div>
   </div>
+  <button onclick="backToPassword()" style="background:none;border:1.5px solid rgba(107,53,200,0.3);border-radius:10px;padding:9px 20px;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:8px;" onmouseover="this.style.borderColor='var(--seafoam)';this.style.color='var(--seafoam)'" onmouseout="this.style.borderColor='rgba(107,53,200,0.3)';this.style.color='var(--text-muted)'">🔒 Back to Password</button>
 </div>
 
 <!-- ── ADMIN BUTTON ── -->
@@ -487,6 +488,7 @@
 </header>
 
 <main>
+  <button class="back-btn" onclick="goHome()">← Back to Menu</button>
   <div class="api-section">
     <label for="apiKey">🔑 Anthropic API Key</label>
     <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
@@ -1156,6 +1158,15 @@ function goHome() {
   document.getElementById('captionPage').classList.add('hidden');
   document.getElementById('salesPage').style.display = 'none';
   document.getElementById('appChooser').classList.remove('hidden');
+}
+
+function backToPassword() {
+  document.getElementById('appChooser').classList.add('hidden');
+  store.del('depop_auth');
+  store.del('depop_session_time');
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwError').textContent = '';
+  document.getElementById('pwScreen').classList.remove('hidden');
 }
 
 // ── SALES TRACKER ─────────────────────────────────────────
