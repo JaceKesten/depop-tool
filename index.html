@@ -3,353 +3,356 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Depop Listing Generator</title>
+<title>Depop Directory</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #06040f;
-    --deep-ocean: #110d24;
-    --ocean: #6b35c8;
-    --teal: #9b59f5;
-    --seafoam: #c084fc;
-    --warm-white: #0e0b1e;
-    --coral: #f472b6;
-    --text: #f0e8ff;
-    --text-muted: #9d8ec4;
-    --border: #2d1f54;
-    --nebula1: #1e0a3c;
-    --nebula2: #0a1a3a;
-    --star: #e2d9ff;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --navy:#06040f; --deep:#110d24; --panel:#0e0b1e;
+  --ocean:#6b35c8; --teal:#9b59f5; --seafoam:#c084fc;
+  --coral:#f472b6; --text:#f0e8ff; --muted:#9d8ec4;
+  --border:#2d1f54; --green:#4ade80; --red:#f87171;
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-  body {
-    font-family:'Barlow',sans-serif;
-    background: var(--navy);
-    color: var(--text);
-    min-height:100vh;
-    position: relative;
-  }
+/* ── NEBULA BG ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 30%,rgba(107,53,200,.18) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 10%,rgba(244,114,182,.12) 0%,transparent 45%),
+    radial-gradient(ellipse at 60% 80%,rgba(155,89,245,.14) 0%,transparent 50%);
+}
+#starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
-  /* Nebula glow layer */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse at 20% 30%, rgba(107,53,200,0.18) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 10%, rgba(244,114,182,0.12) 0%, transparent 45%),
-      radial-gradient(ellipse at 60% 80%, rgba(155,89,245,0.14) 0%, transparent 50%),
-      radial-gradient(ellipse at 10% 85%, rgba(30,10,60,0.6) 0%, transparent 40%);
-    pointer-events: none;
-  }
+/* ── PASSWORD ── */
+#pwScreen{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;}
+#pwScreen.hidden{display:none;}
+.pw-box{background:var(--deep);border-radius:20px;padding:44px 40px 36px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 60px rgba(107,53,200,.15);border:1.5px solid rgba(107,53,200,.25);margin:24px;}
+.pw-logo{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;color:#fff;line-height:1;white-space:nowrap;}
+.pw-logo span{color:var(--coral);}
+.pw-sub{font-size:13px;color:rgba(192,132,252,.7);margin-top:10px;}
+.pw-input-wrap input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(118,200,212,.2);border-radius:10px;padding:13px 16px;color:#fff;font-family:'Barlow',sans-serif;font-size:16px;letter-spacing:3px;outline:none;transition:border-color .2s;}
+.pw-input-wrap input:focus{border-color:var(--seafoam);}
+.pw-input-wrap input::placeholder{letter-spacing:1px;color:rgba(255,255,255,.25);font-size:13px;}
+.pw-input-wrap input.shake{animation:shake .4s ease;border-color:var(--coral)!important;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.pw-btn{width:100%;background:linear-gradient(135deg,#6b35c8,#c084fc);color:#fff;border:none;border-radius:10px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(107,53,200,.4);}
+.pw-btn:hover{opacity:.88;}
+.pw-stay{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.pw-stay-box{width:18px;height:18px;border:2px solid rgba(118,200,212,.4);border-radius:4px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.pw-stay-box.checked{background:var(--teal);border-color:var(--teal);}
+.pw-stay-box.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+.pw-stay-label{font-size:13px;color:rgba(192,132,252,.7);}
+.pw-error{color:var(--coral);font-size:12px;text-align:center;min-height:16px;}
 
-  /* Star canvas sits above nebula */
-  #starCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
+/* ── DASHBOARD LAYOUT ── */
+#app{display:none;min-height:100vh;position:relative;z-index:1;}
+#app.visible{display:flex;}
 
-  main, header, #pwScreen, #adminScreen, #adminBtn { position: relative; z-index: 1; }
+/* ── SIDEBAR ── */
+#sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--deep);border-right:1.5px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  overflow-y:auto;
+}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border);}
+.sb-logo-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:#fff;line-height:1;}
+.sb-logo-text span{color:var(--coral);}
+.sb-logo-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
 
-  /* ── PASSWORD SCREEN ── */
-  #pwScreen { position:fixed; inset:0; z-index:9999; background:var(--navy); display:flex; align-items:center; justify-content:center; }
-  #pwScreen.hidden { display:none; }
-  .pw-box { background:var(--deep-ocean); border-radius:20px; padding:44px 40px 36px; width:100%; max-width:400px; display:flex; flex-direction:column; gap:20px; box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 60px rgba(107,53,200,0.15); border:1.5px solid rgba(107,53,200,0.25); margin:24px; }
-  .pw-logo {
-    font-family:'Barlow Condensed',sans-serif;
-    font-size:36px; font-weight:900;
-    text-transform:uppercase; letter-spacing:1px;
-    color:#fff; line-height:1;
-    white-space: nowrap;
-  }
-  .pw-logo span { color:var(--coral); }
-  .pw-sub { font-size:13px; color:rgba(192,132,252,0.7); margin-top:10px; }
-  .pw-input-wrap input { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(118,200,212,0.2); border-radius:10px; padding:13px 16px; color:#fff; font-family:'Barlow',sans-serif; font-size:16px; letter-spacing:3px; outline:none; transition:border-color 0.2s; }
-  .pw-input-wrap input:focus { border-color:var(--seafoam); }
-  .pw-input-wrap input::placeholder { letter-spacing:1px; color:rgba(255,255,255,0.25); font-size:13px; }
-  .pw-input-wrap input.shake { animation:shake 0.4s ease; border-color:var(--coral)!important; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
-  .pw-btn { width:100%; background:linear-gradient(135deg,#6b35c8,#c084fc); color:#fff; border:none; border-radius:10px; padding:14px; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:opacity 0.2s; box-shadow:0 4px 20px rgba(107,53,200,0.4); }
-  .pw-btn:hover { opacity:0.88; }
-  .pw-stay { display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
-  .pw-stay-box { width:18px; height:18px; border:2px solid rgba(118,200,212,0.4); border-radius:4px; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
-  .pw-stay-box.checked { background:var(--teal); border-color:var(--teal); }
-  .pw-stay-box.checked::after { content:'✓'; color:#fff; font-size:11px; font-weight:700; }
-  .pw-stay-label { font-size:13px; color:rgba(118,200,212,0.7); }
-  .pw-error { color:var(--coral); font-size:12px; text-align:center; min-height:16px; }
+.sb-nav{flex:1;padding:12px 0;}
+.sb-section-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:10px 20px 4px;opacity:.6;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;margin:1px 0;border-radius:0 8px 8px 0;margin-right:8px;}
+.sb-item:hover{background:rgba(107,53,200,.15);color:#fff;}
+.sb-item.active{background:rgba(107,53,200,.25);border-left-color:var(--coral);color:#fff;}
+.sb-item .sb-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center;}
+.sb-item .sb-label{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.sb-item .sb-badge{margin-left:auto;font-size:9px;background:var(--coral);color:#fff;padding:2px 6px;border-radius:10px;font-weight:700;letter-spacing:.5px;}
 
-  /* ── ADMIN BUTTON (corner) ── */
-  #adminBtn {
-    position:fixed; bottom:20px; right:20px; z-index:8000;
-    width:40px; height:40px;
-    background:var(--deep-ocean);
-    border:1.5px solid rgba(118,200,212,0.2);
-    border-radius:50%;
-    cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    font-size:16px;
-    box-shadow:0 4px 16px rgba(0,0,0,0.3);
-    transition:all 0.2s;
-    opacity:0.5;
-  }
-  #adminBtn:hover { opacity:1; border-color:var(--seafoam); transform:scale(1.08); }
+/* Save toggle in sidebar */
+.sb-save{padding:12px 16px;margin:8px;background:rgba(107,53,200,.1);border:1.5px solid var(--border);border-radius:10px;}
+.sb-save-row{display:flex;align-items:center;justify-content:space-between;}
+.sb-save-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.toggle-pill{width:36px;height:20px;background:var(--border);border-radius:20px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle-pill.on{background:var(--ocean);}
+.toggle-pill .knob{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.toggle-pill.on .knob{left:19px;}
+.sb-save-hint{font-size:10px;color:var(--muted);margin-top:6px;opacity:.7;line-height:1.4;}
 
-  /* ── ADMIN SCREEN ── */
-  #adminScreen { position:fixed; inset:0; z-index:9000; background:rgba(13,27,42,0.85); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; }
-  #adminScreen.hidden { display:none; }
-  .admin-box { background:var(--deep-ocean); border-radius:20px; padding:36px; width:100%; max-width:500px; margin:24px; border:1.5px solid rgba(118,200,212,0.2); box-shadow:0 24px 60px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto; }
-  .admin-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
-  .admin-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:#fff; }
-  .admin-title span { color:var(--coral); }
-  .admin-close { background:none; border:none; color:rgba(255,255,255,0.4); font-size:22px; cursor:pointer; transition:color 0.2s; line-height:1; padding:4px; }
-  .admin-close:hover { color:#fff; }
-  .admin-section { margin-bottom:28px; }
-  .admin-section-title { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--seafoam); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid rgba(118,200,212,0.15); }
-  .admin-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .admin-stat { background:rgba(255,255,255,0.05); border-radius:10px; padding:14px; }
-  .admin-stat-val { font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; color:#fff; line-height:1; }
-  .admin-stat-lbl { font-size:11px; color:rgba(118,200,212,0.6); margin-top:4px; }
-  .admin-input { width:100%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(118,200,212,0.2); border-radius:10px; padding:11px 14px; color:#fff; font-family:'Barlow',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; margin-bottom:10px; }
-  .admin-input:focus { border-color:var(--seafoam); }
-  .admin-input::placeholder { color:rgba(255,255,255,0.25); }
-  .admin-row { display:flex; gap:10px; }
-  .admin-btn { flex:1; padding:11px 16px; border:none; border-radius:9px; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
-  .admin-btn-primary { background:linear-gradient(135deg,#6b35c8,#9b59f5); color:#fff; }
-  .admin-btn-primary:hover { opacity:0.85; }
-  .admin-btn-danger { background:rgba(224,122,95,0.15); color:var(--coral); border:1.5px solid rgba(224,122,95,0.3); }
-  .admin-btn-danger:hover { background:rgba(224,122,95,0.25); }
-  .admin-msg { font-size:12px; margin-top:8px; min-height:16px; color:var(--seafoam); }
-  .admin-msg.error { color:var(--coral); }
-  .admin-session-item { background:rgba(255,255,255,0.04); border-radius:8px; padding:10px 14px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
-  .admin-session-info { font-size:13px; color:rgba(255,255,255,0.7); }
-  .admin-session-date { font-size:11px; color:rgba(118,200,212,0.5); margin-top:2px; }
-  .admin-revoke-all { width:100%; padding:12px; background:rgba(224,122,95,0.12); border:1.5px solid rgba(224,122,95,0.25); border-radius:10px; color:var(--coral); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
-  .admin-revoke-all:hover { background:rgba(224,122,95,0.22); }
+.sb-bottom{padding:12px 16px;border-top:1px solid var(--border);}
+.sb-admin-btn{width:100%;padding:8px 12px;background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;}
+.sb-admin-btn:hover{border-color:var(--seafoam);color:var(--seafoam);}
+.sb-signout-btn{width:100%;padding:8px 12px;margin-top:6px;background:none;border:1.5px solid rgba(244,114,182,.2);border-radius:8px;color:rgba(244,114,182,.6);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;}
+.sb-signout-btn:hover{border-color:var(--coral);color:var(--coral);}
 
-  /* ── ADMIN PASSWORD GATE ── */
-  #adminAuthWrap.hidden { display:none; }
-  #adminContentWrap.hidden { display:none; }
+/* ── MAIN CONTENT ── */
+#content{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.page{display:none;flex-direction:column;min-height:100vh;}
+.page.active{display:flex;}
 
-  /* ── HEADER ── */
-  header { background: linear-gradient(160deg, #0a051a 0%, #1a0636 50%, #0a1230 100%); padding:0; position:relative; overflow:hidden; }
-  .header-inner { max-width:900px; margin:0 auto; padding:40px 24px 32px; position:relative; z-index:1; }
-  .wave-top { display:block; width:100%; color:var(--ocean); opacity:0.25; position:absolute; top:0; left:0; }
-  .logo-tag { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--seafoam); margin-bottom:10px; display:block; }
-  header h1 { font-family:'Barlow Condensed',sans-serif; font-size:clamp(36px,6vw,64px); font-weight:900; color:#fff; line-height:0.95; text-transform:uppercase; letter-spacing:-1px; }
-  header h1 span { color:var(--coral); }
-  header p { color:var(--seafoam); font-size:14px; font-weight:400; margin-top:12px; opacity:0.85; max-width:480px; }
-  .wave-divider { display:block; width:100%; color:#06040f; margin-top:-1px; }
+/* Page header */
+.page-header{background:linear-gradient(160deg,#0a051a 0%,#1a0636 50%,#0a1230 100%);padding:32px 32px 24px;position:relative;overflow:hidden;flex-shrink:0;}
+.page-header-wave{position:absolute;bottom:-1px;left:0;right:0;}
+.page-header .ph-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--seafoam);margin-bottom:6px;display:block;}
+.page-header h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:.95;text-transform:uppercase;}
+.page-header h1 span{color:var(--coral);}
+.page-header p{color:var(--seafoam);font-size:13px;margin-top:8px;opacity:.85;max-width:480px;}
 
-  /* ── MAIN ── */
-  main { max-width:900px; margin:0 auto; padding:8px 24px 60px; }
+/* Page body */
+.page-body{padding:24px 28px 60px;flex:1;}
 
-  /* ── API KEY ── */
-  .api-section { background:var(--deep-ocean); border-radius:16px; padding:20px 24px; margin-bottom:28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-  .api-section label { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--seafoam); white-space:nowrap; }
-  .api-section input { flex:1; min-width:200px; background:rgba(255,255,255,0.07); border:1.5px solid rgba(118,200,212,0.25); border-radius:8px; padding:10px 14px; color:#fff; font-family:'Barlow',sans-serif; font-size:13px; letter-spacing:1px; outline:none; transition:border-color 0.2s; }
-  .api-section input:focus { border-color:var(--seafoam); }
-  .api-section input::placeholder { color:rgba(255,255,255,0.3); }
-  .api-hint { font-size:12px; color:rgba(118,200,212,0.6); margin-top:6px; width:100%; }
-  .api-hint a { color:var(--seafoam); text-decoration:underline; text-underline-offset:2px; }
+/* New listing btn */
+.new-listing-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(244,114,182,.1);border:1.5px solid rgba(244,114,182,.25);border-radius:10px;padding:9px 16px;color:var(--coral);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-bottom:20px;}
+.new-listing-btn:hover{background:rgba(244,114,182,.18);border-color:var(--coral);}
 
-  /* ── CARD ── */
-  .card { background:#110d24; border-radius:20px; border:1.5px solid var(--border); overflow:hidden; margin-bottom:24px; box-shadow:0 2px 30px rgba(107,53,200,0.15); }
-  .card-header { background:linear-gradient(135deg,#1e0a3c,#3b1278); padding:18px 24px; display:flex; align-items:center; gap:10px; }
-  .card-header .step { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:var(--coral); color:#fff; padding:3px 9px; border-radius:4px; }
-  .card-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#fff; }
-  .card-body { padding:24px; }
+/* ── CARDS ── */
+.card{background:var(--deep);border-radius:16px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:20px;box-shadow:0 2px 20px rgba(107,53,200,.1);}
+.card-header{background:linear-gradient(135deg,#1e0a3c,#3b1278);padding:14px 20px;display:flex;align-items:center;gap:10px;}
+.card-header .step{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:var(--coral);color:#fff;padding:2px 8px;border-radius:4px;}
+.card-header h2{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#fff;}
+.card-body{padding:20px;}
 
-  /* ── DROP ZONE ── */
-  .drop-zone { border:2.5px dashed var(--border); border-radius:14px; padding:36px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:rgba(107,53,200,0.06); position:relative; }
-  .drop-zone:hover,.drop-zone.dragover { border-color:var(--teal); background:rgba(107,53,200,0.14); }
-  .drop-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-  .drop-zone .dz-icon { font-size:36px; margin-bottom:10px; display:block; }
-  .drop-zone h3 { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; text-transform:uppercase; color:var(--ocean); letter-spacing:0.5px; }
-  .drop-zone p { font-size:13px; color:var(--text-muted); margin-top:4px; }
-  .paste-tip { display:inline-block; margin-top:10px; font-size:11px; color:var(--seafoam); background:var(--navy); padding:3px 10px; border-radius:20px; letter-spacing:0.5px; }
-  .preview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:16px; }
-  .preview-grid:empty { display:none; }
-  .preview-item { position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; border:2px solid var(--border); }
-  .preview-item img { width:100%; height:100%; object-fit:cover; display:block; }
-  .preview-item .remove-btn { position:absolute; top:5px; right:5px; width:22px; height:22px; background:rgba(224,122,95,0.92); border:none; border-radius:50%; color:#fff; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:700; }
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+input[type="text"],input[type="number"],textarea,select{border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);background:#1a1135;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;}
+input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(22,138,173,.1);}
+.field-hint{font-size:11px;color:var(--muted);opacity:.7;}
 
-  /* ── FORM ── */
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
-  .form-group { display:flex; flex-direction:column; gap:6px; }
-  label { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); }
-  input[type="text"],input[type="number"],textarea,select { border:1.5px solid var(--border); border-radius:10px; padding:11px 14px; font-family:'Barlow',sans-serif; font-size:14px; color:var(--text); background:#1a1135; outline:none; transition:border-color 0.2s,box-shadow 0.2s; width:100%; }
-  input[type="text"]:focus,input[type="number"]:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(22,138,173,0.1); }
-  .field-hint { font-size:11px; color:var(--text-muted); opacity:0.75; }
+/* ── DROP ZONE ── */
+.drop-zone{border:2.5px dashed var(--border);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(107,53,200,.06);position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--teal);background:rgba(107,53,200,.12);}
+.drop-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-zone .dz-icon{font-size:28px;margin-bottom:8px;display:block;}
+.drop-zone h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;color:var(--seafoam);}
+.drop-zone p{font-size:12px;color:var(--muted);margin-top:3px;}
+.paste-tip{display:inline-block;margin-top:8px;font-size:10px;color:var(--seafoam);background:var(--navy);padding:2px 8px;border-radius:20px;}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:12px;}
+.preview-grid:empty{display:none;}
+.preview-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid var(--border);}
+.preview-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-item .remove-btn{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(244,114,182,.9);border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
 
-  /* ── MEASUREMENTS ── */
-  .measurements-header { display:flex; align-items:center; justify-content:space-between; margin:24px 0 10px; flex-wrap:wrap; gap:8px; }
-  .section-label { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex:1; }
-  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-  .unit-toggle { display:flex; background:#1a1135; border:1.5px solid var(--border); border-radius:8px; overflow:hidden; flex-shrink:0; }
-  .unit-toggle button { padding:5px 14px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border:none; background:none; cursor:pointer; color:var(--text-muted); transition:all 0.15s; }
-  .unit-toggle button.active { background:linear-gradient(135deg,var(--ocean),var(--teal)); color:#fff; }
-  .measurements-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-  @media(max-width:480px){.measurements-grid{grid-template-columns:repeat(2,1fr);}}
-  .m-field label { font-size:10px; letter-spacing:1px; color:var(--ocean); }
+/* ── MEASUREMENTS ── */
+.row-header{display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px;flex-wrap:wrap;gap:8px;}
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;flex:1;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.unit-toggle{display:flex;background:#1a1135;border:1.5px solid var(--border);border-radius:7px;overflow:hidden;flex-shrink:0;}
+.unit-toggle button{padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;background:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.unit-toggle button.active{background:linear-gradient(135deg,var(--ocean),var(--teal));color:#fff;}
+.m-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:480px){.m-grid{grid-template-columns:repeat(2,1fr);}}
+.m-field label{font-size:9px;color:var(--seafoam);}
 
-  /* ── PRICING ── */
-  .pricing-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:end; }
-  @media(max-width:560px){.pricing-row{grid-template-columns:1fr;}}
-  .boost-toggle-wrap { display:flex; flex-direction:column; gap:8px; }
-  .boost-toggle { display:flex; align-items:center; gap:10px; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; background:#1a1135; user-select:none; }
-  .boost-toggle:hover { border-color:var(--teal); }
-  .boost-toggle.active { border-color:var(--coral); background:rgba(244,114,182,0.08); }
-  .boost-toggle .toggle-switch { width:36px; height:20px; background:var(--border); border-radius:20px; position:relative; transition:background 0.2s; flex-shrink:0; }
-  .boost-toggle.active .toggle-switch { background:var(--coral); }
-  .boost-toggle .toggle-knob { position:absolute; top:3px; left:3px; width:14px; height:14px; background:#fff; border-radius:50%; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
-  .boost-toggle.active .toggle-knob { left:19px; }
-  .boost-toggle .toggle-label { font-family:'Barlow',sans-serif; font-size:13px; font-weight:500; color:var(--text); }
-  .boost-toggle .toggle-sub { font-size:11px; color:var(--text-muted); margin-top:1px; }
+/* ── PRICING ROW ── */
+.pricing-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
+@media(max-width:560px){.pricing-row{grid-template-columns:1fr;}}
+.boost-wrap{display:flex;flex-direction:column;gap:6px;}
+.boost-toggle{display:flex;align-items:center;gap:10px;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;background:#1a1135;user-select:none;}
+.boost-toggle:hover{border-color:var(--teal);}
+.boost-toggle.active{border-color:var(--coral);background:rgba(244,114,182,.08);}
+.boost-toggle .tgl-sw{width:32px;height:18px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0;}
+.boost-toggle.active .tgl-sw{background:var(--coral);}
+.boost-toggle .tgl-kn{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.boost-toggle.active .tgl-kn{left:16px;}
+.boost-toggle .tgl-lbl{font-size:12px;font-weight:500;color:var(--text);}
+.boost-toggle .tgl-sub{font-size:10px;color:var(--muted);margin-top:1px;}
 
-  /* ── GENERATE BTN ── */
-  .generate-btn { width:100%; padding:18px; background:linear-gradient(135deg,#6b35c8,#c084fc); color:#fff; border:none; border-radius:14px; font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 24px rgba(107,53,200,0.4); }
-  .generate-btn:hover { transform:translateY(-1px); box-shadow:0 8px 32px rgba(192,132,252,0.45); }
-  .generate-btn:active { transform:translateY(0); }
-  .generate-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+/* ── GENERATE BTN ── */
+.generate-btn{width:100%;padding:16px;background:linear-gradient(135deg,#6b35c8,#c084fc);color:#fff;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:all .2s;box-shadow:0 4px 24px rgba(107,53,200,.4);}
+.generate-btn:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(192,132,252,.45);}
+.generate-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-  /* ── RESULT SPACING ── */
-  .result-gap { margin-top:32px; }
+/* ── LOADING ── */
+.loading-state{display:none;text-align:center;padding:40px 20px;}
+.loading-state.visible{display:block;}
+.wave-loader{display:flex;justify-content:center;gap:5px;margin-bottom:12px;}
+.wave-loader span{width:7px;height:7px;background:var(--seafoam);border-radius:50%;animation:wb 1.2s ease-in-out infinite;}
+.wave-loader span:nth-child(2){animation-delay:.15s;}.wave-loader span:nth-child(3){animation-delay:.3s;}.wave-loader span:nth-child(4){animation-delay:.45s;}
+@keyframes wb{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-10px);opacity:1;}}
+.loading-state p{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--seafoam);}
 
-  /* ── LOADING ── */
-  .loading-state { display:none; text-align:center; padding:48px 24px; }
-  .loading-state.visible { display:block; }
-  .wave-loader { display:flex; justify-content:center; gap:6px; margin-bottom:16px; }
-  .wave-loader span { width:8px; height:8px; background:var(--seafoam); border-radius:50%; animation:wave-bounce 1.2s ease-in-out infinite; }
-  .wave-loader span:nth-child(2){animation-delay:0.15s;} .wave-loader span:nth-child(3){animation-delay:0.3s;} .wave-loader span:nth-child(4){animation-delay:0.45s;}
-  @keyframes wave-bounce{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-12px);opacity:1;}}
-  .loading-state p { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--seafoam); }
+/* ── RESULT ── */
+.result-section{display:none;margin-top:24px;}
+.result-section.visible{display:block;}
+.result-tabs{display:flex;border-bottom:2px solid var(--border);}
+.tab-btn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:10px 18px;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tab-btn.active{color:var(--seafoam);border-bottom-color:var(--coral);}
+.tab-pane{display:none;padding:16px 0 0;}
+.tab-pane.active{display:block;}
+.desc-output{background:var(--panel);border:1.5px solid var(--border);border-radius:10px;padding:18px;font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+.copy-btn{margin-top:10px;display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1e0a3c,#3b1278);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{background:linear-gradient(135deg,#3b1278,#6b35c8);}
+.copy-btn.copied{background:linear-gradient(135deg,#1a5c3a,#2d8a5e);}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.cat-item{background:#1a1135;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;}
+.cat-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:3px;display:block;}
+.cat-val{font-size:14px;font-weight:600;color:var(--text);}
+.price-item{background:linear-gradient(135deg,#1e0a3c,#6b35c8);grid-column:1/-1;}
+.price-item .cat-lbl{color:var(--seafoam);}
+.price-item .cat-val{font-size:20px;font-weight:900;}
+.price-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px;}
 
-  /* ── RESULT ── */
-  .result-section { display:none; }
-  .result-section.visible { display:block; }
-  .result-tabs { display:flex; border-bottom:2px solid var(--border); }
-  .tab-btn { font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:12px 20px; background:none; border:none; cursor:pointer; color:var(--text-muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
-  .tab-btn.active { color:var(--seafoam); border-bottom-color:var(--coral); }
-  .tab-pane { display:none; padding:20px 0 0; }
-  .tab-pane.active { display:block; }
-  .description-output { background:#0e0b1e; border:1.5px solid var(--border); border-radius:12px; padding:20px; font-family:'Barlow',sans-serif; font-size:14px; line-height:1.65; color:var(--text); white-space:pre-wrap; word-break:break-word; }
-  .copy-btn { margin-top:12px; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg,#1e0a3c,#3b1278); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
-  .copy-btn:hover { background:linear-gradient(135deg,#3b1278,#6b35c8); }
-  .copy-btn.copied { background:linear-gradient(135deg,#1a5c3a,#2d8a5e); }
-  .categories-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
-  .cat-item { background:#1a1135; border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; }
-  .cat-label { font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--teal); margin-bottom:4px; display:block; }
-  .cat-value { font-size:15px; font-weight:600; color:var(--text); }
-  .price-item { background:linear-gradient(135deg,#1e0a3c,#6b35c8); color:#fff; grid-column:1/-1; }
-  .price-item .cat-label { color:var(--seafoam); }
-  .price-item .cat-value { font-size:22px; font-weight:800; color:#fff; }
-  .price-breakdown { font-size:12px; color:rgba(255,255,255,0.65); margin-top:4px; font-weight:400; }
-  .error-box { display:none; background:rgba(244,114,182,0.08); border:1.5px solid rgba(244,114,182,0.3); border-radius:10px; padding:14px 16px; color:#f9a8d4; font-size:13px; margin-top:12px; }
-  .error-box.visible { display:block; }
-  /* ── APP CHOOSER ── */
-  #appChooser { position:fixed; inset:0; z-index:9998; background:var(--navy); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:32px; }
-  #appChooser.hidden { display:none; }
-  .chooser-title { font-family:'Barlow Condensed',sans-serif; font-size:clamp(48px,9vw,88px); font-weight:900; letter-spacing:-1px; text-transform:uppercase; color:#fff; line-height:0.9; text-align:center; }
-  .chooser-title span { color:var(--coral); }
-  .chooser-cards { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; padding:0 24px; }
-  .chooser-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:20px; padding:36px 32px; width:200px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:14px; transition:all 0.2s; box-shadow:0 8px 32px rgba(0,0,0,0.3); text-align:center; }
-  .chooser-card:hover { border-color:var(--ocean); transform:translateY(-4px); box-shadow:0 16px 48px rgba(107,53,200,0.3); }
-  .chooser-card .cc-icon { font-size:40px; line-height:1; }
-  .chooser-card .cc-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#fff; }
-  .chooser-card .cc-sub { font-size:12px; color:var(--text-muted); line-height:1.4; }
-  .chooser-card.active-choice { border-color:var(--teal); background:rgba(107,53,200,0.15); }
+/* ── ERROR BOX ── */
+.error-box{display:none;background:rgba(244,114,182,.08);border:1.5px solid rgba(244,114,182,.3);border-radius:9px;padding:12px 14px;color:#f9a8d4;font-size:12px;margin-top:10px;}
+.error-box.visible{display:block;}
 
-  /* ── SALES TRACKER PAGE ── */
-  #salesPage { display:none; }
-  #salesPage.visible { display:block; }
-  #captionPage { display:block; }
-  #captionPage.hidden { display:none; }
+/* ── API KEY BAR ── */
+.api-bar{background:var(--deep);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1.5px solid var(--border);}
+.api-bar label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--seafoam);white-space:nowrap;}
+.api-bar input{flex:1;min-width:180px;background:rgba(255,255,255,.06);border:1.5px solid rgba(118,200,212,.2);border-radius:7px;padding:9px 12px;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;letter-spacing:1px;outline:none;transition:border-color .2s;}
+.api-bar input:focus{border-color:var(--seafoam);}
+.api-bar input::placeholder{color:rgba(255,255,255,.25);}
+.api-hint{font-size:11px;color:rgba(118,200,212,.55);margin-top:4px;width:100%;}
+.api-hint a{color:var(--seafoam);text-decoration:underline;text-underline-offset:2px;}
 
-  /* back button */
-  .back-btn { display:inline-flex; align-items:center; gap:8px; background:none; border:1.5px solid var(--border); border-radius:10px; padding:8px 16px; color:var(--text-muted); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; margin-bottom:20px; }
-  .back-btn:hover { border-color:var(--seafoam); color:var(--seafoam); }
+/* ── HOME PAGE ── */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.home-card{background:var(--deep);border:1.5px solid var(--border);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:10px;}
+.home-card:hover{border-color:var(--ocean);transform:translateY(-2px);box-shadow:0 12px 32px rgba(107,53,200,.25);}
+.home-card .hc-icon{font-size:32px;}
+.home-card .hc-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;color:#fff;}
+.home-card .hc-sub{font-size:12px;color:var(--muted);line-height:1.4;}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.home-stat{background:var(--deep);border:1.5px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.home-stat-num{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#fff;}
+.home-stat-num.green{color:var(--green);}
+.home-stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
 
-  /* stats bar */
-  .stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
-  @media(max-width:600px){ .stats-bar { grid-template-columns:repeat(2,1fr); } }
-  .stat-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:14px; padding:16px; text-align:center; }
-  .stat-card.profit-card { background:linear-gradient(135deg,#1e0a3c,#3b1278); border-color:rgba(192,132,252,0.3); }
-  .stat-num { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#fff; line-height:1; }
-  .stat-num.green { color:#4ade80; }
-  .stat-lbl { font-size:11px; color:var(--text-muted); margin-top:4px; letter-spacing:0.5px; }
+/* ── SALES TRACKER ── */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:600px){.stats-bar{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--deep);border:1.5px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-card.profit-card{background:linear-gradient(135deg,#1e0a3c,#3b1278);border-color:rgba(192,132,252,.3);}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:#fff;line-height:1;}
+.stat-num.green{color:var(--green);}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;}
+.chart-card{background:var(--deep);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:20px;}
+.chart-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:70px;}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+.chart-bar{width:100%;background:linear-gradient(180deg,var(--teal),var(--ocean));border-radius:3px 3px 0 0;min-height:2px;transition:height .4s ease;}
+.chart-bar.zero{background:var(--border);}
+.chart-bar-lbl{font-size:9px;color:var(--muted);white-space:nowrap;}
+.add-sale-card{background:var(--deep);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.add-sale-header{background:linear-gradient(135deg,#1e0a3c,#3b1278);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.add-sale-header h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#fff;}
+.toggle-icon{color:var(--seafoam);font-size:18px;transition:transform .2s;}
+.add-sale-header.open .toggle-icon{transform:rotate(45deg);}
+.add-sale-body{padding:18px;display:none;}
+.add-sale-body.open{display:block;}
+.sale-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:500px){.sale-form-grid{grid-template-columns:1fr;}}
+.sale-photo-zone{border:2px dashed var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;position:relative;font-size:12px;color:var(--muted);transition:all .2s;}
+.sale-photo-zone:hover{border-color:var(--teal);}
+.sale-photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.sale-photo-preview{width:100%;height:70px;object-fit:cover;border-radius:7px;display:none;}
+.add-sale-btn{width:100%;padding:12px;background:linear-gradient(135deg,#6b35c8,#c084fc);color:#fff;border:none;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.add-sale-btn:hover{opacity:.88;}
+.sales-list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.sales-list-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.sales-actions{display:flex;gap:6px;}
+.sales-action-btn{padding:6px 12px;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:none;color:var(--muted);}
+.sales-action-btn:hover{border-color:var(--seafoam);color:var(--seafoam);}
+.sales-action-btn.import-btn{position:relative;}
+.sales-action-btn.import-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-search{flex:1;min-width:120px;background:#1a1135;border:1.5px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
+.filter-search:focus{border-color:var(--teal);}
+.filter-search::placeholder{color:var(--muted);}
+.filter-select{background:#1a1135;border:1.5px solid var(--border);border-radius:9px;padding:8px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;outline:none;cursor:pointer;}
+.sale-item{background:var(--deep);border:1.5px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;transition:all .2s;}
+.sale-item:hover{border-color:rgba(107,53,200,.4);}
+.sale-thumb{width:46px;height:46px;border-radius:7px;object-fit:cover;flex-shrink:0;background:rgba(107,53,200,.15);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border);overflow:hidden;}
+.sale-thumb img{width:100%;height:100%;object-fit:cover;}
+.sale-info{flex:1;min-width:0;}
+.sale-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sale-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.sale-profit{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--green);white-space:nowrap;}
+.sale-profit.loss{color:var(--red);}
+.sale-date{font-size:10px;color:var(--muted);text-align:right;margin-top:2px;}
+.sale-delete{background:none;border:none;color:rgba(244,114,182,.4);font-size:16px;cursor:pointer;padding:4px 6px;transition:color .2s;flex-shrink:0;}
+.sale-delete:hover{color:var(--coral);}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-state .ei{font-size:36px;margin-bottom:10px;}
+.empty-state p{font-size:13px;}
 
-  /* chart */
-  .chart-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:16px; padding:20px; margin-bottom:24px; }
-  .chart-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; }
-  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:80px; }
-  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
-  .chart-bar { width:100%; background:linear-gradient(180deg,var(--teal),var(--ocean)); border-radius:4px 4px 0 0; min-height:2px; transition:height 0.4s ease; }
-  .chart-bar.zero { background:var(--border); }
-  .chart-bar-lbl { font-size:9px; color:var(--text-muted); white-space:nowrap; }
+/* ── PRICING CALC ── */
+.pc-result{background:linear-gradient(135deg,#1e0a3c,#3b1278);border-radius:16px;padding:28px;text-align:center;margin-bottom:20px;border:1.5px solid rgba(192,132,252,.2);}
+.pc-result-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--seafoam);margin-bottom:6px;}
+.pc-price{font-family:'Barlow Condensed',sans-serif;font-size:64px;font-weight:900;color:#fff;line-height:1;}
+.pc-metrics{display:flex;justify-content:center;gap:28px;margin-top:16px;flex-wrap:wrap;}
+.pc-metric-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;}
+.pc-metric-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.pc-breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.pc-breakdown-row:last-child{border-bottom:none;}
+.wi-result{background:#1a1135;border-radius:10px;padding:14px;margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;}
+.wi-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;}
+.wi-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
 
-  /* add sale form */
-  .add-sale-card { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:24px; }
-  .add-sale-header { background:linear-gradient(135deg,#1e0a3c,#3b1278); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
-  .add-sale-header h3 { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#fff; }
-  .add-sale-header .toggle-icon { color:var(--seafoam); font-size:18px; transition:transform 0.2s; }
-  .add-sale-header.open .toggle-icon { transform:rotate(45deg); }
-  .add-sale-body { padding:20px; display:none; }
-  .add-sale-body.open { display:block; }
-  .sale-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-  @media(max-width:500px){ .sale-form-grid { grid-template-columns:1fr; } }
-  .sale-photo-zone { border:2px dashed var(--border); border-radius:10px; padding:16px; text-align:center; cursor:pointer; position:relative; font-size:12px; color:var(--text-muted); transition:all 0.2s; }
-  .sale-photo-zone:hover { border-color:var(--teal); }
-  .sale-photo-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-  .sale-photo-preview { width:100%; height:80px; object-fit:cover; border-radius:8px; display:none; }
-  .add-sale-btn { width:100%; padding:13px; background:linear-gradient(135deg,#6b35c8,#c084fc); color:#fff; border:none; border-radius:10px; font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-top:4px; }
-  .add-sale-btn:hover { opacity:0.88; }
+/* ── PHOTO GEN PAGE ── */
+.coming-soon{text-align:center;padding:80px 20px;}
+.coming-soon .cs-icon{font-size:60px;margin-bottom:16px;}
+.coming-soon h2{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;color:#fff;margin-bottom:8px;}
+.coming-soon p{color:var(--muted);font-size:14px;max-width:360px;margin:0 auto;line-height:1.6;}
 
-  /* sales list */
-  .sales-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:10px; }
-  .sales-list-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); }
-  .sales-actions { display:flex; gap:8px; }
-  .sales-action-btn { padding:7px 14px; border-radius:8px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border:1.5px solid var(--border); background:none; color:var(--text-muted); }
-  .sales-action-btn:hover { border-color:var(--seafoam); color:var(--seafoam); }
-  .sales-action-btn.import-btn { position:relative; }
-  .sales-action-btn.import-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; }
-  .sale-item { background:var(--deep-ocean); border:1.5px solid var(--border); border-radius:14px; padding:16px; display:flex; align-items:center; gap:14px; margin-bottom:10px; transition:all 0.2s; }
-  .sale-item:hover { border-color:rgba(107,53,200,0.4); }
-  .sale-thumb { width:52px; height:52px; border-radius:8px; object-fit:cover; flex-shrink:0; background:rgba(107,53,200,0.15); display:flex; align-items:center; justify-content:center; font-size:20px; border:1px solid var(--border); overflow:hidden; }
-  .sale-thumb img { width:100%; height:100%; object-fit:cover; }
-  .sale-info { flex:1; min-width:0; }
-  .sale-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .sale-meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
-  .sale-profit { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; color:#4ade80; white-space:nowrap; }
-  .sale-profit.loss { color:#f87171; }
-  .sale-date { font-size:11px; color:var(--text-muted); text-align:right; margin-top:2px; }
-  .sale-delete { background:none; border:none; color:rgba(244,114,182,0.4); font-size:18px; cursor:pointer; padding:4px 8px; transition:color 0.2s; flex-shrink:0; }
-  .sale-delete:hover { color:var(--coral); }
-  .empty-state { text-align:center; padding:48px 20px; color:var(--text-muted); }
-  .empty-state .empty-icon { font-size:40px; margin-bottom:12px; }
-  .empty-state p { font-size:14px; }
+/* ── ADMIN PANEL ── */
+#adminOverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,27,42,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;}
+#adminOverlay.hidden{display:none;}
+.admin-box{background:var(--deep);border-radius:20px;padding:32px;width:100%;max-width:480px;margin:24px;border:1.5px solid rgba(118,200,212,.2);box-shadow:0 24px 60px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto;}
+.admin-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.admin-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;color:#fff;}
+.admin-title span{color:var(--coral);}
+.admin-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;transition:color .2s;padding:4px;}
+.admin-close:hover{color:#fff;}
+.admin-sec{margin-bottom:24px;}
+.admin-sec-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--seafoam);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid rgba(118,200,212,.15);}
+.admin-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.admin-stat{background:rgba(255,255,255,.05);border-radius:9px;padding:12px;}
+.admin-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:#fff;line-height:1;}
+.admin-stat-lbl{font-size:10px;color:rgba(118,200,212,.6);margin-top:3px;}
+.admin-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(118,200,212,.2);border-radius:9px;padding:10px 13px;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;margin-bottom:8px;}
+.admin-input:focus{border-color:var(--seafoam);}
+.admin-input::placeholder{color:rgba(255,255,255,.25);}
+.admin-row{display:flex;gap:8px;}
+.admin-btn{flex:1;padding:10px 14px;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.admin-btn-primary{background:linear-gradient(135deg,#6b35c8,#9b59f5);color:#fff;}
+.admin-btn-primary:hover{opacity:.85;}
+.admin-btn-danger{background:rgba(244,114,182,.12);color:var(--coral);border:1.5px solid rgba(244,114,182,.25);}
+.admin-btn-danger:hover{background:rgba(244,114,182,.22);}
+.admin-msg{font-size:11px;margin-top:7px;min-height:14px;color:var(--seafoam);}
+.admin-msg.error{color:var(--coral);}
+.admin-session-item{background:rgba(255,255,255,.04);border-radius:7px;padding:9px 12px;margin-bottom:7px;}
+.admin-session-info{font-size:12px;color:rgba(255,255,255,.7);}
+.admin-session-date{font-size:10px;color:rgba(118,200,212,.5);margin-top:2px;}
+.admin-revoke{width:100%;padding:10px;background:rgba(244,114,182,.1);border:1.5px solid rgba(244,114,182,.22);border-radius:9px;color:var(--coral);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.admin-revoke:hover{background:rgba(244,114,182,.2);}
+#adminAuthWrap.hidden{display:none;}
+#adminContentWrap.hidden{display:none;}
 
-  /* search/filter bar */
-  .filter-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
-  .filter-search { flex:1; min-width:140px; background:#1a1135; border:1.5px solid var(--border); border-radius:10px; padding:9px 14px; color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
-  .filter-search:focus { border-color:var(--teal); }
-  .filter-search::placeholder { color:var(--text-muted); }
-  .filter-select { background:#1a1135; border:1.5px solid var(--border); border-radius:10px; padding:9px 12px; color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; outline:none; cursor:pointer; }
+@media(max-width:720px){
+  #sidebar{transform:translateX(-100%);transition:transform .25s;}
+  #sidebar.open{transform:translateX(0);}
+  #content{margin-left:0;}
+  .sb-toggle{display:flex;}
+}
+.sb-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--deep);border:1.5px solid var(--border);border-radius:8px;width:36px;height:36px;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
 </style>
 </head>
 <body>
-
 <canvas id="starCanvas"></canvas>
 
-<!-- ── PASSWORD SCREEN ── -->
+<!-- ── PASSWORD ── -->
 <div id="pwScreen">
   <div class="pw-box">
     <div>
-      <div class="pw-logo">Depop <span>Listing</span></div>
+      <div class="pw-logo">Depop <span>Directory</span></div>
       <div class="pw-sub">Enter password to continue</div>
     </div>
     <div class="pw-input-wrap">
@@ -365,797 +368,635 @@
   </div>
 </div>
 
-<!-- ── APP CHOOSER ── -->
-<div id="appChooser" class="hidden">
-  <div class="chooser-title">Depop<br><span>Directory</span></div>
-  <div class="chooser-cards">
-    <div class="chooser-card" onclick="launchApp('caption')">
-      <div class="cc-icon">✍️</div>
-      <div class="cc-title">Caption Builder</div>
-      <div class="cc-sub">Generate Depop listings from photos</div>
-    </div>
-    <div class="chooser-card" onclick="launchApp('sales')">
-      <div class="cc-icon">💰</div>
-      <div class="cc-title">Sales Tracker</div>
-      <div class="cc-sub">Track sales & calculate your profit</div>
-    </div>
-    <div class="chooser-card" onclick="launchApp('pricing')">
-      <div class="cc-icon">🏷️</div>
-      <div class="cc-title">Pricing Calculator</div>
-      <div class="cc-sub">Find the perfect listing price with margin sliders</div>
-    </div>
-  </div>
-  <button onclick="backToPassword()" style="background:none;border:1.5px solid rgba(107,53,200,0.3);border-radius:10px;padding:9px 20px;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:8px;" onmouseover="this.style.borderColor='var(--seafoam)';this.style.color='var(--seafoam)'" onmouseout="this.style.borderColor='rgba(107,53,200,0.3)';this.style.color='var(--text-muted)'">🔒 Back to Password</button>
-</div>
-
-<!-- ── ADMIN BUTTON ── -->
-<button id="adminBtn" onclick="openAdmin()" title="Admin">⚙️</button>
-
-<!-- ── ADMIN PANEL ── -->
-<div id="adminScreen" class="hidden">
+<!-- ── ADMIN ── -->
+<div id="adminOverlay" class="hidden">
   <div class="admin-box">
-    <div class="admin-header">
+    <div class="admin-hdr">
       <div class="admin-title">Admin <span>Panel</span></div>
       <button class="admin-close" onclick="closeAdmin()">✕</button>
     </div>
-
-    <!-- Admin auth gate -->
     <div id="adminAuthWrap">
-      <div class="admin-section">
-        <div class="admin-section-title">Admin Login</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Admin Login</div>
         <input class="admin-input" type="password" id="adminPwInput" placeholder="Admin password"
           onkeydown="if(event.key==='Enter')checkAdminPassword()">
         <button class="admin-btn admin-btn-primary" onclick="checkAdminPassword()">Unlock</button>
         <div class="admin-msg error" id="adminPwError"></div>
       </div>
     </div>
-
-    <!-- Admin content (shown after auth) -->
     <div id="adminContentWrap" class="hidden">
-
-      <!-- Stats -->
-      <div class="admin-section">
-        <div class="admin-section-title">Usage Stats</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Usage Stats</div>
         <div class="admin-stat-grid">
-          <div class="admin-stat">
-            <div class="admin-stat-val" id="statListings">0</div>
-            <div class="admin-stat-lbl">Listings generated</div>
-          </div>
-          <div class="admin-stat">
-            <div class="admin-stat-val" id="statSessions">0</div>
-            <div class="admin-stat-lbl">Saved sessions</div>
-          </div>
-          <div class="admin-stat">
-            <div class="admin-stat-val" id="statFirstUsed">—</div>
-            <div class="admin-stat-lbl">First used</div>
-          </div>
-          <div class="admin-stat">
-            <div class="admin-stat-val" id="statLastUsed">—</div>
-            <div class="admin-stat-lbl">Last used</div>
-          </div>
+          <div class="admin-stat"><div class="admin-stat-val" id="statListings">0</div><div class="admin-stat-lbl">Listings generated</div></div>
+          <div class="admin-stat"><div class="admin-stat-val" id="statSessions">0</div><div class="admin-stat-lbl">Saved sessions</div></div>
+          <div class="admin-stat"><div class="admin-stat-val" id="statFirstUsed">—</div><div class="admin-stat-lbl">First used</div></div>
+          <div class="admin-stat"><div class="admin-stat-val" id="statLastUsed">—</div><div class="admin-stat-lbl">Last used</div></div>
         </div>
       </div>
-
-      <!-- Sessions -->
-      <div class="admin-section">
-        <div class="admin-section-title">Sessions</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Sessions</div>
         <div id="sessionList"></div>
-        <button class="admin-revoke-all" onclick="revokeAllSessions()">⛔ Revoke All Sessions (force re-login)</button>
+        <button class="admin-revoke" onclick="revokeAllSessions()">⛔ Revoke All Sessions</button>
         <div class="admin-msg" id="sessionMsg"></div>
       </div>
-
-      <!-- Change user password -->
-      <div class="admin-section">
-        <div class="admin-section-title">Change User Password</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Change User Password</div>
         <input class="admin-input" type="text" id="newUserPw" placeholder="New user password">
         <div class="admin-row">
-          <button class="admin-btn admin-btn-primary" onclick="changeUserPassword()">Save Password</button>
+          <button class="admin-btn admin-btn-primary" onclick="changeUserPassword()">Save</button>
           <button class="admin-btn admin-btn-danger" onclick="resetUserPassword()">Reset to Default</button>
         </div>
         <div class="admin-msg" id="pwChangeMsg"></div>
       </div>
-
-      <!-- Change admin password -->
-      <div class="admin-section">
-        <div class="admin-section-title">Change Admin Password</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Change Admin Password</div>
         <input class="admin-input" type="text" id="newAdminPw" placeholder="New admin password">
         <button class="admin-btn admin-btn-primary" onclick="changeAdminPassword()">Save Admin Password</button>
         <div class="admin-msg" id="adminPwChangeMsg"></div>
       </div>
-
-      <!-- Danger zone -->
-      <div class="admin-section">
-        <div class="admin-section-title">Danger Zone</div>
+      <div class="admin-sec">
+        <div class="admin-sec-title">Danger Zone</div>
         <div class="admin-row">
           <button class="admin-btn admin-btn-danger" onclick="clearStats()">Clear Stats</button>
           <button class="admin-btn admin-btn-danger" onclick="clearAllData()">Reset Everything</button>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ── MAIN APP ── -->
-<!-- ── CAPTION BUILDER PAGE ── -->
-<div id="captionPage" class="hidden">
-<header>
-  <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
-  </svg>
-  <div class="header-inner">
-    <span class="logo-tag">Auto Caption Maker</span>
-    <h1>Depop<br><span>Listing</span><br>Generator</h1>
-    <p>Upload a photo, fill in the basics — get a ready-to-paste Depop listing in seconds.</p>
-  </div>
-  <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
-  </svg>
-</header>
+<!-- ── DASHBOARD ── -->
+<div id="app">
 
-<main>
-  <button class="back-btn" onclick="goHome()">← Back to Menu</button>
-  <div class="api-section">
-    <label for="apiKey">🔑 Anthropic API Key</label>
-    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
-    <p class="api-hint">Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — saved in your browser automatically.</p>
-  </div>
+  <!-- Mobile sidebar toggle -->
+  <div class="sb-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</div>
 
-  <div class="card">
-    <div class="card-header"><span class="step">Step 1</span><h2>Photos</h2></div>
-    <div class="card-body">
-      <div class="drop-zone" id="dropZone">
-        <input type="file" id="fileInput" accept="image/*" multiple>
-        <span class="dz-icon">📸</span>
-        <h3>Drop photos here</h3>
-        <p>Front + back if there's a graphic · Up to 4 images</p>
-        <span class="paste-tip">Or paste with Ctrl+V / Cmd+V</span>
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-text">Depop <span>Directory</span></div>
+      <div class="sb-logo-sub">Reseller Suite</div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-header"><span class="step">Step 2</span><h2>Item Details</h2></div>
-    <div class="card-body">
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="size">Size *</label>
-          <input type="text" id="size" placeholder="e.g. M, L, XL, 12, One Size">
-        </div>
-        <div class="form-group">
-          <label for="material">Material</label>
-          <input type="text" id="material" placeholder="e.g. Cotton, Polyester, Denim">
+    <div class="sb-nav">
+      <div class="sb-section-label">Main</div>
+      <div class="sb-item active" onclick="nav('home')" id="nav-home">
+        <span class="sb-icon">🏠</span><span class="sb-label">Home</span>
+      </div>
+      <div class="sb-item" onclick="nav('caption')" id="nav-caption">
+        <span class="sb-icon">✍️</span><span class="sb-label">Caption Builder</span>
+      </div>
+      <div class="sb-item" onclick="nav('pricing')" id="nav-pricing">
+        <span class="sb-icon">🏷️</span><span class="sb-label">Price Calculator</span>
+      </div>
+      <div class="sb-item" onclick="nav('sales')" id="nav-sales">
+        <span class="sb-icon">💰</span><span class="sb-label">Sales Tracker</span>
+      </div>
+      <div class="sb-item" onclick="nav('photo')" id="nav-photo">
+        <span class="sb-icon">📸</span><span class="sb-label">Photo Gen</span>
+        <span class="sb-badge">Soon</span>
+      </div>
+    </div>
+
+    <!-- Save toggle -->
+    <div class="sb-save">
+      <div class="sb-save-row">
+        <span class="sb-save-label">💾 Save State</span>
+        <div class="toggle-pill" id="saveTogglePill" onclick="toggleSaveState()">
+          <div class="knob"></div>
         </div>
       </div>
-      <div class="measurements-header">
-        <span class="section-label">Measurements <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
-        <div class="unit-toggle">
-          <button id="btnCm" class="active" onclick="setUnit('cm')">cm</button>
-          <button id="btnIn" onclick="setUnit('in')">in</button>
+      <div class="sb-save-hint">Keep your inputs when switching between pages.</div>
+    </div>
+
+    <div class="sb-bottom">
+      <button class="sb-admin-btn" onclick="openAdmin()">⚙️ Admin Panel</button>
+      <button class="sb-signout-btn" onclick="signOut()">🔒 Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <svg style="position:absolute;bottom:-1px;left:0;right:0;width:100%;color:#06040f;" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none"><path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/></svg>
+        <span class="ph-tag">Depop Directory</span>
+        <h1>Welcome<br><span>Back</span> 👋</h1>
+        <p>Your all-in-one Depop reseller dashboard.</p>
+      </div>
+      <div class="page-body">
+        <div class="home-grid">
+          <div class="home-card" onclick="nav('caption')">
+            <div class="hc-icon">✍️</div>
+            <div class="hc-title">Caption Builder</div>
+            <div class="hc-sub">Generate Depop listings from photos using AI</div>
+          </div>
+          <div class="home-card" onclick="nav('pricing')">
+            <div class="hc-icon">🏷️</div>
+            <div class="hc-title">Price Calculator</div>
+            <div class="hc-sub">Find the perfect listing price with margin sliders</div>
+          </div>
+          <div class="home-card" onclick="nav('sales')">
+            <div class="hc-icon">💰</div>
+            <div class="hc-title">Sales Tracker</div>
+            <div class="hc-sub">Log sales and track your profit over time</div>
+          </div>
+          <div class="home-card" style="opacity:.6;cursor:default;">
+            <div class="hc-icon">📸</div>
+            <div class="hc-title">Photo Gen <span style="font-size:10px;background:var(--coral);color:#fff;padding:1px 6px;border-radius:4px;vertical-align:middle;margin-left:4px;">Soon</span></div>
+            <div class="hc-sub">AI background removal and photo enhancement</div>
+          </div>
+        </div>
+        <div class="home-stats">
+          <div class="home-stat"><div class="home-stat-num" id="homeListings">0</div><div class="home-stat-lbl">Listings Generated</div></div>
+          <div class="home-stat"><div class="home-stat-num" id="homeSales">0</div><div class="home-stat-lbl">Sales Logged</div></div>
+          <div class="home-stat"><div class="home-stat-num green" id="homeProfit">$0</div><div class="home-stat-lbl">Total Profit</div></div>
         </div>
       </div>
-      <div class="measurements-grid">
-        <div class="m-field form-group"><label id="labelChest">Chest (cm)</label><input type="text" id="mChest" placeholder="e.g. 116"></div>
-        <div class="m-field form-group"><label id="labelLength">Length (cm)</label><input type="text" id="mLength" placeholder="e.g. 68"></div>
-        <div class="m-field form-group"><label id="labelShoulder">Shoulder (cm)</label><input type="text" id="mShoulder" placeholder="e.g. 55"></div>
-        <div class="m-field form-group"><label id="labelSleeve">Sleeve (cm)</label><input type="text" id="mSleeve" placeholder="e.g. 52"></div>
+    </div>
+
+    <!-- CAPTION BUILDER -->
+    <div class="page" id="page-caption">
+      <div class="page-header">
+        <svg style="position:absolute;bottom:-1px;left:0;right:0;width:100%;color:#06040f;" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none"><path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/></svg>
+        <span class="ph-tag">AI Tool</span>
+        <h1>Caption<br><span>Builder</span></h1>
+        <p>Upload a photo and get a ready-to-paste Depop listing.</p>
       </div>
-      <div class="measurements-header" style="margin-top:24px;">
-        <span class="section-label">Pricing <span style="font-size:10px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
-      </div>
-      <div class="pricing-row">
-        <div class="form-group">
-          <label for="originalPrice">Cost Price ($)</label>
-          <input type="number" id="originalPrice" placeholder="e.g. 8.00" min="0" step="0.01">
-          <span class="field-hint">Used to calculate your suggested listing price</span>
+      <div class="page-body">
+        <button class="new-listing-btn" onclick="resetCaption()">✦ New Listing</button>
+
+        <div class="api-bar">
+          <label for="apiKey">🔑 API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+          <p class="api-hint">Get yours at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — saved automatically.</p>
         </div>
-        <div class="boost-toggle-wrap">
-          <label>Depop Boost</label>
-          <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()">
-            <div class="toggle-switch"><div class="toggle-knob"></div></div>
-            <div>
-              <div class="toggle-label">Boosted listing</div>
-              <div class="toggle-sub">Adds 12% Depop commission to price</div>
+
+        <div class="card">
+          <div class="card-header"><span class="step">1</span><h2>Photos</h2></div>
+          <div class="card-body">
+            <div class="drop-zone" id="dropZone">
+              <input type="file" id="fileInput" accept="image/*" multiple>
+              <span class="dz-icon">📸</span>
+              <h3>Drop photos here</h3>
+              <p>Front + back · Up to 4 images</p>
+              <span class="paste-tip">Or paste Ctrl+V / Cmd+V</span>
             </div>
+            <div class="preview-grid" id="previewGrid"></div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <button class="generate-btn" id="generateBtn" onclick="generate()">⚡ Generate Listing</button>
-  <div class="error-box" id="errorBox"></div>
-
-  <div class="loading-state" id="loadingState">
-    <div class="wave-loader"><span></span><span></span><span></span><span></span></div>
-    <p>Writing your listing...</p>
-  </div>
-
-  <div class="result-section card result-gap" id="resultSection">
-    <div class="card-header"><span class="step">Done</span><h2>Your Listing</h2></div>
-    <div class="card-body">
-      <div class="result-tabs">
-        <button class="tab-btn active" onclick="switchTab('description',this)">Description</button>
-        <button class="tab-btn" onclick="switchTab('categories',this)">Categories & Price</button>
-      </div>
-      <div class="tab-pane active" id="tab-description">
-        <div class="description-output" id="descriptionOutput"></div>
-        <button class="copy-btn" id="copyBtn" onclick="copyDescription()">📋 Copy Description</button>
-      </div>
-      <div class="tab-pane" id="tab-categories">
-        <div class="categories-grid" id="categoriesGrid"></div>
-      </div>
-    </div>
-  </div>
-</main>
-</div><!-- end captionPage -->
-
-<!-- ── SALES TRACKER PAGE ── -->
-<div id="salesPage">
-  <header>
-    <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
-    </svg>
-    <div class="header-inner">
-      <span class="logo-tag">Depop Tools</span>
-      <h1>Sales<br><span>Tracker</span></h1>
-      <p>Log your sales, track profit, and see how your shop is performing.</p>
-    </div>
-    <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
-    </svg>
-  </header>
-
-  <main>
-    <button class="back-btn" onclick="goHome()">← Back to Menu</button>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-      <div class="stat-card"><div class="stat-num" id="stTotalSales">0</div><div class="stat-lbl">Total Sales</div></div>
-      <div class="stat-card"><div class="stat-num" id="stTotalRevenue">$0</div><div class="stat-lbl">Total Revenue</div></div>
-      <div class="stat-card profit-card"><div class="stat-num green" id="stTotalProfit">$0</div><div class="stat-lbl">Total Profit</div></div>
-      <div class="stat-card"><div class="stat-num" id="stAvgProfit">$0</div><div class="stat-lbl">Avg Profit / Item</div></div>
-    </div>
-
-    <!-- Monthly Chart -->
-    <div class="chart-card">
-      <div class="chart-title">Monthly Profit</div>
-      <div class="chart-bars" id="profitChart"></div>
-    </div>
-
-    <!-- Add Sale -->
-    <div class="add-sale-card">
-      <div class="add-sale-header" id="addSaleToggle" onclick="toggleAddSale()">
-        <h3>+ Add New Sale</h3>
-        <span class="toggle-icon">+</span>
-      </div>
-      <div class="add-sale-body" id="addSaleBody">
-        <div class="sale-form-grid">
-          <div class="form-group" style="grid-column:1/-1">
-            <label for="saleItemName">Item Name *</label>
-            <input type="text" id="saleItemName" placeholder="e.g. Grey Graphic Hoodie">
-          </div>
-          <div class="form-group">
-            <label for="saleCostPrice">Cost Price ($) *</label>
-            <input type="number" id="saleCostPrice" placeholder="e.g. 8.00" min="0" step="0.01">
-          </div>
-          <div class="form-group">
-            <label for="saleSoldPrice">Sold For ($) *</label>
-            <input type="number" id="saleSoldPrice" placeholder="e.g. 22.00" min="0" step="0.01">
-          </div>
-          <div class="form-group">
-            <label for="salePlatform">Platform</label>
-            <select id="salePlatform">
-              <option value="Depop">Depop</option>
-              <option value="eBay">eBay</option>
-              <option value="Vinted">Vinted</option>
-              <option value="Poshmark">Poshmark</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Photo (optional)</label>
-            <div class="sale-photo-zone" id="salePhotoZone">
-              <input type="file" id="salePhotoInput" accept="image/*" onchange="handleSalePhoto(this)">
-              <img class="sale-photo-preview" id="salePhotoPreview">
-              <span id="salePhotoText">📷 Tap to add photo</span>
-            </div>
-          </div>
-        </div>
-        <div class="error-box" id="saleError"></div>
-        <button class="add-sale-btn" onclick="addSale()">Add Sale</button>
-      </div>
-    </div>
-
-    <!-- Filter & List -->
-    <div class="sales-list-header">
-      <div class="sales-list-title">Your Sales</div>
-      <div class="sales-actions">
-        <button class="sales-action-btn" onclick="exportSales()">⬇ Export</button>
-        <div class="sales-action-btn import-btn">
-          ⬆ Import
-          <input type="file" accept=".json" onchange="importSales(this)">
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-bar">
-      <input class="filter-search" type="text" id="saleSearch" placeholder="Search sales..." oninput="renderSales()">
-      <select class="filter-select" id="saleSortBy" onchange="renderSales()">
-        <option value="newest">Newest first</option>
-        <option value="oldest">Oldest first</option>
-        <option value="profit-high">Highest profit</option>
-        <option value="profit-low">Lowest profit</option>
-      </select>
-    </div>
-
-    <div id="salesList"></div>
-  </main>
-</div>
-
-<!-- ── PRICING CALCULATOR PAGE ── -->
-<div id="pricingPage" style="display:none;">
-  <header>
-    <svg class="wave-top" viewBox="0 0 1440 60" fill="none" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 30C240 60 480 0 720 30C960 60 1200 0 1440 30V60H0V30Z" fill="currentColor"/>
-    </svg>
-    <div class="header-inner">
-      <span class="logo-tag">Depop Tools</span>
-      <h1>Pricing<br><span>Calculator</span></h1>
-      <p>Find the perfect listing price and see your profit in real time.</p>
-    </div>
-    <svg class="wave-divider" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/>
-    </svg>
-  </header>
-  <main>
-    <button class="back-btn" onclick="goHome()">← Back to Menu</button>
-
-    <!-- Result Display -->
-    <div style="background:linear-gradient(135deg,#1e0a3c,#3b1278);border-radius:20px;padding:32px;text-align:center;margin-bottom:24px;border:1.5px solid rgba(192,132,252,0.2);">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--seafoam);margin-bottom:8px;">Suggested Listing Price</div>
-      <div id="pcListingPrice" style="font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;color:#fff;line-height:1;">$0</div>
-      <div style="display:flex;justify-content:center;gap:32px;margin-top:20px;flex-wrap:wrap;">
-        <div>
-          <div id="pcProfit" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:#4ade80;">+$0</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Your Profit</div>
-        </div>
-        <div>
-          <div id="pcMarginPct" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--seafoam);">0%</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Profit Margin</div>
-        </div>
-        <div>
-          <div id="pcROI" style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--coral);">0x</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Return on Cost</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Inputs -->
-    <div class="card">
-      <div class="card-header"><span class="step">1</span><h2>Cost Price</h2></div>
-      <div class="card-body">
-        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:120px;">
-            <label for="pcCostInput">What did you pay? ($)</label>
-            <input type="number" id="pcCostInput" placeholder="e.g. 8.00" min="0" step="0.01" oninput="calcPricing()" style="margin-top:6px;">
-          </div>
-          <div style="flex:1;min-width:120px;">
-            <label for="pcShippingInput">Shipping cost ($) <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px;">(optional)</span></label>
-            <input type="number" id="pcShippingInput" placeholder="e.g. 4.00" min="0" step="0.01" oninput="calcPricing()" style="margin-top:6px;">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span class="step">2</span><h2>Target Profit Margin</h2></div>
-      <div class="card-body">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <label style="margin:0;">Desired margin</label>
-          <span id="pcMarginLabel" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--seafoam);">50%</span>
-        </div>
-        <input type="range" id="pcMarginSlider" min="10" max="300" value="50" step="5" oninput="calcPricing()" style="width:100%;accent-color:var(--teal);height:6px;cursor:pointer;">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;">
-          <span>10% (Low)</span><span>150% (Good)</span><span>300% (Max)</span>
-        </div>
-
-        <div style="margin-top:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <label style="margin:0;">Depop fee (10%)</label>
-            <div id="pcFeeToggle" onclick="togglePcFee()" style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
-              <div id="pcFeeSwitch" style="width:36px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0;">
-                <div id="pcFeeKnob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+        <div class="card">
+          <div class="card-header"><span class="step">2</span><h2>Item Details</h2></div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="size">Size *</label>
+                <input type="text" id="size" placeholder="e.g. M, L, XL, One Size">
               </div>
-              <span id="pcFeeLbl" style="font-size:13px;color:var(--text-muted);">Off</span>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <label style="margin:0;">Depop Boost (12%)</label>
-            <div id="pcBoostToggle" onclick="togglePcBoost()" style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
-              <div id="pcBoostSwitch" style="width:36px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0;">
-                <div id="pcBoostKnob" style="position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+              <div class="form-group">
+                <label for="material">Material</label>
+                <input type="text" id="material" placeholder="e.g. Cotton, Polyester">
               </div>
-              <span id="pcBoostLbl" style="font-size:13px;color:var(--text-muted);">Off</span>
+            </div>
+            <div class="row-header">
+              <span class="section-label">Measurements <span style="font-size:9px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
+              <div class="unit-toggle">
+                <button id="btnCm" class="active" onclick="setUnit('cm')">cm</button>
+                <button id="btnIn" onclick="setUnit('in')">in</button>
+              </div>
+            </div>
+            <div class="m-grid">
+              <div class="m-field form-group"><label id="labelChest">Chest (cm)</label><input type="text" id="mChest" placeholder="e.g. 116"></div>
+              <div class="m-field form-group"><label id="labelLength">Length (cm)</label><input type="text" id="mLength" placeholder="e.g. 68"></div>
+              <div class="m-field form-group"><label id="labelShoulder">Shoulder (cm)</label><input type="text" id="mShoulder" placeholder="e.g. 55"></div>
+              <div class="m-field form-group"><label id="labelSleeve">Sleeve (cm)</label><input type="text" id="mSleeve" placeholder="e.g. 52"></div>
+            </div>
+            <div class="row-header" style="margin-top:18px;">
+              <span class="section-label">Pricing <span style="font-size:9px;font-family:'Barlow',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span></span>
+            </div>
+            <div class="pricing-row">
+              <div class="form-group">
+                <label for="originalPrice">Cost Price ($)</label>
+                <input type="number" id="originalPrice" placeholder="e.g. 8.00" min="0" step="0.01">
+                <span class="field-hint">Used to calculate suggested listing price</span>
+              </div>
+              <div class="boost-wrap">
+                <label>Depop Boost</label>
+                <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()">
+                  <div class="tgl-sw"><div class="tgl-kn"></div></div>
+                  <div><div class="tgl-lbl">Boosted listing</div><div class="tgl-sub">Adds 12% fee to price</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="generateBtn" onclick="generate()">⚡ Generate Listing</button>
+        <div class="error-box" id="errorBox"></div>
+
+        <div class="loading-state" id="loadingState">
+          <div class="wave-loader"><span></span><span></span><span></span><span></span></div>
+          <p>Writing your listing...</p>
+        </div>
+
+        <div class="result-section" id="resultSection">
+          <div class="result-tabs">
+            <button class="tab-btn active" onclick="switchTab('description',this)">Description</button>
+            <button class="tab-btn" onclick="switchTab('categories',this)">Categories & Price</button>
+          </div>
+          <div class="tab-pane active" id="tab-description">
+            <div class="desc-output" id="descriptionOutput"></div>
+            <button class="copy-btn" id="copyBtn" onclick="copyDescription()">📋 Copy Description</button>
+          </div>
+          <div class="tab-pane" id="tab-categories">
+            <div class="cat-grid" id="categoriesGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICE CALCULATOR -->
+    <div class="page" id="page-pricing">
+      <div class="page-header">
+        <svg style="position:absolute;bottom:-1px;left:0;right:0;width:100%;color:#06040f;" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none"><path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/></svg>
+        <span class="ph-tag">Calculator</span>
+        <h1>Price<br><span>Calculator</span></h1>
+        <p>Find the perfect listing price and see your profit in real time.</p>
+      </div>
+      <div class="page-body">
+        <button class="new-listing-btn" onclick="resetPricing()">✦ New Calculation</button>
+
+        <div class="pc-result">
+          <div class="pc-result-tag">Suggested Listing Price</div>
+          <div class="pc-price" id="pcListingPrice">$0</div>
+          <div class="pc-metrics">
+            <div><div class="pc-metric-val" id="pcProfit" style="color:var(--green);">+$0</div><div class="pc-metric-lbl">Your Profit</div></div>
+            <div><div class="pc-metric-val" id="pcMarginPct" style="color:var(--seafoam);">0%</div><div class="pc-metric-lbl">Profit Margin</div></div>
+            <div><div class="pc-metric-val" id="pcROI" style="color:var(--coral);">0x</div><div class="pc-metric-lbl">Return on Cost</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="step">1</span><h2>Cost Price</h2></div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="pcCostInput">What did you pay? ($)</label>
+                <input type="number" id="pcCostInput" placeholder="e.g. 8.00" min="0" step="0.01" oninput="calcPricing()">
+              </div>
+              <div class="form-group">
+                <label for="pcShippingInput">Shipping cost ($) <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;">(optional)</span></label>
+                <input type="number" id="pcShippingInput" placeholder="e.g. 4.00" min="0" step="0.01" oninput="calcPricing()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="step">2</span><h2>Target Margin</h2></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <label style="margin:0;">Desired margin</label>
+              <span id="pcMarginLabel" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--seafoam);">50%</span>
+            </div>
+            <input type="range" id="pcMarginSlider" min="10" max="300" value="50" step="5" oninput="calcPricing()" style="width:100%;accent-color:var(--teal);height:5px;cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px;"><span>10%</span><span>150%</span><span>300%</span></div>
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <label style="margin:0;">Depop fee (10%)</label>
+                <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="togglePcFee()">
+                  <div id="pcFeeSwitch" style="width:32px;height:18px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;"><div id="pcFeeKnob" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div></div>
+                  <span id="pcFeeLbl" style="font-size:12px;color:var(--muted);">Off</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <label style="margin:0;">Depop Boost (12%)</label>
+                <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="togglePcBoost()">
+                  <div id="pcBoostSwitch" style="width:32px;height:18px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;"><div id="pcBoostKnob" style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div></div>
+                  <span id="pcBoostLbl" style="font-size:12px;color:var(--muted);">Off</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="step">3</span><h2>Breakdown</h2></div>
+          <div class="card-body" id="pcBreakdown">
+            <div style="text-align:center;color:var(--muted);font-size:13px;padding:16px 0;">Enter a cost price above to see the breakdown.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="step">✦</span><h2>What If I Listed at...</h2></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <label style="margin:0;">Custom price</label>
+              <span id="pcWhatIfPrice" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:#fff;">$0</span>
+            </div>
+            <input type="range" id="pcWhatIfSlider" min="1" max="200" value="20" step="1" oninput="calcWhatIf()" style="width:100%;accent-color:var(--coral);height:5px;cursor:pointer;">
+            <div class="wi-result">
+              <div><div class="wi-val" id="wiProfit" style="color:var(--green);">$0</div><div class="wi-lbl">Profit</div></div>
+              <div><div class="wi-val" id="wiMargin" style="color:var(--seafoam);">0%</div><div class="wi-lbl">Margin</div></div>
+              <div><div class="wi-val" id="wiVerdict">—</div><div class="wi-lbl">Verdict</div></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Breakdown -->
-    <div class="card">
-      <div class="card-header"><span class="step">3</span><h2>Breakdown</h2></div>
-      <div class="card-body" id="pcBreakdown">
-        <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px 0;">Enter a cost price above to see the breakdown.</div>
+    <!-- SALES TRACKER -->
+    <div class="page" id="page-sales">
+      <div class="page-header">
+        <svg style="position:absolute;bottom:-1px;left:0;right:0;width:100%;color:#06040f;" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none"><path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/></svg>
+        <span class="ph-tag">Tracker</span>
+        <h1>Sales<br><span>Tracker</span></h1>
+        <p>Log your sales and see how your shop is performing.</p>
+      </div>
+      <div class="page-body">
+        <button class="new-listing-btn" onclick="resetSaleForm()">✦ Clear Form</button>
+        <div class="stats-bar">
+          <div class="stat-card"><div class="stat-num" id="stTotalSales">0</div><div class="stat-lbl">Total Sales</div></div>
+          <div class="stat-card"><div class="stat-num" id="stTotalRevenue">$0</div><div class="stat-lbl">Total Revenue</div></div>
+          <div class="stat-card profit-card"><div class="stat-num green" id="stTotalProfit">$0</div><div class="stat-lbl">Total Profit</div></div>
+          <div class="stat-card"><div class="stat-num" id="stAvgProfit">$0</div><div class="stat-lbl">Avg Profit</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Monthly Profit</div>
+          <div class="chart-bars" id="profitChart"></div>
+        </div>
+        <div class="add-sale-card">
+          <div class="add-sale-header" id="addSaleToggle" onclick="toggleAddSale()">
+            <h3>+ Add New Sale</h3><span class="toggle-icon">+</span>
+          </div>
+          <div class="add-sale-body" id="addSaleBody">
+            <div class="sale-form-grid">
+              <div class="form-group" style="grid-column:1/-1"><label for="saleItemName">Item Name *</label><input type="text" id="saleItemName" placeholder="e.g. Grey Graphic Hoodie"></div>
+              <div class="form-group"><label for="saleCostPrice">Cost Price ($) *</label><input type="number" id="saleCostPrice" placeholder="e.g. 8.00" min="0" step="0.01"></div>
+              <div class="form-group"><label for="saleSoldPrice">Sold For ($) *</label><input type="number" id="saleSoldPrice" placeholder="e.g. 22.00" min="0" step="0.01"></div>
+              <div class="form-group"><label for="salePlatform">Platform</label><select id="salePlatform"><option>Depop</option><option>eBay</option><option>Vinted</option><option>Poshmark</option><option>Other</option></select></div>
+              <div class="form-group"><label>Photo (optional)</label>
+                <div class="sale-photo-zone" id="salePhotoZone">
+                  <input type="file" id="salePhotoInput" accept="image/*" onchange="handleSalePhoto(this)">
+                  <img class="sale-photo-preview" id="salePhotoPreview">
+                  <span id="salePhotoText">📷 Tap to add photo</span>
+                </div>
+              </div>
+            </div>
+            <div class="error-box" id="saleError"></div>
+            <button class="add-sale-btn" onclick="addSale()">Add Sale</button>
+          </div>
+        </div>
+        <div class="sales-list-header">
+          <div class="sales-list-title">Your Sales</div>
+          <div class="sales-actions">
+            <button class="sales-action-btn" onclick="exportSales()">⬇ Export</button>
+            <div class="sales-action-btn import-btn">⬆ Import<input type="file" accept=".json" onchange="importSales(this)"></div>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <input class="filter-search" type="text" id="saleSearch" placeholder="Search sales..." oninput="renderSales()">
+          <select class="filter-select" id="saleSortBy" onchange="renderSales()">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="profit-high">Highest profit</option>
+            <option value="profit-low">Lowest profit</option>
+          </select>
+        </div>
+        <div id="salesList"></div>
       </div>
     </div>
 
-    <!-- What-if slider -->
-    <div class="card">
-      <div class="card-header"><span class="step">✦</span><h2>What If I Listed at...</h2></div>
-      <div class="card-body">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <label style="margin:0;">Custom price</label>
-          <span id="pcWhatIfPrice" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#fff;">$0</span>
-        </div>
-        <input type="range" id="pcWhatIfSlider" min="1" max="200" value="20" step="1" oninput="calcWhatIf()" style="width:100%;accent-color:var(--coral);height:6px;cursor:pointer;">
-        <div style="background:#1a1135;border-radius:12px;padding:16px;margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;" id="pcWhatIfResult">
-          <div><div id="wiProfit" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:#4ade80;">$0</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Profit</div></div>
-          <div><div id="wiMargin" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--seafoam);">0%</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Margin</div></div>
-          <div><div id="wiVerdict" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;padding-top:3px;">—</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Verdict</div></div>
+    <!-- PHOTO GEN -->
+    <div class="page" id="page-photo">
+      <div class="page-header">
+        <svg style="position:absolute;bottom:-1px;left:0;right:0;width:100%;color:#06040f;" viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none"><path d="M0 0C360 32 1080 32 1440 0V32H0V0Z" fill="currentColor"/></svg>
+        <span class="ph-tag">Coming Soon</span>
+        <h1>Photo<br><span>Generation</span></h1>
+      </div>
+      <div class="page-body">
+        <div class="coming-soon">
+          <div class="cs-icon">📸</div>
+          <h2>Coming Soon</h2>
+          <p>AI-powered photo background removal, enhancement, and product photo generation. Check back soon!</p>
         </div>
       </div>
     </div>
 
-  </main>
-</div>
+  </div><!-- end #content -->
+</div><!-- end #app -->
 
 <script>
 // ── CONSTANTS ─────────────────────────────────────────────
-const DEFAULT_USER_PASS = '2LIVECREW';
-const DEFAULT_ADMIN_PASS = '2NOTLIVECREW';
+const DEFAULT_USER_PASS='2LIVECREW';
+const DEFAULT_ADMIN_PASS='2NOTLIVECREW';
+const store={get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v),del:k=>localStorage.removeItem(k)};
+function getUserPass(){return store.get('depop_user_pass')||DEFAULT_USER_PASS;}
+function getAdminPass(){return store.get('depop_admin_pass')||DEFAULT_ADMIN_PASS;}
 
-// ── HELPERS: get/set stored values ────────────────────────
-const store = {
-  get: k => localStorage.getItem(k),
-  set: (k,v) => localStorage.setItem(k, v),
-  del: k => localStorage.removeItem(k),
-};
-
-function getUserPass() { return store.get('depop_user_pass') || DEFAULT_USER_PASS; }
-function getAdminPass() { return store.get('depop_admin_pass') || DEFAULT_ADMIN_PASS; }
-
-// ── PASSWORD SCREEN ───────────────────────────────────────
-let stayChecked = false;
-
-if (store.get('depop_auth') === 'yes') {
+// ── PASSWORD ──────────────────────────────────────────────
+let stayChecked=false;
+if(store.get('depop_auth')==='yes'){
   document.getElementById('pwScreen').classList.add('hidden');
-  document.getElementById('appChooser').classList.remove('hidden');
+  document.getElementById('app').style.display='flex';
+  refreshHomeStats();
 }
-
-function toggleStay() {
-  stayChecked = !stayChecked;
-  document.getElementById('stayBox').classList.toggle('checked', stayChecked);
-}
-
-function checkPassword() {
-  const val = document.getElementById('pwInput').value;
-  if (val === getUserPass()) {
-    if (stayChecked) {
-      store.set('depop_auth', 'yes');
-      store.set('depop_session_time', new Date().toISOString());
-      const sc = parseInt(store.get('depop_session_count') || '0') + 1;
-      store.set('depop_session_count', sc);
-    }
-    if (!store.get('depop_first_used')) store.set('depop_first_used', new Date().toISOString());
-    store.set('depop_last_used', new Date().toISOString());
+function toggleStay(){stayChecked=!stayChecked;document.getElementById('stayBox').classList.toggle('checked',stayChecked);}
+function checkPassword(){
+  const val=document.getElementById('pwInput').value;
+  if(val===getUserPass()){
+    if(stayChecked){store.set('depop_auth','yes');store.set('depop_session_time',new Date().toISOString());store.set('depop_session_count',parseInt(store.get('depop_session_count')||'0')+1);}
+    if(!store.get('depop_first_used'))store.set('depop_first_used',new Date().toISOString());
+    store.set('depop_last_used',new Date().toISOString());
     document.getElementById('pwScreen').classList.add('hidden');
-    document.getElementById('appChooser').classList.remove('hidden');
+    document.getElementById('app').style.display='flex';
+    refreshHomeStats();
   } else {
-    const inp = document.getElementById('pwInput');
-    inp.classList.remove('shake');
-    void inp.offsetWidth;
-    inp.classList.add('shake');
-    document.getElementById('pwError').textContent = 'Incorrect password. Try again.';
-    inp.value = '';
-    setTimeout(() => inp.classList.remove('shake'), 400);
+    const inp=document.getElementById('pwInput');
+    inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');
+    document.getElementById('pwError').textContent='Incorrect password. Try again.';
+    inp.value='';setTimeout(()=>inp.classList.remove('shake'),400);
   }
 }
-
-// ── ADMIN PANEL ───────────────────────────────────────────
-let adminUnlocked = false;
-
-function openAdmin() {
-  document.getElementById('adminScreen').classList.remove('hidden');
-  document.getElementById('adminAuthWrap').classList.remove('hidden');
-  document.getElementById('adminContentWrap').classList.add('hidden');
-  document.getElementById('adminPwInput').value = '';
-  document.getElementById('adminPwError').textContent = '';
-  adminUnlocked = false;
+function signOut(){
+  store.del('depop_auth');store.del('depop_session_time');
+  document.getElementById('app').style.display='none';
+  document.getElementById('pwInput').value='';document.getElementById('pwError').textContent='';
+  document.getElementById('pwScreen').classList.remove('hidden');
 }
 
-function closeAdmin() {
-  document.getElementById('adminScreen').classList.add('hidden');
-  adminUnlocked = false;
+// ── NAVIGATION ────────────────────────────────────────────
+let currentPage='home';
+let saveState=store.get('depop_save_state')==='yes';
+if(saveState)document.getElementById('saveTogglePill').classList.add('on');
+
+function nav(page){
+  currentPage=page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  if(page==='sales'){renderSales();renderChart();}
+  if(page==='home'){refreshHomeStats();}
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
 }
 
-// Close on backdrop click
-document.getElementById('adminScreen').addEventListener('click', function(e) {
-  if (e.target === this) closeAdmin();
-});
+function toggleSaveState(){
+  saveState=!saveState;
+  document.getElementById('saveTogglePill').classList.toggle('on',saveState);
+  store.set('depop_save_state',saveState?'yes':'no');
+}
 
-function checkAdminPassword() {
-  const val = document.getElementById('adminPwInput').value;
-  if (val === getAdminPass()) {
-    adminUnlocked = true;
+// ── RESET BUTTONS ─────────────────────────────────────────
+function resetCaption(){
+  images.length=0;renderPreviews();
+  ['size','material','mChest','mLength','mShoulder','mSleeve','originalPrice'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  if(boosted){boosted=false;document.getElementById('boostToggle').classList.remove('active');}
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('errorBox').className='error-box';
+  document.getElementById('loadingState').classList.remove('visible');
+  document.getElementById('fileInput').value='';
+}
+
+function resetPricing(){
+  ['pcCostInput','pcShippingInput'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('pcMarginSlider').value=50;
+  if(pcFeeOn)togglePcFee();
+  if(pcBoostOn)togglePcBoost();
+  calcPricing();
+}
+
+function resetSaleForm(){
+  document.getElementById('saleItemName').value='';
+  document.getElementById('saleCostPrice').value='';
+  document.getElementById('saleSoldPrice').value='';
+  document.getElementById('salePlatform').value='Depop';
+  document.getElementById('salePhotoPreview').style.display='none';
+  document.getElementById('salePhotoText').style.display='';
+  document.getElementById('salePhotoInput').value='';
+  salePhotoData=null;
+  document.getElementById('saleError').className='error-box';
+}
+
+// ── HOME STATS ────────────────────────────────────────────
+function refreshHomeStats(){
+  document.getElementById('homeListings').textContent=store.get('depop_listing_count')||'0';
+  const sales=getSales();
+  document.getElementById('homeSales').textContent=sales.length;
+  const profit=sales.reduce((s,x)=>s+x.profit,0);
+  document.getElementById('homeProfit').textContent=(profit>=0?'+':'')+'$'+profit.toFixed(2);
+}
+
+// ── ADMIN ─────────────────────────────────────────────────
+function openAdmin(){document.getElementById('adminOverlay').classList.remove('hidden');document.getElementById('adminAuthWrap').classList.remove('hidden');document.getElementById('adminContentWrap').classList.add('hidden');document.getElementById('adminPwInput').value='';document.getElementById('adminPwError').textContent='';}
+function closeAdmin(){document.getElementById('adminOverlay').classList.add('hidden');}
+document.getElementById('adminOverlay').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
+function checkAdminPassword(){
+  if(document.getElementById('adminPwInput').value===getAdminPass()){
     document.getElementById('adminAuthWrap').classList.add('hidden');
     document.getElementById('adminContentWrap').classList.remove('hidden');
     loadAdminStats();
-  } else {
-    document.getElementById('adminPwError').textContent = 'Incorrect admin password.';
-    document.getElementById('adminPwInput').value = '';
-  }
+  } else {document.getElementById('adminPwError').textContent='Incorrect admin password.';document.getElementById('adminPwInput').value='';}
+}
+function loadAdminStats(){
+  document.getElementById('statListings').textContent=store.get('depop_listing_count')||'0';
+  document.getElementById('statSessions').textContent=store.get('depop_session_count')||'0';
+  const fu=store.get('depop_first_used'),lu=store.get('depop_last_used');
+  document.getElementById('statFirstUsed').textContent=fu?new Date(fu).toLocaleDateString():'—';
+  document.getElementById('statLastUsed').textContent=lu?new Date(lu).toLocaleDateString():'—';
+  const hasSess=store.get('depop_auth')==='yes',st=store.get('depop_session_time');
+  document.getElementById('sessionList').innerHTML=hasSess
+    ?`<div class="admin-session-item"><div class="admin-session-info">📱 This device — saved session</div><div class="admin-session-date">${st?'Signed in '+new Date(st).toLocaleString():''}</div></div>`
+    :'<div style="font-size:12px;color:rgba(255,255,255,.3);margin-bottom:10px;">No saved sessions on this device.</div>';
+}
+function revokeAllSessions(){store.del('depop_auth');store.del('depop_session_time');document.getElementById('sessionMsg').textContent='✓ All sessions revoked.';loadAdminStats();setTimeout(()=>document.getElementById('sessionMsg').textContent='',3000);}
+function changeUserPassword(){const v=document.getElementById('newUserPw').value.trim();if(!v){document.getElementById('pwChangeMsg').textContent='Cannot be empty.';document.getElementById('pwChangeMsg').className='admin-msg error';return;}store.set('depop_user_pass',v);document.getElementById('newUserPw').value='';document.getElementById('pwChangeMsg').textContent=`✓ Changed to "${v}"`;document.getElementById('pwChangeMsg').className='admin-msg';setTimeout(()=>document.getElementById('pwChangeMsg').textContent='',3000);}
+function resetUserPassword(){store.del('depop_user_pass');document.getElementById('pwChangeMsg').textContent=`✓ Reset to default (${DEFAULT_USER_PASS})`;document.getElementById('pwChangeMsg').className='admin-msg';setTimeout(()=>document.getElementById('pwChangeMsg').textContent='',3000);}
+function changeAdminPassword(){const v=document.getElementById('newAdminPw').value.trim();if(!v){document.getElementById('adminPwChangeMsg').textContent='Cannot be empty.';document.getElementById('adminPwChangeMsg').className='admin-msg error';return;}store.set('depop_admin_pass',v);document.getElementById('newAdminPw').value='';document.getElementById('adminPwChangeMsg').textContent='✓ Admin password updated.';document.getElementById('adminPwChangeMsg').className='admin-msg';setTimeout(()=>document.getElementById('adminPwChangeMsg').textContent='',3000);}
+function clearStats(){['depop_listing_count','depop_session_count','depop_first_used','depop_last_used'].forEach(k=>store.del(k));loadAdminStats();}
+function clearAllData(){if(!confirm('Reset EVERYTHING including passwords, sessions, and stats?'))return;const key=store.get('depop_api_key');localStorage.clear();if(key)store.set('depop_api_key',key);loadAdminStats();}
+
+// ── CAPTION: FILES ────────────────────────────────────────
+const images=[];
+let unit='cm',boosted=false;
+const keyInput=document.getElementById('apiKey');
+keyInput.value=store.get('depop_api_key')||'';
+keyInput.addEventListener('input',()=>store.set('depop_api_key',keyInput.value.trim()));
+
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+fileInput.addEventListener('change',e=>addFiles(e.target.files));
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('dragover');addFiles(e.dataTransfer.files);});
+document.addEventListener('paste',e=>{const files=[];for(const item of(e.clipboardData?.items||[])){if(item.type.startsWith('image/'))files.push(item.getAsFile());}if(files.length)addFiles(files);});
+
+function addFiles(files){for(const file of files){if(!file.type.startsWith('image/')||images.length>=4)continue;const r=new FileReader();r.onload=e=>{images.push({dataUrl:e.target.result,base64:e.target.result.split(',')[1],mediaType:file.type});renderPreviews();};r.readAsDataURL(file);}}
+function removeImage(idx){images.splice(idx,1);renderPreviews();}
+function renderPreviews(){const g=document.getElementById('previewGrid');g.innerHTML='';images.forEach((img,i)=>{const d=document.createElement('div');d.className='preview-item';d.innerHTML=`<img src="${img.dataUrl}"><button class="remove-btn" onclick="removeImage(${i})">✕</button>`;g.appendChild(d);});}
+function setUnit(u){unit=u;document.getElementById('btnCm').classList.toggle('active',u==='cm');document.getElementById('btnIn').classList.toggle('active',u==='in');const s=u==='cm'?'cm':'in';const ph=u==='cm'?['116','68','55','52']:['45.5','26.5','21.5','20.5'];['Chest','Length','Shoulder','Sleeve'].forEach((n,i)=>{document.getElementById('label'+n).textContent=`${n} (${s})`;document.getElementById('m'+n).placeholder=`e.g. ${ph[i]}`;});}
+function toggleBoost(){boosted=!boosted;document.getElementById('boostToggle').classList.toggle('active',boosted);}
+
+// ── CAPTION: TABS ─────────────────────────────────────────
+function switchTab(name,btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');}
+
+// ── CAPTION: COPY ─────────────────────────────────────────
+function copyDescription(){navigator.clipboard.writeText(document.getElementById('descriptionOutput').textContent).then(()=>{const b=document.getElementById('copyBtn');b.textContent='✓ Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='📋 Copy Description';b.classList.remove('copied');},2000);});}
+
+// ── CAPTION: PRICE CALC ───────────────────────────────────
+function calcPrice(raw){
+  const cost=parseFloat(document.getElementById('originalPrice').value)||null;
+  let low,high;
+  if(cost){low=Math.round(cost*2);high=Math.round(cost*2.5);}
+  else{const nums=raw.replace(/[£$€]/g,'').match(/[\d.]+/g);if(!nums||nums.length<2)return{display:raw,breakdown:null};low=Math.round(parseFloat(nums[0]));high=Math.round(parseFloat(nums[1]));}
+  let fl=low,fh=high;
+  if(boosted){fl=Math.ceil(low/0.88);fh=Math.ceil(high/0.88);}
+  const display=`$${boosted?fl:low}–$${boosted?fh:high}`;
+  let breakdown=null;
+  if(boosted&&cost){const nl=Math.round(fl*.88),nh=Math.round(fh*.88);breakdown=`After 12% fee you keep ~$${nl}–$${nh} · Profit ~$${nl-cost}–$${nh-cost}`;}
+  else if(boosted){breakdown=`After 12% fee: keep ~$${Math.round(fl*.88)}–$${Math.round(fh*.88)}`;}
+  else if(cost){breakdown=`Est. profit: $${low-cost}–$${high-cost} after $${cost.toFixed(2)} cost`;}
+  return{display,breakdown};
 }
 
-function loadAdminStats() {
-  // Stats
-  const listings = store.get('depop_listing_count') || '0';
-  const sessions = store.get('depop_session_count') || '0';
-  const firstUsed = store.get('depop_first_used');
-  const lastUsed = store.get('depop_last_used');
+// ── CAPTION: CLEAN ────────────────────────────────────────
+function cleanDescription(raw){return raw.replace(/\[([^\]]*)\]\([^)]*\)/g,(_,t)=>t.trim()).replace(/https?:\/\/\S+/g,'').replace(/📏 MEASUREMENTS\s*\n(\s*\n|\s*Size:)/g,'$1').replace(/\n{3,}/g,'\n\n').trim();}
 
-  document.getElementById('statListings').textContent = listings;
-  document.getElementById('statSessions').textContent = sessions;
-  document.getElementById('statFirstUsed').textContent = firstUsed ? new Date(firstUsed).toLocaleDateString() : '—';
-  document.getElementById('statLastUsed').textContent = lastUsed ? new Date(lastUsed).toLocaleDateString() : '—';
-
-  // Sessions
-  const sessionList = document.getElementById('sessionList');
-  const hasSession = store.get('depop_auth') === 'yes';
-  const sessionTime = store.get('depop_session_time');
-
-  if (hasSession) {
-    sessionList.innerHTML = `
-      <div class="admin-session-item">
-        <div>
-          <div class="admin-session-info">📱 This device — saved session</div>
-          <div class="admin-session-date">${sessionTime ? 'Signed in ' + new Date(sessionTime).toLocaleString() : 'Session active'}</div>
-        </div>
-      </div>`;
-  } else {
-    sessionList.innerHTML = `<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:12px;">No saved sessions on this device.</div>`;
-  }
-}
-
-function revokeAllSessions() {
-  store.del('depop_auth');
-  store.del('depop_session_time');
-  document.getElementById('sessionMsg').textContent = '✓ All sessions revoked. Users must re-enter password next visit.';
-  loadAdminStats();
-  setTimeout(() => document.getElementById('sessionMsg').textContent = '', 3000);
-}
-
-function changeUserPassword() {
-  const val = document.getElementById('newUserPw').value.trim();
-  if (!val) { document.getElementById('pwChangeMsg').textContent = 'Password cannot be empty.'; document.getElementById('pwChangeMsg').className = 'admin-msg error'; return; }
-  store.set('depop_user_pass', val);
-  document.getElementById('newUserPw').value = '';
-  document.getElementById('pwChangeMsg').textContent = `✓ User password changed to "${val}"`;
-  document.getElementById('pwChangeMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
-}
-
-function resetUserPassword() {
-  store.del('depop_user_pass');
-  document.getElementById('pwChangeMsg').textContent = `✓ User password reset to default (${DEFAULT_USER_PASS})`;
-  document.getElementById('pwChangeMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
-}
-
-function changeAdminPassword() {
-  const val = document.getElementById('newAdminPw').value.trim();
-  if (!val) { document.getElementById('adminPwChangeMsg').textContent = 'Password cannot be empty.'; document.getElementById('adminPwChangeMsg').className = 'admin-msg error'; return; }
-  store.set('depop_admin_pass', val);
-  document.getElementById('newAdminPw').value = '';
-  document.getElementById('adminPwChangeMsg').textContent = `✓ Admin password updated. Remember the new password!`;
-  document.getElementById('adminPwChangeMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('adminPwChangeMsg').textContent = '', 3000);
-}
-
-function clearStats() {
-  store.del('depop_listing_count');
-  store.del('depop_session_count');
-  store.del('depop_first_used');
-  store.del('depop_last_used');
-  loadAdminStats();
-}
-
-function clearAllData() {
-  if (!confirm('Reset EVERYTHING including passwords, sessions, and stats?')) return;
-  const keysToKeep = ['depop_api_key']; // keep the API key
-  const keep = {};
-  keysToKeep.forEach(k => { const v = store.get(k); if (v) keep[k] = v; });
-  localStorage.clear();
-  Object.entries(keep).forEach(([k,v]) => store.set(k,v));
-  loadAdminStats();
-}
-
-// ── APP STATE ─────────────────────────────────────────────
-const images = [];
-let unit = 'cm';
-let boosted = false;
-
-// ── API KEY PERSIST ───────────────────────────────────────
-const keyInput = document.getElementById('apiKey');
-keyInput.value = store.get('depop_api_key') || '';
-keyInput.addEventListener('input', () => store.set('depop_api_key', keyInput.value.trim()));
-
-// ── UNIT TOGGLE ───────────────────────────────────────────
-function setUnit(u) {
-  unit = u;
-  document.getElementById('btnCm').classList.toggle('active', u === 'cm');
-  document.getElementById('btnIn').classList.toggle('active', u === 'in');
-  const s = u === 'cm' ? 'cm' : 'in';
-  const ph = u === 'cm' ? ['e.g. 116','e.g. 68','e.g. 55','e.g. 52'] : ['e.g. 45.5','e.g. 26.5','e.g. 21.5','e.g. 20.5'];
-  ['Chest','Length','Shoulder','Sleeve'].forEach((n,i) => document.getElementById('label'+n).textContent = `${n} (${s})`);
-  ['mChest','mLength','mShoulder','mSleeve'].forEach((id,i) => document.getElementById(id).placeholder = ph[i]);
-}
-
-// ── BOOST TOGGLE ─────────────────────────────────────────
-function toggleBoost() {
-  boosted = !boosted;
-  document.getElementById('boostToggle').classList.toggle('active', boosted);
-}
-
-// ── FILE HANDLING ─────────────────────────────────────────
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-
-fileInput.addEventListener('change', e => addFiles(e.target.files));
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
-document.addEventListener('paste', e => {
-  const files = [];
-  for (const item of (e.clipboardData?.items || [])) {
-    if (item.type.startsWith('image/')) files.push(item.getAsFile());
-  }
-  if (files.length) addFiles(files);
-});
-
-function addFiles(files) {
-  for (const file of files) {
-    if (!file.type.startsWith('image/') || images.length >= 4) continue;
-    const reader = new FileReader();
-    reader.onload = e => {
-      images.push({ dataUrl: e.target.result, base64: e.target.result.split(',')[1], mediaType: file.type });
-      renderPreviews();
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function removeImage(idx) { images.splice(idx, 1); renderPreviews(); }
-
-function renderPreviews() {
-  const grid = document.getElementById('previewGrid');
-  grid.innerHTML = '';
-  images.forEach((img, i) => {
-    const div = document.createElement('div');
-    div.className = 'preview-item';
-    div.innerHTML = `<img src="${img.dataUrl}" alt="Photo ${i+1}"><button class="remove-btn" onclick="removeImage(${i})">✕</button>`;
-    grid.appendChild(div);
-  });
-}
-
-// ── TAB SWITCHING ─────────────────────────────────────────
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ── COPY ─────────────────────────────────────────────────
-function copyDescription() {
-  navigator.clipboard.writeText(document.getElementById('descriptionOutput').textContent).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = '✓ Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '📋 Copy Description'; btn.classList.remove('copied'); }, 2000);
-  });
-}
-
-// ── PRICE CALCULATOR ─────────────────────────────────────
-function calcPrice(rawPriceStr) {
-  const originalCost = parseFloat(document.getElementById('originalPrice').value) || null;
-  let low, high;
-
-  if (originalCost) {
-    low = Math.round(originalCost * 2);
-    high = Math.round(originalCost * 2.5);
-  } else {
-    const nums = rawPriceStr.replace(/[£$€]/g,'').match(/[\d.]+/g);
-    if (!nums || nums.length < 2) return { display: rawPriceStr, breakdown: null };
-    low = Math.round(parseFloat(nums[0]));
-    high = Math.round(parseFloat(nums[1]));
-  }
-
-  let finalLow = low, finalHigh = high;
-  if (boosted) {
-    finalLow = Math.ceil(low / 0.88);
-    finalHigh = Math.ceil(high / 0.88);
-  }
-
-  const display = `$${boosted ? finalLow : low}–$${boosted ? finalHigh : high}`;
-  let breakdown = null;
-
-  if (boosted && originalCost) {
-    const netLow = Math.round(finalLow * 0.88);
-    const netHigh = Math.round(finalHigh * 0.88);
-    breakdown = `After 12% boost fee you keep ~$${netLow}–$${netHigh} · Profit ~$${netLow - originalCost}–$${netHigh - originalCost}`;
-  } else if (boosted) {
-    breakdown = `After 12% Depop boost fee: you keep ~$${Math.round(finalLow * 0.88)}–$${Math.round(finalHigh * 0.88)}`;
-  } else if (originalCost) {
-    breakdown = `Est. profit: $${low - originalCost}–$${high - originalCost} after $${originalCost.toFixed(2)} cost`;
-  }
-
-  return { display, breakdown };
-}
-
-// ── CLEAN DESCRIPTION ─────────────────────────────────────
-function cleanDescription(raw) {
-  return raw
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, (_, text) => text.trim())
-    .replace(/https?:\/\/\S+/g, '')
-    .replace(/📏 MEASUREMENTS\s*\n(\s*\n|\s*Size:)/g, '$1')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
-// ── GENERATE ─────────────────────────────────────────────
-async function generate() {
-  const apiKey = document.getElementById('apiKey').value.trim();
-  const size = document.getElementById('size').value.trim();
-  const errorBox = document.getElementById('errorBox');
-  errorBox.className = 'error-box';
-
-  if (!apiKey) { errorBox.textContent = 'Please enter your Anthropic API key above.'; errorBox.classList.add('visible'); return; }
-  if (!size) { errorBox.textContent = 'Please enter the size.'; errorBox.classList.add('visible'); return; }
-  if (!images.length) { errorBox.textContent = 'Please upload at least one photo.'; errorBox.classList.add('visible'); return; }
-
-  const material = document.getElementById('material').value.trim();
-  const mChest = document.getElementById('mChest').value.trim();
-  const mLength = document.getElementById('mLength').value.trim();
-  const mShoulder = document.getElementById('mShoulder').value.trim();
-  const mSleeve = document.getElementById('mSleeve').value.trim();
-  const hasMeasurements = mChest || mLength || mShoulder || mSleeve;
-
-  const mParts = [];
-  if (mChest) mParts.push(`Chest ${mChest}${unit}`);
-  if (mLength) mParts.push(`Length ${mLength}${unit}`);
-  if (mShoulder) mParts.push(`Shoulder ${mShoulder}${unit}`);
-  if (mSleeve) mParts.push(`Sleeve ${mSleeve}${unit}`);
-  const measurementsLine = hasMeasurements ? `${size} — ${mParts.join(' · ')}` : null;
-
-  document.getElementById('generateBtn').disabled = true;
+// ── CAPTION: GENERATE ─────────────────────────────────────
+async function generate(){
+  const apiKey=document.getElementById('apiKey').value.trim();
+  const size=document.getElementById('size').value.trim();
+  const errBox=document.getElementById('errorBox');
+  errBox.className='error-box';
+  if(!apiKey){errBox.textContent='Please enter your Anthropic API key above.';errBox.classList.add('visible');return;}
+  if(!size){errBox.textContent='Please enter the size.';errBox.classList.add('visible');return;}
+  if(!images.length){errBox.textContent='Please upload at least one photo.';errBox.classList.add('visible');return;}
+  const material=document.getElementById('material').value.trim();
+  const mChest=document.getElementById('mChest').value.trim();
+  const mLength=document.getElementById('mLength').value.trim();
+  const mShoulder=document.getElementById('mShoulder').value.trim();
+  const mSleeve=document.getElementById('mSleeve').value.trim();
+  const hasMeasurements=mChest||mLength||mShoulder||mSleeve;
+  const mParts=[];
+  if(mChest)mParts.push(`Chest ${mChest}${unit}`);
+  if(mLength)mParts.push(`Length ${mLength}${unit}`);
+  if(mShoulder)mParts.push(`Shoulder ${mShoulder}${unit}`);
+  if(mSleeve)mParts.push(`Sleeve ${mSleeve}${unit}`);
+  const mLine=hasMeasurements?`${size} — ${mParts.join(' · ')}`:null;
+  const mBlock=hasMeasurements?`\n📏 MEASUREMENTS\n${mLine}\n`:'';
+  document.getElementById('generateBtn').disabled=true;
   document.getElementById('loadingState').classList.add('visible');
   document.getElementById('resultSection').classList.remove('visible');
-
-  const contentBlocks = images.map(img => ({
-    type: 'image',
-    source: { type: 'base64', media_type: img.mediaType, data: img.base64 }
-  }));
-
-  const detailParts = [`Size: ${size}`];
-  if (material) detailParts.push(`Material: ${material}`);
-  if (measurementsLine) detailParts.push(`Measurements: ${measurementsLine}`);
-
-  const measurementsBlock = hasMeasurements ? `\n📏 MEASUREMENTS\n${measurementsLine}\n` : '';
-
-  const systemPrompt = `You are an expert Depop reseller writing concise, accurate listings. Study the photo(s) carefully — notice specific details like ribbons, lace trim, buttons, stitching, neckline, fabric texture.
+  const contentBlocks=images.map(img=>({type:'image',source:{type:'base64',media_type:img.mediaType,data:img.base64}}));
+  const detailParts=[`Size: ${size}`];
+  if(material)detailParts.push(`Material: ${material}`);
+  if(mLine)detailParts.push(`Measurements: ${mLine}`);
+  const systemPrompt=`You are an expert Depop reseller writing concise, accurate listings. Study the photo(s) carefully — notice specific details like ribbons, lace trim, buttons, stitching, neckline, fabric texture.
 
 Output the listing in EXACTLY this format:
 
@@ -1163,518 +1004,154 @@ Output the listing in EXACTLY this format:
 
 [Color] [Item Type] [Brief Descriptor] [era e.g. Y2K, Vintage] Top
 
-[EXACTLY 2 sentences. Sentence 1: describe the item with specific visual details you can actually see (lace trim, spaghetti straps, ribbed fabric, gingham pattern, ruffled sleeves, etc). Sentence 2: one punchy line about the vibe or who it's for — keep it natural, not over the top. NO filler phrases like "hugs in all the right places", "effortlessly put together", "pair with X for the full moment", "giving X energy". Match the length and simplicity of this example exactly:
+[EXACTLY 2 sentences. Sentence 1: describe the item with specific visual details you can actually see. Sentence 2: one punchy line about the vibe or who it's for — keep it natural, not over the top. NO filler phrases like "hugs in all the right places", "effortlessly put together", "giving X energy". Match the length and simplicity of this example exactly:
 "Navy blue camisole top with delicate lace trim along the neckline. This fitted spaghetti strap top has a Y2K aesthetic, perfect for a casual summer look or layering."]
-${measurementsBlock}
+${mBlock}
 Size: [SIZE]
 
 #tag1 #tag2 #tag3 #tag4 #tag5
 
-HASHTAG RULE: Exactly 5 hashtags as plain text separated by spaces. No links, no brackets, no URLs. Just plain hashtags like "#cami #y2k #summertop #casual #vintage".
+HASHTAG RULE: Exactly 5 hashtags as plain text separated by spaces. No links, no brackets, no URLs.
 
 Then output ---JSON--- on its own line followed by:
 {
   "color": "1 or 2 dominant colors max, single words e.g. Grey or Black, White",
-  "source": "1-2 from: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired — usually preloved or vintage",
+  "source": "1-2 from: vintage, preloved, reworked/upcycled, custom, handmade, deadstock, designer, repaired",
   "age": "exactly one of: Modern, 00s, 90s, 80s, 70s, 60s, 50s, Antique",
   "style": "exactly 3 comma-separated from: Streetwear, Sportswear, Loungewear, Goth, Retro, Boho, Western, Indie, Skater, Rave, Costume, Cosplay, Grunge, Emo, Minimalist, Preppy, Avant Garde, Punk, Glam, Regency, Casual, Utility, Futuristic, Cottage, Fairy, Kidcore, Y2K, Biker, Gorpcore, Twee, Coquette, Whimsygoth",
   "occasion": "1-3 comma-separated from ONLY: Casual, Festival, Gifting, Going Out, Outdoors, Party, Relaxation, School, Ski, Special Occasion, Summer, Holiday, Winter, Work, Workout",
   "condition": "one of: New with tags, Like new, Good, Fair, Well worn",
   "price": "$X-$Y in US dollars, realistic Depop secondhand value"
 }`;
-
-  const userText = `Write a Depop listing for this item.\n\n${detailParts.join('\n')}\n\nUse size "${size}" in the listing. Generate the full listing now.`;
-  contentBlocks.push({ type: 'text', text: userText });
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1200,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: contentBlocks }]
-      })
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err?.error?.message || `API error ${response.status}`);
-    }
-
-    const data = await response.json();
-    const raw = data?.content?.[0]?.text || '';
-
-    // Track usage
-    const count = parseInt(store.get('depop_listing_count') || '0') + 1;
-    store.set('depop_listing_count', count);
-    store.set('depop_last_used', new Date().toISOString());
-    if (!store.get('depop_first_used')) store.set('depop_first_used', new Date().toISOString());
-
-    const splitIdx = raw.indexOf('---JSON---');
-    const descRaw = splitIdx !== -1 ? raw.slice(0, splitIdx).trim() : raw.trim();
-    const desc = cleanDescription(descRaw);
-    let categories = {};
-
-    if (splitIdx !== -1) {
-      const jsonPart = raw.slice(splitIdx + 10).replace(/```json|```/g,'').trim();
-      try { categories = JSON.parse(jsonPart); }
-      catch { const m = jsonPart.match(/\{[\s\S]+\}/); if (m) { try { categories = JSON.parse(m[0]); } catch {} } }
-    }
-
-    document.getElementById('descriptionOutput').textContent = desc;
-
-    const catGrid = document.getElementById('categoriesGrid');
-    catGrid.innerHTML = '';
-    const catFields = [
-      { key:'color', label:'Color' }, { key:'style', label:'Style' },
-      { key:'age', label:'Era / Age' }, { key:'source', label:'Source' },
-      { key:'occasion', label:'Occasion' }, { key:'condition', label:'Condition' },
-    ];
-    for (const f of catFields) {
-      if (categories[f.key]) {
-        const div = document.createElement('div');
-        div.className = 'cat-item';
-        div.innerHTML = `<span class="cat-label">${f.label}</span><span class="cat-value">${categories[f.key]}</span>`;
-        catGrid.appendChild(div);
-      }
-    }
-    if (categories.price) {
-      const { display, breakdown } = calcPrice(categories.price);
-      const div = document.createElement('div');
-      div.className = 'cat-item price-item';
-      div.innerHTML = `<span class="cat-label">💰 Suggested Price${boosted ? ' (Boosted)' : ''}</span><span class="cat-value">${display}</span>${breakdown ? `<div class="price-breakdown">${breakdown}</div>` : ''}`;
-      catGrid.appendChild(div);
-    }
-
+  contentBlocks.push({type:'text',text:`Write a Depop listing for this item.\n\n${detailParts.join('\n')}\n\nUse size "${size}" in the listing.`});
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:systemPrompt,messages:[{role:'user',content:contentBlocks}]})});
+    if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err?.error?.message||`API error ${response.status}`);}
+    const data=await response.json();
+    const raw=data?.content?.[0]?.text||'';
+    const count=parseInt(store.get('depop_listing_count')||'0')+1;
+    store.set('depop_listing_count',count);store.set('depop_last_used',new Date().toISOString());
+    if(!store.get('depop_first_used'))store.set('depop_first_used',new Date().toISOString());
+    const si=raw.indexOf('---JSON---');
+    const desc=cleanDescription(si!==-1?raw.slice(0,si).trim():raw.trim());
+    let cats={};
+    if(si!==-1){const jp=raw.slice(si+10).replace(/```json|```/g,'').trim();try{cats=JSON.parse(jp);}catch{const m=jp.match(/\{[\s\S]+\}/);if(m)try{cats=JSON.parse(m[0]);}catch{}}}
+    document.getElementById('descriptionOutput').textContent=desc;
+    const cg=document.getElementById('categoriesGrid');cg.innerHTML='';
+    const catFields=[{key:'color',label:'Color'},{key:'style',label:'Style'},{key:'age',label:'Era / Age'},{key:'source',label:'Source'},{key:'occasion',label:'Occasion'},{key:'condition',label:'Condition'}];
+    for(const f of catFields){if(cats[f.key]){const d=document.createElement('div');d.className='cat-item';d.innerHTML=`<span class="cat-lbl">${f.label}</span><span class="cat-val">${cats[f.key]}</span>`;cg.appendChild(d);}}
+    if(cats.price){const{display,breakdown}=calcPrice(cats.price);const d=document.createElement('div');d.className='cat-item price-item';d.innerHTML=`<span class="cat-lbl">💰 Suggested Price${boosted?' (Boosted)':''}</span><span class="cat-val">${display}</span>${breakdown?`<div class="price-sub">${breakdown}</div>`:''}`;cg.appendChild(d);}
     document.getElementById('resultSection').classList.add('visible');
-    document.getElementById('resultSection').scrollIntoView({ behavior:'smooth', block:'start' });
-
-  } catch (err) {
-    errorBox.textContent = `Error: ${err.message}`;
-    errorBox.classList.add('visible');
-  } finally {
-    document.getElementById('generateBtn').disabled = false;
-    document.getElementById('loadingState').classList.remove('visible');
-  }
-}
-// ── APP ROUTING ───────────────────────────────────────────
-function launchApp(app) {
-  document.getElementById('appChooser').classList.add('hidden');
-  document.getElementById('captionPage').classList.add('hidden');
-  document.getElementById('salesPage').style.display = 'none';
-  document.getElementById('pricingPage').style.display = 'none';
-
-  if (app === 'caption') {
-    document.getElementById('captionPage').classList.remove('hidden');
-  } else if (app === 'sales') {
-    document.getElementById('salesPage').style.display = 'block';
-    renderSales();
-    renderChart();
-  } else if (app === 'pricing') {
-    document.getElementById('pricingPage').style.display = 'block';
-    calcPricing();
-  }
+    document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){errBox.textContent=`Error: ${err.message}`;errBox.classList.add('visible');}
+  finally{document.getElementById('generateBtn').disabled=false;document.getElementById('loadingState').classList.remove('visible');}
 }
 
-function goHome() {
-  document.getElementById('captionPage').classList.add('hidden');
-  document.getElementById('salesPage').style.display = 'none';
-  document.getElementById('pricingPage').style.display = 'none';
-  document.getElementById('appChooser').classList.remove('hidden');
+// ── PRICING CALCULATOR ────────────────────────────────────
+let pcFeeOn=false,pcBoostOn=false;
+function togglePcFee(){pcFeeOn=!pcFeeOn;document.getElementById('pcFeeSwitch').style.background=pcFeeOn?'var(--teal)':'var(--border)';document.getElementById('pcFeeKnob').style.left=pcFeeOn?'16px':'2px';document.getElementById('pcFeeLbl').textContent=pcFeeOn?'On':'Off';document.getElementById('pcFeeLbl').style.color=pcFeeOn?'var(--seafoam)':'var(--muted)';calcPricing();}
+function togglePcBoost(){pcBoostOn=!pcBoostOn;document.getElementById('pcBoostSwitch').style.background=pcBoostOn?'var(--coral)':'var(--border)';document.getElementById('pcBoostKnob').style.left=pcBoostOn?'16px':'2px';document.getElementById('pcBoostLbl').textContent=pcBoostOn?'On':'Off';document.getElementById('pcBoostLbl').style.color=pcBoostOn?'var(--coral)':'var(--muted)';calcPricing();}
+function calcPricing(){
+  const cost=(parseFloat(document.getElementById('pcCostInput')?.value)||0)+(parseFloat(document.getElementById('pcShippingInput')?.value)||0);
+  const margin=parseInt(document.getElementById('pcMarginSlider')?.value)||50;
+  document.getElementById('pcMarginLabel').textContent=margin+'%';
+  if(cost<=0){document.getElementById('pcListingPrice').textContent='$0';document.getElementById('pcProfit').textContent='+$0';document.getElementById('pcMarginPct').textContent='0%';document.getElementById('pcROI').textContent='0x';document.getElementById('pcBreakdown').innerHTML='<div style="text-align:center;color:var(--muted);font-size:12px;padding:14px 0;">Enter a cost price above to see the breakdown.</div>';updateWhatIfSlider(0);return;}
+  const tp=cost*(margin/100);let fm=1;if(pcFeeOn)fm+=0.10;if(pcBoostOn)fm+=0.12;
+  const listing=Math.ceil(((cost+tp)/(1-(fm-1)))*100)/100;
+  const df=pcFeeOn?listing*0.10:0,bf=pcBoostOn?listing*0.12:0;
+  const ap=listing-cost-df-bf,am=cost>0?(ap/cost)*100:0,roi=cost>0?listing/cost:0;
+  document.getElementById('pcListingPrice').textContent='$'+listing.toFixed(2);
+  const pe=document.getElementById('pcProfit');pe.textContent=(ap>=0?'+':'')+`$${ap.toFixed(2)}`;pe.style.color=ap>=0?'var(--green)':'var(--red)';
+  document.getElementById('pcMarginPct').textContent=am.toFixed(0)+'%';
+  document.getElementById('pcROI').textContent=roi.toFixed(1)+'x';
+  const rawCost=(parseFloat(document.getElementById('pcCostInput')?.value)||0);
+  const rows=[
+    {label:'Cost Price',val:`$${rawCost.toFixed(2)}`,color:'var(--red)'},
+    (parseFloat(document.getElementById('pcShippingInput')?.value)||0)>0?{label:'Shipping',val:`$${(parseFloat(document.getElementById('pcShippingInput').value)||0).toFixed(2)}`,color:'var(--red)'}:null,
+    {label:'Listing Price',val:`$${listing.toFixed(2)}`,color:'#fff',bold:true},
+    pcFeeOn?{label:'Depop Fee (10%)',val:`-$${df.toFixed(2)}`,color:'var(--red)'}:null,
+    pcBoostOn?{label:'Boost Fee (12%)',val:`-$${bf.toFixed(2)}`,color:'#fbbf24'}:null,
+    {label:'Your Profit',val:`${ap>=0?'+':''}$${ap.toFixed(2)}`,color:ap>=0?'var(--green)':'var(--red)',bold:true},
+  ].filter(Boolean);
+  document.getElementById('pcBreakdown').innerHTML=rows.map(r=>`<div class="pc-breakdown-row"><span style="font-size:12px;color:var(--muted);">${r.label}</span><span style="font-family:'Barlow Condensed',sans-serif;font-size:${r.bold?'18':'14'}px;font-weight:${r.bold?900:600};color:${r.color};">${r.val}</span></div>`).join('');
+  updateWhatIfSlider(cost);
 }
-
-function backToPassword() {
-  document.getElementById('appChooser').classList.add('hidden');
-  store.del('depop_auth');
-  store.del('depop_session_time');
-  document.getElementById('pwInput').value = '';
-  document.getElementById('pwError').textContent = '';
-  document.getElementById('pwScreen').classList.remove('hidden');
+function updateWhatIfSlider(cost){const s=document.getElementById('pcWhatIfSlider');if(!s)return;const mx=Math.max(200,Math.ceil(cost*5));s.max=mx;if(parseFloat(s.value)<1)s.value=Math.max(1,Math.ceil(cost*1.5));calcWhatIf();}
+function calcWhatIf(){
+  const cost=(parseFloat(document.getElementById('pcCostInput')?.value)||0)+(parseFloat(document.getElementById('pcShippingInput')?.value)||0);
+  const price=parseFloat(document.getElementById('pcWhatIfSlider')?.value)||0;
+  document.getElementById('pcWhatIfPrice').textContent='$'+price.toFixed(0);
+  const df=pcFeeOn?price*.10:0,bf=pcBoostOn?price*.12:0,profit=price-cost-df-bf,margin=cost>0?(profit/cost)*100:0;
+  const pe=document.getElementById('wiProfit');pe.textContent=(profit>=0?'+':'')+`$${profit.toFixed(2)}`;pe.style.color=profit>=0?'var(--green)':'var(--red)';
+  document.getElementById('wiMargin').textContent=margin.toFixed(0)+'%';
+  const ve=document.getElementById('wiVerdict');
+  if(cost<=0){ve.textContent='—';ve.style.color='var(--muted)';}
+  else if(profit<0){ve.textContent='❌ Loss';ve.style.color='var(--red)';}
+  else if(margin<20){ve.textContent='⚠️ Thin';ve.style.color='#fbbf24';}
+  else if(margin<60){ve.textContent='✓ Fair';ve.style.color='var(--green)';}
+  else if(margin<150){ve.textContent='🔥 Great';ve.style.color='var(--green)';}
+  else{ve.textContent='🚀 Excellent';ve.style.color='var(--seafoam)';}
 }
 
 // ── SALES TRACKER ─────────────────────────────────────────
-let salePhotoData = null;
-
-function getSales() {
-  try { return JSON.parse(store.get('depop_sales') || '[]'); } catch { return []; }
+let salePhotoData=null;
+function getSales(){try{return JSON.parse(store.get('depop_sales')||'[]');}catch{return[];}}
+function saveSales(s){store.set('depop_sales',JSON.stringify(s));}
+function toggleAddSale(){const b=document.getElementById('addSaleBody'),h=document.getElementById('addSaleToggle');const o=b.classList.toggle('open');h.classList.toggle('open',o);}
+function handleSalePhoto(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{salePhotoData=e.target.result;const p=document.getElementById('salePhotoPreview');p.src=salePhotoData;p.style.display='block';document.getElementById('salePhotoText').style.display='none';};r.readAsDataURL(file);}
+function addSale(){
+  const name=document.getElementById('saleItemName').value.trim();
+  const cost=parseFloat(document.getElementById('saleCostPrice').value);
+  const sold=parseFloat(document.getElementById('saleSoldPrice').value);
+  const platform=document.getElementById('salePlatform').value;
+  const eb=document.getElementById('saleError');eb.className='error-box';
+  if(!name){eb.textContent='Please enter an item name.';eb.classList.add('visible');return;}
+  if(isNaN(cost)||cost<0){eb.textContent='Please enter a valid cost price.';eb.classList.add('visible');return;}
+  if(isNaN(sold)||sold<0){eb.textContent='Please enter a valid sold price.';eb.classList.add('visible');return;}
+  const profit=parseFloat((sold-cost).toFixed(2));
+  const sales=getSales();sales.unshift({id:Date.now().toString(),name,cost,sold,profit,platform,photo:salePhotoData||null,date:new Date().toISOString()});saveSales(sales);
+  resetSaleForm();
+  document.getElementById('addSaleBody').classList.remove('open');document.getElementById('addSaleToggle').classList.remove('open');
+  renderSales();renderChart();refreshHomeStats();
 }
-function saveSales(sales) { store.set('depop_sales', JSON.stringify(sales)); }
-
-function toggleAddSale() {
-  const body = document.getElementById('addSaleBody');
-  const hdr = document.getElementById('addSaleToggle');
-  const open = body.classList.toggle('open');
-  hdr.classList.toggle('open', open);
+function deleteSale(id){if(!confirm('Delete this sale?'))return;saveSales(getSales().filter(s=>s.id!==id));renderSales();renderChart();refreshHomeStats();}
+function renderSales(){
+  const search=(document.getElementById('saleSearch')?.value||'').toLowerCase();
+  const sort=document.getElementById('saleSortBy')?.value||'newest';
+  let sales=getSales();
+  if(search)sales=sales.filter(s=>s.name.toLowerCase().includes(search));
+  sales.sort((a,b)=>sort==='newest'?new Date(b.date)-new Date(a.date):sort==='oldest'?new Date(a.date)-new Date(b.date):sort==='profit-high'?b.profit-a.profit:a.profit-b.profit);
+  const all=getSales();
+  const tr=all.reduce((s,x)=>s+x.sold,0),tp=all.reduce((s,x)=>s+x.profit,0),avg=all.length?tp/all.length:0;
+  document.getElementById('stTotalSales').textContent=all.length;
+  document.getElementById('stTotalRevenue').textContent='$'+tr.toFixed(2);
+  document.getElementById('stTotalProfit').textContent=(tp>=0?'+':'')+'$'+tp.toFixed(2);
+  document.getElementById('stAvgProfit').textContent='$'+avg.toFixed(2);
+  const list=document.getElementById('salesList');
+  if(!sales.length){list.innerHTML=`<div class="empty-state"><div class="ei">${search?'🔍':'📦'}</div><p>${search?'No sales match your search.':'No sales yet. Add your first sale above!'}</p></div>`;return;}
+  list.innerHTML=sales.map(s=>{const pc=s.profit<0?'loss':'',ps=s.profit>=0?'+':'',ds=new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const th=s.photo?`<div class="sale-thumb"><img src="${s.photo}"></div>`:`<div class="sale-thumb">👕</div>`;return`<div class="sale-item">${th}<div class="sale-info"><div class="sale-name">${s.name}</div><div class="sale-meta">Cost $${s.cost.toFixed(2)} · Sold $${s.sold.toFixed(2)} · ${s.platform}</div></div><div style="text-align:right;flex-shrink:0"><div class="sale-profit ${pc}">${ps}$${s.profit.toFixed(2)}</div><div class="sale-date">${ds}</div></div><button class="sale-delete" onclick="deleteSale('${s.id}')">✕</button></div>`;}).join('');
 }
-
-function handleSalePhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    salePhotoData = e.target.result;
-    const preview = document.getElementById('salePhotoPreview');
-    preview.src = salePhotoData;
-    preview.style.display = 'block';
-    document.getElementById('salePhotoText').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+function renderChart(){
+  const sales=getSales(),chart=document.getElementById('profitChart');if(!chart)return;
+  const months=[];const now=new Date();
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${d.getMonth()}`,label:d.toLocaleString('en-US',{month:'short'}),profit:0});}
+  sales.forEach(s=>{const d=new Date(s.date),k=`${d.getFullYear()}-${d.getMonth()}`,m=months.find(m=>m.key===k);if(m)m.profit+=s.profit;});
+  const max=Math.max(...months.map(m=>m.profit),1);
+  chart.innerHTML=months.map(m=>{const pct=Math.max(0,(m.profit/max)*100);return`<div class="chart-bar-wrap"><div class="chart-bar ${m.profit===0?'zero':''}" style="height:${pct}%;" title="$${m.profit.toFixed(2)}"></div><div class="chart-bar-lbl">${m.label}</div></div>`;}).join('');
 }
+function exportSales(){const s=getSales();if(!s.length){alert('No sales to export.');return;}const b=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`depop-sales-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);}
+function importSales(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error();const ex=getSales(),ids=new Set(ex.map(s=>s.id)),nw=imp.filter(s=>!ids.has(s.id));saveSales([...ex,...nw]);renderSales();renderChart();refreshHomeStats();alert(`✓ Imported ${nw.length} new sale(s).`);}catch{alert('Import failed.');}};r.readAsText(file);input.value='';}
 
-function addSale() {
-  const name = document.getElementById('saleItemName').value.trim();
-  const cost = parseFloat(document.getElementById('saleCostPrice').value);
-  const sold = parseFloat(document.getElementById('saleSoldPrice').value);
-  const platform = document.getElementById('salePlatform').value;
-  const errBox = document.getElementById('saleError');
-  errBox.className = 'error-box';
-
-  if (!name) { errBox.textContent = 'Please enter an item name.'; errBox.classList.add('visible'); return; }
-  if (isNaN(cost) || cost < 0) { errBox.textContent = 'Please enter a valid cost price.'; errBox.classList.add('visible'); return; }
-  if (isNaN(sold) || sold < 0) { errBox.textContent = 'Please enter a valid sold price.'; errBox.classList.add('visible'); return; }
-
-  const profit = parseFloat((sold - cost).toFixed(2));
-  const sale = {
-    id: Date.now().toString(),
-    name, cost, sold, profit, platform,
-    photo: salePhotoData || null,
-    date: new Date().toISOString(),
-  };
-
-  const sales = getSales();
-  sales.unshift(sale);
-  saveSales(sales);
-
-  // Reset form
-  document.getElementById('saleItemName').value = '';
-  document.getElementById('saleCostPrice').value = '';
-  document.getElementById('saleSoldPrice').value = '';
-  document.getElementById('salePlatform').value = 'Depop';
-  document.getElementById('salePhotoPreview').style.display = 'none';
-  document.getElementById('salePhotoText').style.display = '';
-  document.getElementById('salePhotoInput').value = '';
-  salePhotoData = null;
-  errBox.className = 'error-box';
-
-  // Close form, refresh
-  document.getElementById('addSaleBody').classList.remove('open');
-  document.getElementById('addSaleToggle').classList.remove('open');
-  renderSales();
-  renderChart();
-}
-
-function deleteSale(id) {
-  if (!confirm('Delete this sale?')) return;
-  const sales = getSales().filter(s => s.id !== id);
-  saveSales(sales);
-  renderSales();
-  renderChart();
-}
-
-function renderSales() {
-  const search = (document.getElementById('saleSearch')?.value || '').toLowerCase();
-  const sort = document.getElementById('saleSortBy')?.value || 'newest';
-  let sales = getSales();
-
-  if (search) sales = sales.filter(s => s.name.toLowerCase().includes(search));
-
-  sales.sort((a, b) => {
-    if (sort === 'newest') return new Date(b.date) - new Date(a.date);
-    if (sort === 'oldest') return new Date(a.date) - new Date(b.date);
-    if (sort === 'profit-high') return b.profit - a.profit;
-    if (sort === 'profit-low') return a.profit - b.profit;
-    return 0;
-  });
-
-  // Update stats from ALL sales (not filtered)
-  const allSales = getSales();
-  const totalSales = allSales.length;
-  const totalRevenue = allSales.reduce((s, x) => s + x.sold, 0);
-  const totalProfit = allSales.reduce((s, x) => s + x.profit, 0);
-  const avgProfit = totalSales > 0 ? totalProfit / totalSales : 0;
-  document.getElementById('stTotalSales').textContent = totalSales;
-  document.getElementById('stTotalRevenue').textContent = '$' + totalRevenue.toFixed(2);
-  document.getElementById('stTotalProfit').textContent = (totalProfit >= 0 ? '+' : '') + '$' + totalProfit.toFixed(2);
-  document.getElementById('stAvgProfit').textContent = '$' + avgProfit.toFixed(2);
-
-  const list = document.getElementById('salesList');
-  if (!sales.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">${search ? '🔍' : '📦'}</div><p>${search ? 'No sales match your search.' : 'No sales yet. Add your first sale above!'}</p></div>`;
-    return;
-  }
-
-  list.innerHTML = sales.map(s => {
-    const profitClass = s.profit < 0 ? 'loss' : '';
-    const profitSign = s.profit >= 0 ? '+' : '';
-    const dateStr = new Date(s.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-    const thumbHtml = s.photo
-      ? `<div class="sale-thumb"><img src="${s.photo}" alt="${s.name}"></div>`
-      : `<div class="sale-thumb" style="font-size:22px;">👕</div>`;
-    return `<div class="sale-item">
-      ${thumbHtml}
-      <div class="sale-info">
-        <div class="sale-name">${s.name}</div>
-        <div class="sale-meta">Cost $${s.cost.toFixed(2)} · Sold $${s.sold.toFixed(2)} · ${s.platform}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div class="sale-profit ${profitClass}">${profitSign}$${s.profit.toFixed(2)}</div>
-        <div class="sale-date">${dateStr}</div>
-      </div>
-      <button class="sale-delete" onclick="deleteSale('${s.id}')" title="Delete">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function renderChart() {
-  const sales = getSales();
-  const chart = document.getElementById('profitChart');
-  if (!chart) return;
-
-  // Get last 6 months
-  const months = [];
-  const now = new Date();
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({
-      key: `${d.getFullYear()}-${d.getMonth()}`,
-      label: d.toLocaleString('en-US', { month: 'short' }),
-      profit: 0,
-    });
-  }
-
-  sales.forEach(s => {
-    const d = new Date(s.date);
-    const key = `${d.getFullYear()}-${d.getMonth()}`;
-    const m = months.find(m => m.key === key);
-    if (m) m.profit += s.profit;
-  });
-
-  const max = Math.max(...months.map(m => m.profit), 1);
-
-  chart.innerHTML = months.map(m => {
-    const pct = Math.max(0, (m.profit / max) * 100);
-    const isZero = m.profit === 0;
-    return `<div class="chart-bar-wrap">
-      <div class="chart-bar ${isZero ? 'zero' : ''}" style="height:${pct}%;" title="$${m.profit.toFixed(2)}"></div>
-      <div class="chart-bar-lbl">${m.label}</div>
-    </div>`;
-  }).join('');
-}
-
-function exportSales() {
-  const sales = getSales();
-  if (!sales.length) { alert('No sales to export.'); return; }
-  const json = JSON.stringify(sales, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `depop-sales-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importSales(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const imported = JSON.parse(e.target.result);
-      if (!Array.isArray(imported)) throw new Error('Invalid format');
-      const existing = getSales();
-      const existingIds = new Set(existing.map(s => s.id));
-      const newSales = imported.filter(s => !existingIds.has(s.id));
-      saveSales([...existing, ...newSales]);
-      renderSales();
-      renderChart();
-      alert(`✓ Imported ${newSales.length} new sale(s). ${imported.length - newSales.length} duplicate(s) skipped.`);
-    } catch {
-      alert('Import failed — make sure the file is a valid export from this tool.');
-    }
-  };
-  reader.readAsText(file);
-  input.value = '';
-}
-
-// ── PRICING CALCULATOR ───────────────────────────────────
-let pcFeeOn = false;
-let pcBoostOn = false;
-
-function togglePcFee() {
-  pcFeeOn = !pcFeeOn;
-  document.getElementById('pcFeeSwitch').style.background = pcFeeOn ? 'var(--teal)' : 'var(--border)';
-  document.getElementById('pcFeeKnob').style.left = pcFeeOn ? '19px' : '3px';
-  document.getElementById('pcFeeLbl').textContent = pcFeeOn ? 'On' : 'Off';
-  document.getElementById('pcFeeLbl').style.color = pcFeeOn ? 'var(--seafoam)' : 'var(--text-muted)';
-  calcPricing();
-}
-
-function togglePcBoost() {
-  pcBoostOn = !pcBoostOn;
-  document.getElementById('pcBoostSwitch').style.background = pcBoostOn ? 'var(--coral)' : 'var(--border)';
-  document.getElementById('pcBoostKnob').style.left = pcBoostOn ? '19px' : '3px';
-  document.getElementById('pcBoostLbl').textContent = pcBoostOn ? 'On' : 'Off';
-  document.getElementById('pcBoostLbl').style.color = pcBoostOn ? 'var(--coral)' : 'var(--text-muted)';
-  calcPricing();
-}
-
-function calcPricing() {
-  const cost = parseFloat(document.getElementById('pcCostInput')?.value) || 0;
-  const shipping = parseFloat(document.getElementById('pcShippingInput')?.value) || 0;
-  const margin = parseInt(document.getElementById('pcMarginSlider')?.value) || 50;
-  document.getElementById('pcMarginLabel').textContent = margin + '%';
-
-  const totalCost = cost + shipping;
-
-  if (totalCost <= 0) {
-    document.getElementById('pcListingPrice').textContent = '$0';
-    document.getElementById('pcProfit').textContent = '+$0';
-    document.getElementById('pcMarginPct').textContent = '0%';
-    document.getElementById('pcROI').textContent = '0x';
-    document.getElementById('pcBreakdown').innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px 0;">Enter a cost price above to see the breakdown.</div>';
-    updateWhatIfSlider(totalCost);
-    return;
-  }
-
-  // Work out target profit then gross up for fees
-  const targetProfit = totalCost * (margin / 100);
-  let feeMultiplier = 1;
-  if (pcFeeOn) feeMultiplier += 0.10;
-  if (pcBoostOn) feeMultiplier += 0.12;
-
-  // Listing price needed so after fees you net targetProfit over cost
-  const listing = Math.ceil(((totalCost + targetProfit) / (1 - (feeMultiplier - 1))) * 100) / 100;
-  const depopFee = pcFeeOn ? listing * 0.10 : 0;
-  const boostFee = pcBoostOn ? listing * 0.12 : 0;
-  const actualProfit = listing - totalCost - depopFee - boostFee;
-  const actualMargin = totalCost > 0 ? (actualProfit / totalCost) * 100 : 0;
-  const roi = totalCost > 0 ? (listing / totalCost) : 0;
-
-  document.getElementById('pcListingPrice').textContent = '$' + listing.toFixed(2);
-  const profitEl = document.getElementById('pcProfit');
-  profitEl.textContent = (actualProfit >= 0 ? '+' : '') + '$' + actualProfit.toFixed(2);
-  profitEl.style.color = actualProfit >= 0 ? '#4ade80' : '#f87171';
-  document.getElementById('pcMarginPct').textContent = actualMargin.toFixed(0) + '%';
-  document.getElementById('pcROI').textContent = roi.toFixed(1) + 'x';
-
-  // Breakdown rows
-  const rows = [
-    { label: 'Cost Price', val: `$${cost.toFixed(2)}`, color: '#f87171' },
-    shipping > 0 ? { label: 'Shipping Cost', val: `$${shipping.toFixed(2)}`, color: '#f87171' } : null,
-    { label: 'Listing Price', val: `$${listing.toFixed(2)}`, color: '#fff', bold: true },
-    pcFeeOn ? { label: 'Depop Fee (10%)', val: `-$${depopFee.toFixed(2)}`, color: '#f87171' } : null,
-    pcBoostOn ? { label: 'Boost Fee (12%)', val: `-$${boostFee.toFixed(2)}`, color: '#fbbf24' } : null,
-    { label: 'Your Profit', val: `${actualProfit >= 0 ? '+' : ''}$${actualProfit.toFixed(2)}`, color: actualProfit >= 0 ? '#4ade80' : '#f87171', bold: true },
-  ].filter(Boolean);
-
-  document.getElementById('pcBreakdown').innerHTML = rows.map(r =>
-    `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:13px;color:var(--text-muted);">${r.label}</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:${r.bold ? '20' : '16'}px;font-weight:${r.bold ? '900' : '600'};color:${r.color};">${r.val}</span>
-    </div>`
-  ).join('').replace(/border-bottom[^;]+;(?=[^<]*<\/div>[^<]*$)/, '');
-
-  updateWhatIfSlider(totalCost);
-}
-
-function updateWhatIfSlider(totalCost) {
-  const slider = document.getElementById('pcWhatIfSlider');
-  if (!slider) return;
-  const max = Math.max(200, Math.ceil(totalCost * 5));
-  slider.max = max;
-  if (parseFloat(slider.value) < 1) slider.value = Math.max(1, Math.ceil(totalCost * 1.5));
-  calcWhatIf();
-}
-
-function calcWhatIf() {
-  const cost = (parseFloat(document.getElementById('pcCostInput')?.value) || 0) +
-               (parseFloat(document.getElementById('pcShippingInput')?.value) || 0);
-  const price = parseFloat(document.getElementById('pcWhatIfSlider')?.value) || 0;
-  document.getElementById('pcWhatIfPrice').textContent = '$' + price.toFixed(0);
-
-  const depopFee = pcFeeOn ? price * 0.10 : 0;
-  const boostFee = pcBoostOn ? price * 0.12 : 0;
-  const profit = price - cost - depopFee - boostFee;
-  const margin = cost > 0 ? (profit / cost) * 100 : 0;
-
-  const profitEl = document.getElementById('wiProfit');
-  profitEl.textContent = (profit >= 0 ? '+' : '') + '$' + profit.toFixed(2);
-  profitEl.style.color = profit >= 0 ? '#4ade80' : '#f87171';
-
-  document.getElementById('wiMargin').textContent = margin.toFixed(0) + '%';
-
-  const verdictEl = document.getElementById('wiVerdict');
-  if (cost <= 0) { verdictEl.textContent = '—'; verdictEl.style.color = 'var(--text-muted)'; }
-  else if (profit < 0) { verdictEl.textContent = '❌ Loss'; verdictEl.style.color = '#f87171'; }
-  else if (margin < 20) { verdictEl.textContent = '⚠️ Thin'; verdictEl.style.color = '#fbbf24'; }
-  else if (margin < 60) { verdictEl.textContent = '✓ Fair'; verdictEl.style.color = '#4ade80'; }
-  else if (margin < 150) { verdictEl.textContent = '🔥 Great'; verdictEl.style.color = '#4ade80'; }
-  else { verdictEl.textContent = '🚀 Excellent'; verdictEl.style.color = 'var(--seafoam)'; }
-}
-
-// ── TWINKLING STAR CANVAS ────────────────────────────────
-(function() {
-  const canvas = document.getElementById('starCanvas');
-  const ctx = canvas.getContext('2d');
-  const colors = [
-    [255,255,255],[226,217,255],[244,114,182],[192,132,252],[200,220,255]
-  ];
-  let stars = [];
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  function initStars() {
-    stars = [];
-    const count = Math.floor((canvas.width * canvas.height) / 3800);
-    for (let i = 0; i < count; i++) {
-      const c = colors[Math.floor(Math.random() * colors.length)];
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.2 + 0.2,
-        base: Math.random() * 0.45 + 0.25,
-        amp: Math.random() * 0.55 + 0.2,
-        speed: Math.random() * 0.8 + 0.15,
-        phase: Math.random() * Math.PI * 2,
-        color: c,
-      });
-    }
-  }
-
-  function draw(t) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const time = t / 1000;
-    for (const s of stars) {
-      const alpha = Math.max(0, Math.min(1, s.base + s.amp * Math.sin(time * s.speed + s.phase)));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${s.color[0]},${s.color[1]},${s.color[2]},${alpha.toFixed(3)})`;
-      ctx.fill();
-      if (s.r > 0.9 && alpha > 0.55) {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${s.color[0]},${s.color[1]},${s.color[2]},${(alpha * 0.1).toFixed(3)})`;
-        ctx.fill();
-      }
-    }
-    requestAnimationFrame(draw);
-  }
-
-  resize();
-  initStars();
-  window.addEventListener('resize', () => { resize(); initStars(); });
-  requestAnimationFrame(draw);
+// ── STARS ─────────────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('starCanvas');
+  const ctx=canvas.getContext('2d');
+  const colors=[[255,255,255],[226,217,255],[244,114,182],[192,132,252],[200,220,255]];
+  let stars=[];
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  function initStars(){stars=[];const count=Math.floor((canvas.width*canvas.height)/3800);for(let i=0;i<count;i++){const c=colors[Math.floor(Math.random()*colors.length)];stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.2,base:Math.random()*.45+.25,amp:Math.random()*.55+.2,speed:Math.random()*.8+.15,phase:Math.random()*Math.PI*2,color:c});}}
+  function draw(t){ctx.clearRect(0,0,canvas.width,canvas.height);const time=t/1000;for(const s of stars){const alpha=Math.max(0,Math.min(1,s.base+s.amp*Math.sin(time*s.speed+s.phase)));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${alpha.toFixed(3)})`;ctx.fill();if(s.r>.9&&alpha>.55){ctx.beginPath();ctx.arc(s.x,s.y,s.r*3,0,Math.PI*2);ctx.fillStyle=`rgba(${s.color[0]},${s.color[1]},${s.color[2]},${(alpha*.1).toFixed(3)})`;ctx.fill();}}requestAnimationFrame(draw);}
+  resize();initStars();window.addEventListener('resize',()=>{resize();initStars();});requestAnimationFrame(draw);
 })();
 </script>
 </body>
