@@ -366,19 +366,26 @@ input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:va
     <div class="pw-box">
       <div>
         <div class="pw-logo">Depop <span>Directory</span></div>
-        <div class="pw-sub">Sign in to your workspace</div>
+        <div class="pw-sub">Sign in to your account</div>
+      </div>
+      <div class="pw-field">
+        <label>Email Address</label>
+        <input type="email" id="pwEmail" placeholder="you@example.com" autocomplete="email">
       </div>
       <div class="pw-field">
         <label>Password</label>
-        <input type="password" id="pwInput" placeholder="Enter password" autocomplete="off"
+        <input type="password" id="pwInput" placeholder="Enter your password" autocomplete="current-password"
           onkeydown="if(event.key==='Enter')checkPassword()">
       </div>
       <div class="pw-stay" onclick="toggleStay()">
         <div class="pw-stay-box" id="stayBox"></div>
         <span class="pw-stay-label">Keep me signed in on this device</span>
       </div>
-      <button class="pw-btn" onclick="checkPassword()">Enter Workspace →</button>
+      <button class="pw-btn" onclick="checkPassword()">Sign In →</button>
       <div class="pw-error" id="pwError"></div>
+      <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:-8px;">
+        Don't have an account? <span style="color:var(--yellow);cursor:pointer;" onclick="showContactMsg()">Contact us</span>
+      </div>
     </div>
   </div>
 </div>
@@ -774,6 +781,7 @@ if(store.get('depop_auth')==='yes'){
   document.getElementById('app').style.display='flex';
   refreshHomeStats();
 }
+function showContactMsg(){alert('To get access, contact us on Instagram or Depop.');}
 function toggleStay(){stayChecked=!stayChecked;document.getElementById('stayBox').classList.toggle('checked',stayChecked);}
 function checkPassword(){
   const val=document.getElementById('pwInput').value;
@@ -787,7 +795,7 @@ function checkPassword(){
   } else {
     const inp=document.getElementById('pwInput');
     inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');
-    document.getElementById('pwError').textContent='Incorrect password.';
+    document.getElementById('pwError').textContent='Incorrect email or password.';
     inp.value='';setTimeout(()=>inp.classList.remove('shake'),400);
   }
 }
