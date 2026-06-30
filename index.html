@@ -850,6 +850,120 @@ body.celeb-shake { animation: screenShake .5s ease; }
   90% { transform: translate(2px, 0); }
 }
 
+/* ============================================================
+   SALE CRASH (loss) — inverse of celebration
+   ============================================================ */
+
+#celebrationOverlay.crash-mode .celeb-stars { display: none; }
+
+#celebrationOverlay.crash-mode .celeb-flash {
+  background: radial-gradient(circle at 50% 75%, rgba(229,57,53,.4) 0%, transparent 60%);
+  animation: crashFlash 1.3s ease-out forwards;
+}
+@keyframes crashFlash {
+  0% { opacity: 0; }
+  60% { opacity: 0; }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#celebrationOverlay.crash-mode .celeb-rocket-wrap {
+  left: 22%;
+  bottom: auto;
+  top: -120px;
+  animation: rocketFall 1.3s cubic-bezier(.55,0,.85,.35) forwards;
+}
+@keyframes rocketFall {
+  0% { top: -120px; left: 22%; transform: translateX(-50%) rotate(15deg); }
+  100% { top: 78%; left: 52%; transform: translateX(-50%) rotate(425deg); }
+}
+
+#celebrationOverlay.crash-mode .celeb-rocket {
+  filter: drop-shadow(0 0 14px rgba(229,57,53,.7));
+  animation: rocketTumble .22s linear infinite;
+}
+@keyframes rocketTumble {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#celebrationOverlay.crash-mode .celeb-trail { display: none; }
+
+.celeb-smoke { display: none; position: absolute; }
+#celebrationOverlay.crash-mode .celeb-smoke {
+  display: block;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(120,120,120,.7) 0%, rgba(80,80,80,.3) 60%, transparent 80%);
+  filter: blur(2px);
+  animation: smokePuff .35s ease-out infinite;
+}
+@keyframes smokePuff {
+  0% { opacity: .8; transform: translate(-50%, -50%) scale(.6); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+}
+
+.celeb-impact {
+  display: none;
+  position: absolute;
+  left: 52%; top: 78%;
+  transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+#celebrationOverlay.crash-mode .celeb-impact {
+  display: block;
+  animation: impactBlast .6s ease-out 1.25s forwards;
+}
+@keyframes impactBlast {
+  0% { box-shadow: 0 0 0 0 rgba(229,57,53,.9), 0 0 0 0 rgba(245,197,24,.5); opacity: 1; }
+  100% { box-shadow: 0 0 0 90px rgba(229,57,53,0), 0 0 0 140px rgba(245,197,24,0); opacity: 0; }
+}
+
+.celeb-crackOverlay {
+  display: none;
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(105deg, transparent 48%, rgba(255,255,255,.55) 49%, transparent 50.5%),
+    linear-gradient(70deg, transparent 58%, rgba(255,255,255,.4) 59%, transparent 60.5%),
+    linear-gradient(140deg, transparent 38%, rgba(255,255,255,.35) 39%, transparent 40.5%);
+  background-size: 100% 100%;
+  clip-path: circle(0% at 52% 78%);
+  opacity: 0;
+}
+#celebrationOverlay.crash-mode .celeb-crackOverlay {
+  display: block;
+  animation: crackSpread .5s ease-out 1.25s forwards;
+}
+@keyframes crackSpread {
+  0% { clip-path: circle(0% at 52% 78%); opacity: 0; }
+  20% { opacity: .9; }
+  100% { clip-path: circle(75% at 52% 78%); opacity: 0; }
+}
+
+#celebrationOverlay.crash-mode .celeb-content { animation-name: crashContentSlam; }
+@keyframes crashContentSlam {
+  0% { opacity: 0; transform: translate(-50%, -65%) scale(.7) rotate(-4deg); }
+  55% { opacity: 0; }
+  62% { opacity: 1; transform: translate(-50%, -48%) scale(1.1) rotate(2deg); }
+  70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1.25s; }
+@keyframes screenShakeHard {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-8px, 5px) rotate(-.4deg); }
+  25% { transform: translate(9px, -4px) rotate(.4deg); }
+  40% { transform: translate(-7px, 3px); }
+  55% { transform: translate(6px, -3px); }
+  70% { transform: translate(-4px, 2px); }
+  85% { transform: translate(3px, -1px); }
+}
+
 </style>
 </head>
 <body>
@@ -950,13 +1064,16 @@ body.celeb-shake { animation: screenShake .5s ease; }
 <div id="celebrationOverlay" class="hidden">
   <div class="celeb-stars" id="celebStars"></div>
   <div class="celeb-particles" id="celebParticles"></div>
-  <div class="celeb-flash"></div>
-  <div class="celeb-rocket-wrap">
+  <div class="celeb-flash" id="celebFlash"></div>
+  <div class="celeb-crackOverlay" id="celebCrackOverlay"></div>
+  <div class="celeb-rocket-wrap" id="celebRocketWrap">
     <div class="celeb-rocket" id="celebRocket">🚀</div>
-    <div class="celeb-trail"></div>
+    <div class="celeb-trail" id="celebTrail"></div>
+    <div class="celeb-smoke" id="celebSmoke"></div>
   </div>
-  <div class="celeb-content">
-    <div class="celeb-label">SALE LOGGED</div>
+  <div class="celeb-impact" id="celebImpact"></div>
+  <div class="celeb-content" id="celebContent">
+    <div class="celeb-label" id="celebLabel">SALE LOGGED</div>
     <div class="celeb-profit" id="celebProfitText">+$0</div>
     <div class="celeb-item" id="celebItemText"></div>
   </div>
@@ -2058,26 +2175,51 @@ function launchSaleCelebration(itemName, profit) {
   const overlay = document.getElementById('celebrationOverlay');
   const profitEl = document.getElementById('celebProfitText');
   const itemEl = document.getElementById('celebItemText');
+  const labelEl = document.getElementById('celebLabel');
   const particlesWrap = document.getElementById('celebParticles');
 
   const isProfit = profit >= 0;
   profitEl.textContent = (isProfit ? '+' : '') + '$' + profit.toFixed(2);
   profitEl.classList.toggle('loss-color', !isProfit);
   itemEl.textContent = itemName;
+  labelEl.textContent = isProfit ? 'SALE LOGGED' : 'TOOK A LOSS';
+  labelEl.style.color = isProfit ? 'var(--yellow)' : 'var(--red)';
+  labelEl.style.textShadow = isProfit ? '0 0 16px rgba(245,197,24,.6)' : '0 0 16px rgba(229,57,53,.6)';
 
-  // Reset any previous animation state by forcing a reflow
+  overlay.classList.toggle('crash-mode', !isProfit);
   overlay.classList.remove('hidden');
   void overlay.offsetWidth;
 
-  // Re-trigger CSS animations by replacing animated elements
-  overlay.querySelectorAll('.celeb-flash, .celeb-stars, .celeb-rocket-wrap, .celeb-content').forEach(el => {
+  // Re-trigger CSS animations by forcing reflow on every animated element
+  overlay.querySelectorAll('.celeb-flash, .celeb-stars, .celeb-rocket-wrap, .celeb-rocket, .celeb-content, .celeb-impact, .celeb-crackOverlay, .celeb-smoke').forEach(el => {
     el.style.animation = 'none';
     void el.offsetWidth;
     el.style.animation = '';
   });
 
-  // Spawn confetti/spark particles
   particlesWrap.innerHTML = '';
+
+  if (isProfit) {
+    spawnConfettiBurst(particlesWrap);
+  } else {
+    spawnCrashDebris(particlesWrap);
+  }
+
+  // Screen shake — punchy on launch for wins, delayed hard slam for crashes
+  document.body.classList.remove('celeb-shake', 'celeb-shake-hard');
+  void document.body.offsetWidth;
+  document.body.classList.add(isProfit ? 'celeb-shake' : 'celeb-shake-hard');
+
+  clearTimeout(window._celebTimeout);
+  window._celebTimeout = setTimeout(() => {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('crash-mode');
+    particlesWrap.innerHTML = '';
+    document.body.classList.remove('celeb-shake', 'celeb-shake-hard');
+  }, isProfit ? 2200 : 2400);
+}
+
+function spawnConfettiBurst(wrap) {
   const colors = ['#f5c518', '#f472b6', '#9b59f5', '#ffffff', '#4ade80'];
   const particleCount = 36;
   for (let i = 0; i < particleCount; i++) {
@@ -2102,21 +2244,38 @@ function launchSaleCelebration(itemName, profit) {
     p.style.animation = `particleBurst ${duration}s cubic-bezier(.25,.46,.45,.94) ${delay}s forwards`;
     p.style.setProperty('--dx', dx + 'px');
     p.style.setProperty('--dy', dy + 'px');
-    particlesWrap.appendChild(p);
+    wrap.appendChild(p);
   }
+}
 
-  // Screen shake
-  document.body.classList.remove('celeb-shake');
-  void document.body.offsetWidth;
-  document.body.classList.add('celeb-shake');
+function spawnCrashDebris(wrap) {
+  // Dark smoky/ember debris that bursts outward from the impact point on the ground
+  const colors = ['#e53935', '#fb923c', '#6b6b6b', '#3a3a3a', '#9d8ec4'];
+  const particleCount = 30;
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'celeb-particle';
+    const angle = (Math.random() * 180 + 180) * (Math.PI / 180); // mostly upward/outward from ground
+    const distance = 60 + Math.random() * 180;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance * 0.6;
+    const delay = 1.25 + Math.random() * 0.15;
+    const duration = 0.6 + Math.random() * 0.5;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = 3 + Math.random() * 6;
 
-  // Clean up after the sequence finishes
-  clearTimeout(window._celebTimeout);
-  window._celebTimeout = setTimeout(() => {
-    overlay.classList.add('hidden');
-    particlesWrap.innerHTML = '';
-    document.body.classList.remove('celeb-shake');
-  }, 2200);
+    p.style.left = '52%';
+    p.style.top = '78%';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.background = color;
+    p.style.boxShadow = `0 0 5px ${color}`;
+    p.style.borderRadius = Math.random() > 0.4 ? '50%' : '2px';
+    p.style.animation = `particleBurst ${duration}s cubic-bezier(.25,.46,.45,.94) ${delay}s forwards`;
+    p.style.setProperty('--dx', dx + 'px');
+    p.style.setProperty('--dy', dy + 'px');
+    wrap.appendChild(p);
+  }
 }
 
 function deleteSale(id) {
