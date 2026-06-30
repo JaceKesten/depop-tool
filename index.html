@@ -87,67 +87,6 @@ body::before {
   text-align: center; max-width: 440px; margin-bottom: 36px;
 }
 
-/* Pricing tier cards */
-.tier-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 20px; width: 100%; margin-bottom: 24px;
-}
-@media (max-width: 680px) { .tier-grid { grid-template-columns: 1fr; } }
-
-.tier-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 28px;
-  display: flex; flex-direction: column;
-  position: relative; overflow: hidden;
-  transition: border-color .2s;
-}
-.tier-card:hover { border-color: var(--muted2); }
-.tier-card.reserve {
-  border-color: var(--yellow);
-  box-shadow: 0 0 40px rgba(245, 197, 24, .08);
-}
-.tier-card.reserve::before {
-  content: 'MOST POPULAR';
-  position: absolute; top: 0; right: 0;
-  background: var(--yellow); color: #000;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 11px; letter-spacing: 2px;
-  padding: 5px 14px; border-radius: 0 0 0 6px;
-}
-.tier-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 24px; letter-spacing: 1px; color: #fff; margin-bottom: 2px;
-}
-.tier-name .accent { color: var(--yellow); }
-.tier-card.reserve .tier-name .accent { color: var(--red); }
-.tier-tagline { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
-.tier-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 20px; }
-.tier-price .amt { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: #fff; line-height: 1; }
-.tier-price .period { font-size: 12px; color: var(--muted); }
-.tier-feats { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 24px; flex: 1; }
-.tier-feats li { font-size: 13px; color: var(--text); display: flex; gap: 9px; align-items: flex-start; line-height: 1.4; }
-.tier-feats li .ck { color: var(--yellow); flex-shrink: 0; font-weight: 700; margin-top: 1px; }
-.tier-card.reserve .tier-feats li .ck { color: var(--red); }
-.tier-feats li.extra { font-weight: 600; }
-
-.tier-btn {
-  width: 100%; padding: 13px; border-radius: 3px; cursor: pointer;
-  font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px;
-  background: var(--surface2); color: #fff; border: 1px solid var(--border);
-  transition: all .2s;
-}
-.tier-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-.tier-card.reserve .tier-btn { background: var(--yellow); color: #000; border: none; }
-.tier-card.reserve .tier-btn:hover { background: #fff176; }
-
-.pw-access-link {
-  font-size: 12px; color: var(--muted); cursor: pointer;
-  text-align: center; margin-top: 4px;
-}
-.pw-access-link span { color: var(--yellow); text-decoration: underline; text-underline-offset: 2px; }
-
 /* Access code box */
 .access-box {
   background: var(--surface);
@@ -239,8 +178,6 @@ body::before {
 .sb-item .sb-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
 .sb-item .sb-label { font-size: 12px; font-weight: 500; letter-spacing: .3px; }
 .sb-item .sb-badge { margin-left: auto; font-size: 8px; background: var(--red); color: #fff; padding: 2px 6px; border-radius: 20px; font-weight: 700; }
-.sb-item.locked { opacity: .5; }
-.sb-item.locked .sb-icon::after { content: ' 🔒'; }
 .sb-divider { height: 1px; background: var(--border); margin: 6px 0; }
 
 .sb-save-block { margin: 8px; padding: 12px; background: var(--surface2); border-radius: 3px; border: 1px solid var(--border); }
@@ -593,35 +530,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .wi-lbl { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
 /* ============================================================
-   ACCOUNT INFO GEN
-   ============================================================ */
-
-.tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag-chip {
-  padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border);
-  background: var(--surface2); color: var(--muted); font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: all .15s; user-select: none;
-}
-.tag-chip:hover { border-color: var(--muted2); color: var(--text); }
-.tag-chip.selected { background: var(--yellow-glow); border-color: var(--yellow); color: var(--yellow); }
-
-.aig-result {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 4px;
-  padding: 18px; margin-top: 16px; display: none;
-}
-.aig-result.visible { display: block; }
-.aig-result-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--yellow); margin-bottom: 8px; }
-.aig-result-text { font-size: 16px; font-weight: 600; color: #fff; line-height: 1.5; word-break: break-word; }
-.aig-result-text.bio { font-size: 14px; font-weight: 500; white-space: pre-wrap; }
-
-.aig-locked {
-  text-align: center; padding: 60px 20px;
-}
-.aig-locked .al-icon { font-size: 40px; margin-bottom: 14px; }
-.aig-locked h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; letter-spacing: 1px; margin-bottom: 8px; }
-.aig-locked p { font-size: 13px; color: var(--muted); max-width: 380px; margin: 0 auto 20px; line-height: 1.6; }
-
-/* ============================================================
    COMING SOON
    ============================================================ */
 
@@ -680,46 +588,9 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
   <div class="pw-wrap">
     <div class="pw-eyebrow">Depop Directory</div>
     <div class="pw-hero-logo">Oakmont <span>AI</span></div>
-    <div class="pw-hero-sub">Choose your tier to unlock the full Depop reseller toolkit — captions, pricing, sales tracking, and more.</div>
+    <div class="pw-hero-sub">Enter your access code to continue.</div>
 
-    <div class="tier-grid">
-      <!-- BLACK TIER -->
-      <div class="tier-card">
-        <div class="tier-name">Oakmont: <span class="accent">Black</span></div>
-        <div class="tier-tagline">The complete reseller toolkit</div>
-        <div class="tier-price"><span class="amt">$27.40</span><span class="period">one-time</span></div>
-        <ul class="tier-feats">
-          <li><span class="ck">✓</span> AI Caption Builder — unlimited listings</li>
-          <li><span class="ck">✓</span> Price Calculator with margin sliders</li>
-          <li><span class="ck">✓</span> Sales Tracker & profit dashboard</li>
-          <li><span class="ck">✓</span> Photo Generation (when released)</li>
-          <li><span class="ck">✓</span> Lifetime access, no subscription</li>
-        </ul>
-        <button class="tier-btn" onclick="selectTier('black')">Get Black</button>
-      </div>
-
-      <!-- BLACK RESERVE TIER -->
-      <div class="tier-card reserve">
-        <div class="tier-name">Oakmont: <span class="accent">Black Reserve</span></div>
-        <div class="tier-tagline">Everything in Black, plus more to come</div>
-        <div class="tier-price"><span class="amt">$33.10</span><span class="period">one-time</span></div>
-        <ul class="tier-feats">
-          <li><span class="ck">✓</span> Everything in Oakmont: Black</li>
-          <li class="extra"><span class="ck">✓</span> Priority access to new tools first</li>
-          <li class="extra"><span class="ck">✓</span> Unlimited data exports & backups</li>
-          <li class="extra"><span class="ck">✓</span> Founding Member badge & status</li>
-        </ul>
-        <button class="tier-btn" onclick="selectTier('reserve')">Get Black Reserve</button>
-      </div>
-    </div>
-
-    <div class="pw-access-link" onclick="toggleAccessBox()">Already have access? <span>Enter your code</span></div>
-
-    <div class="access-box" id="accessBox">
-      <div>
-        <div class="access-box-title">Enter Access Code</div>
-        <div class="access-box-sub">Provided after purchase</div>
-      </div>
+    <div class="access-box open" id="accessBox" style="max-width:380px">
       <div class="pw-field">
         <label>Access Code</label>
         <input type="password" id="pwInput" placeholder="••••••••••" autocomplete="off"
@@ -774,23 +645,13 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
       </div>
 
       <div class="admin-sec">
-        <div class="admin-sec-title">Change Black Access Code</div>
-        <input class="admin-input" type="text" id="newBlackPw" placeholder="New Black access code">
+        <div class="admin-sec-title">Change Access Code</div>
+        <input class="admin-input" type="text" id="newUserPw" placeholder="New access code">
         <div class="admin-row">
-          <button class="admin-btn admin-btn-primary" onclick="changeBlackPassword()">Save</button>
-          <button class="admin-btn admin-btn-danger" onclick="resetBlackPassword()">Reset Default</button>
+          <button class="admin-btn admin-btn-primary" onclick="changeUserPassword()">Save</button>
+          <button class="admin-btn admin-btn-danger" onclick="resetUserPassword()">Reset Default</button>
         </div>
-        <div class="admin-msg" id="blackPwMsg"></div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-title">Change Black Reserve Access Code</div>
-        <input class="admin-input" type="text" id="newReservePw" placeholder="New Reserve access code">
-        <div class="admin-row">
-          <button class="admin-btn admin-btn-primary" onclick="changeReservePassword()">Save</button>
-          <button class="admin-btn admin-btn-danger" onclick="resetReservePassword()">Reset Default</button>
-        </div>
-        <div class="admin-msg" id="reservePwMsg"></div>
+        <div class="admin-msg" id="pwChangeMsg"></div>
       </div>
 
       <div class="admin-sec">
@@ -833,7 +694,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
       <div class="sb-item" onclick="nav('pricing')" id="nav-pricing"><span class="sb-icon">◈</span><span class="sb-label">Price Calculator</span></div>
       <div class="sb-item" onclick="nav('sales')" id="nav-sales"><span class="sb-icon">↗</span><span class="sb-label">Sales Tracker</span></div>
       <div class="sb-item" onclick="nav('photo')" id="nav-photo"><span class="sb-icon">◉</span><span class="sb-label">Photo Gen</span><span class="sb-badge">Soon</span></div>
-      <div class="sb-item" onclick="nav('accountgen')" id="nav-accountgen"><span class="sb-icon">◆</span><span class="sb-label">Account Info Gen</span></div>
       <div class="sb-divider"></div>
       <div class="sb-section">Settings</div>
       <div class="sb-save-block">
@@ -1159,20 +1019,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
       </div>
     </div>
 
-    <!-- ════════════ ACCOUNT INFO GEN ════════════ -->
-    <div class="page" id="page-accountgen">
-      <div class="page-header">
-        <div>
-          <span class="ph-tag">Reserve Exclusive</span>
-          <h1 class="ph-title">Account Info Gen</h1>
-          <p class="ph-sub">Generate Pinterest search terms and Depop bios in seconds.</p>
-        </div>
-      </div>
-      <div class="page-body" id="accountgenBody">
-        <!-- Content injected by JS depending on tier access -->
-      </div>
-    </div>
-
     <!-- ════════════ PHOTO GEN (placeholder) ════════════ -->
     <div class="page" id="page-photo">
       <div class="page-header">
@@ -1202,14 +1048,10 @@ const store = {
   del: k => localStorage.removeItem(k),
 };
 
-const DEFAULT_BLACK_PASS = '7571';
-const DEFAULT_RESERVE_PASS = '757175';
+const DEFAULT_USER_PASS = '2LIVECREW';
 const DEFAULT_ADMIN_PASS = '2NOTLIVECREW';
-function getBlackPass() { return store.get('depop_black_pass') || DEFAULT_BLACK_PASS; }
-function getReservePass() { return store.get('depop_reserve_pass') || DEFAULT_RESERVE_PASS; }
+function getUserPass() { return store.get('depop_user_pass') || DEFAULT_USER_PASS; }
 function getAdminPass() { return store.get('depop_admin_pass') || DEFAULT_ADMIN_PASS; }
-function getUserTier() { return store.get('depop_tier') || null; }
-function isReserve() { return getUserTier() === 'reserve'; }
 
 /* ============================================================
    AUTH / PAYWALL
@@ -1221,21 +1063,9 @@ let stayChecked = false;
   if (store.get('depop_auth') === 'yes') {
     document.getElementById('pwScreen').classList.add('hidden');
     document.getElementById('app').style.display = 'flex';
-    applyTierAccess();
     refreshHomeStats();
   }
 })();
-
-function selectTier(tier) {
-  const msg = tier === 'reserve'
-    ? 'To purchase Oakmont: Black Reserve ($33.10 one-time), contact us via Instagram or Depop and we\'ll send your access code right after payment.'
-    : 'To purchase Oakmont: Black ($27.40 one-time), contact us via Instagram or Depop and we\'ll send your access code right after payment.';
-  alert(msg);
-}
-
-function toggleAccessBox() {
-  document.getElementById('accessBox').classList.toggle('open');
-}
 
 function toggleStay() {
   stayChecked = !stayChecked;
@@ -1244,12 +1074,7 @@ function toggleStay() {
 
 function checkPassword() {
   const val = document.getElementById('pwInput').value;
-  let matchedTier = null;
-  if (val === getReservePass()) matchedTier = 'reserve';
-  else if (val === getBlackPass()) matchedTier = 'black';
-
-  if (matchedTier) {
-    store.set('depop_tier', matchedTier);
+  if (val === getUserPass()) {
     if (stayChecked) {
       store.set('depop_auth', 'yes');
       store.set('depop_session_time', new Date().toISOString());
@@ -1259,7 +1084,6 @@ function checkPassword() {
     store.set('depop_last_used', new Date().toISOString());
     document.getElementById('pwScreen').classList.add('hidden');
     document.getElementById('app').style.display = 'flex';
-    applyTierAccess();
     refreshHomeStats();
   } else {
     const inp = document.getElementById('pwInput');
@@ -1270,22 +1094,6 @@ function checkPassword() {
     inp.value = '';
     setTimeout(() => inp.classList.remove('shake'), 400);
   }
-}
-
-function applyTierAccess() {
-  const reserveItem = document.getElementById('nav-accountgen');
-  if (!reserveItem) return;
-  if (isReserve()) {
-    reserveItem.classList.remove('locked');
-    reserveItem.onclick = () => nav('accountgen');
-  } else {
-    reserveItem.classList.add('locked');
-    reserveItem.onclick = () => showUpgradePrompt();
-  }
-}
-
-function showUpgradePrompt() {
-  alert('Account Info Gen is an Oakmont: Black Reserve exclusive. Upgrade your access code to unlock it.');
 }
 
 function signOut() {
@@ -1321,7 +1129,6 @@ function nav(page) {
 
   if (page === 'sales') { renderSales(); renderChart(); }
   if (page === 'home') refreshHomeStats();
-  if (page === 'accountgen') renderAccountGenPage();
 
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -1445,46 +1252,25 @@ function revokeAllSessions() {
   setTimeout(() => document.getElementById('sessionMsg').textContent = '', 3000);
 }
 
-function changeBlackPassword() {
-  const v = document.getElementById('newBlackPw').value.trim();
+function changeUserPassword() {
+  const v = document.getElementById('newUserPw').value.trim();
   if (!v) {
-    document.getElementById('blackPwMsg').textContent = 'Cannot be empty.';
-    document.getElementById('blackPwMsg').className = 'admin-msg error';
+    document.getElementById('pwChangeMsg').textContent = 'Cannot be empty.';
+    document.getElementById('pwChangeMsg').className = 'admin-msg error';
     return;
   }
-  store.set('depop_black_pass', v);
-  document.getElementById('newBlackPw').value = '';
-  document.getElementById('blackPwMsg').textContent = `Black code changed to "${v}"`;
-  document.getElementById('blackPwMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('blackPwMsg').textContent = '', 3000);
+  store.set('depop_user_pass', v);
+  document.getElementById('newUserPw').value = '';
+  document.getElementById('pwChangeMsg').textContent = `Changed to "${v}"`;
+  document.getElementById('pwChangeMsg').className = 'admin-msg';
+  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
 }
 
-function resetBlackPassword() {
-  store.del('depop_black_pass');
-  document.getElementById('blackPwMsg').textContent = 'Reset to default.';
-  document.getElementById('blackPwMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('blackPwMsg').textContent = '', 3000);
-}
-
-function changeReservePassword() {
-  const v = document.getElementById('newReservePw').value.trim();
-  if (!v) {
-    document.getElementById('reservePwMsg').textContent = 'Cannot be empty.';
-    document.getElementById('reservePwMsg').className = 'admin-msg error';
-    return;
-  }
-  store.set('depop_reserve_pass', v);
-  document.getElementById('newReservePw').value = '';
-  document.getElementById('reservePwMsg').textContent = `Reserve code changed to "${v}"`;
-  document.getElementById('reservePwMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('reservePwMsg').textContent = '', 3000);
-}
-
-function resetReservePassword() {
-  store.del('depop_reserve_pass');
-  document.getElementById('reservePwMsg').textContent = 'Reset to default.';
-  document.getElementById('reservePwMsg').className = 'admin-msg';
-  setTimeout(() => document.getElementById('reservePwMsg').textContent = '', 3000);
+function resetUserPassword() {
+  store.del('depop_user_pass');
+  document.getElementById('pwChangeMsg').textContent = 'Reset to default.';
+  document.getElementById('pwChangeMsg').className = 'admin-msg';
+  setTimeout(() => document.getElementById('pwChangeMsg').textContent = '', 3000);
 }
 
 function changeAdminPassword() {
@@ -2071,141 +1857,6 @@ function importSales(input) {
   reader.readAsText(file);
   input.value = '';
 }
-
-/* ============================================================
-   ACCOUNT INFO GEN  (Black Reserve exclusive)
-   ============================================================ */
-
-const PFP_THEMES = ['Realism', 'Anime', 'Y2K', 'Soft Girl', 'Grunge', 'Cottagecore', 'Dark Academia', 'Minimalist', 'Vintage', 'Glam', 'Streetwear', 'Pastel', 'Gothic', 'Boho', 'Coquette'];
-const BIO_FOCUSES = ['Free Shipping', 'Bundle & Save', 'Fast Shipper', 'Final Sale Only', 'Message Before Buying', 'Y2K Vibes', 'Preloved Finds', 'No Trades', 'Smoke-Free Home', 'Same Day Shipping', 'Open to Offers', 'New Drops Weekly'];
-
-const PFP_PHRASES = {
-  'Realism': ['realistic pfp', 'aesthetic realism icon', 'photo pfp aesthetic'],
-  'Anime': ['anime pfp aesthetic', 'anime icon cute', 'manga pfp'],
-  'Y2K': ['y2k pfp aesthetic', 'y2k icon cute', '2000s pfp'],
-  'Soft Girl': ['soft girl pfp', 'soft aesthetic icon', 'pastel pfp cute'],
-  'Grunge': ['grunge pfp aesthetic', 'grunge icon dark', 'edgy pfp'],
-  'Cottagecore': ['cottagecore pfp', 'cottagecore icon aesthetic', 'cozy pfp'],
-  'Dark Academia': ['dark academia pfp', 'academia icon aesthetic', 'vintage academia pfp'],
-  'Minimalist': ['minimalist pfp aesthetic', 'simple icon clean', 'minimal pfp'],
-  'Vintage': ['vintage pfp aesthetic', 'retro icon cute', 'old school pfp'],
-  'Glam': ['glam pfp aesthetic', 'glamour icon cute', 'luxe pfp'],
-  'Streetwear': ['streetwear pfp aesthetic', 'street icon cool', 'hypebeast pfp'],
-  'Pastel': ['pastel pfp aesthetic', 'pastel icon cute', 'soft pastel pfp'],
-  'Gothic': ['gothic pfp aesthetic', 'goth icon dark', 'dark gothic pfp'],
-  'Boho': ['boho pfp aesthetic', 'bohemian icon cute', 'boho chic pfp'],
-  'Coquette': ['coquette pfp aesthetic', 'coquette icon cute', 'bow pfp aesthetic'],
-};
-
-const BIO_LINES = {
-  'Free Shipping': '🚚 Free shipping every order',
-  'Bundle & Save': '📦 Bundle 2+ items & save',
-  'Fast Shipper': '⚡ Same/next day shipping',
-  'Final Sale Only': '❌ Final sale only — no refunds!',
-  'Message Before Buying': '📩 Message before buying 📦',
-  'Y2K Vibes': '💞 2000s nostalgia + preloved Y2K gems ✨',
-  'Preloved Finds': '♻️ Curated preloved finds',
-  'No Trades': '🚫 No trades, sorry!',
-  'Smoke-Free Home': '🚭 Smoke-free, pet-free home',
-  'Same Day Shipping': '📤 Ships same day (Mon–Fri)',
-  'Open to Offers': '💌 Always open to reasonable offers',
-  'New Drops Weekly': '🆕 New drops every week',
-};
-
-let selectedPfpThemes = [];
-let selectedBioFocuses = [];
-
-function renderAccountGenPage() {
-  const body = document.getElementById('accountgenBody');
-  if (!isReserve()) {
-    body.innerHTML = `
-      <div class="aig-locked">
-        <div class="al-icon">🔒</div>
-        <h2>Black Reserve Exclusive</h2>
-        <p>Account Info Gen — Pinterest profile picture search terms and ready-to-use Depop bios — is only available on Oakmont: Black Reserve.</p>
-        <button class="hero-btn-primary" onclick="showUpgradePrompt()">Upgrade to Reserve</button>
-      </div>`;
-    return;
-  }
-
-  body.innerHTML = `
-    <div class="card">
-      <div class="card-header"><span class="card-step">01</span><span class="card-title">Pinterest PFP Search Generator</span></div>
-      <div class="card-body">
-        <div class="section-label" style="margin-bottom:10px">Pick a theme (select one or more)</div>
-        <div class="tag-grid" id="pfpTagGrid"></div>
-        <button class="generate-btn" style="margin-top:16px" onclick="generatePfpSearch()">Generate Search Term</button>
-        <div class="aig-result" id="pfpResult">
-          <div class="aig-result-label">Search This On Pinterest</div>
-          <div class="aig-result-text" id="pfpResultText"></div>
-          <button class="copy-btn" style="margin-top:10px" onclick="copyAigResult('pfpResultText', this)">📋 Copy</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span class="card-step">02</span><span class="card-title">Depop Bio Generator</span></div>
-      <div class="card-body">
-        <div class="section-label" style="margin-bottom:10px">Pick what to highlight (select up to 4)</div>
-        <div class="tag-grid" id="bioTagGrid"></div>
-        <button class="generate-btn" style="margin-top:16px" onclick="generateBio()">Generate Bio</button>
-        <div class="aig-result" id="bioResult">
-          <div class="aig-result-label">Your Depop Bio</div>
-          <div class="aig-result-text bio" id="bioResultText"></div>
-          <button class="copy-btn" style="margin-top:10px" onclick="copyAigResult('bioResultText', this)">📋 Copy</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  renderTagGrid('pfpTagGrid', PFP_THEMES, selectedPfpThemes, false);
-  renderTagGrid('bioTagGrid', BIO_FOCUSES, selectedBioFocuses, true);
-}
-
-function renderTagGrid(gridId, options, selectedArr, multiLimit) {
-  const grid = document.getElementById(gridId);
-  grid.innerHTML = options.map(opt => `<div class="tag-chip" data-val="${opt}">${opt}</div>`).join('');
-  grid.querySelectorAll('.tag-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const val = chip.dataset.val;
-      const idx = selectedArr.indexOf(val);
-      if (idx > -1) {
-        selectedArr.splice(idx, 1);
-        chip.classList.remove('selected');
-      } else {
-        if (multiLimit && selectedArr.length >= 4) return;
-        selectedArr.push(val);
-        chip.classList.add('selected');
-      }
-    });
-  });
-}
-
-function generatePfpSearch() {
-  if (!selectedPfpThemes.length) { alert('Pick at least one theme first.'); return; }
-  const theme = selectedPfpThemes[Math.floor(Math.random() * selectedPfpThemes.length)];
-  const phrases = PFP_PHRASES[theme] || [`${theme.toLowerCase()} pfp aesthetic`];
-  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
-  document.getElementById('pfpResultText').textContent = phrase;
-  document.getElementById('pfpResult').classList.add('visible');
-}
-
-function generateBio() {
-  if (!selectedBioFocuses.length) { alert('Pick at least one focus first.'); return; }
-  const lines = selectedBioFocuses.map(f => BIO_LINES[f] || `✨ ${f}`);
-  document.getElementById('bioResultText').textContent = lines.join('\n');
-  document.getElementById('bioResult').classList.add('visible');
-}
-
-function copyAigResult(elId, btn) {
-  navigator.clipboard.writeText(document.getElementById(elId).textContent).then(() => {
-    const original = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
-  });
-}
-
 </script>
 </body>
 </html>
