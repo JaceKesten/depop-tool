@@ -82,7 +82,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 /* ── SIDEBAR ── */
 #sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
 .sb-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-.sb-logo-mark{width:32px;height:32px;background:var(--yellow);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#000;flex-shrink:0;}
+.sb-logo-mark{width:32px;height:32px;background:var(--yellow);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#000;flex-shrink:0;overflow:hidden;}
+.sb-logo-mark img{width:100%;height:100%;object-fit:cover;display:block;}
 .sb-logo-text{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:1px;line-height:1;}
 .sb-logo-sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
 .sb-nav{flex:1;padding:8px 0;}
@@ -496,6 +497,22 @@ input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:va
         <div class="admin-msg" id="adminPwChangeMsg"></div>
       </div>
       <div class="admin-sec">
+        <div class="admin-sec-title">Sidebar Logo</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div id="logoPreviewBox" style="width:44px;height:44px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+            <span id="logoPreviewLetter" style="font-family:'Bebas Neue',sans-serif;color:var(--yellow);">O</span>
+            <img id="logoPreviewImg" style="display:none;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="font-size:11px;color:var(--muted);">Upload an image to replace the "O" mark in the sidebar.</div>
+        </div>
+        <label class="admin-btn admin-btn-primary" style="display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;">
+          Choose Image
+          <input type="file" accept="image/*" onchange="handleLogoUpload(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+        </label>
+        <button class="admin-btn admin-btn-danger" style="width:100%;margin-top:8px;" onclick="resetLogo()">Remove Custom Logo</button>
+        <div class="admin-msg" id="logoMsg"></div>
+      </div>
+      <div class="admin-sec">
         <div class="admin-sec-title">Danger Zone</div>
         <div class="admin-row">
           <button class="admin-btn admin-btn-danger" onclick="clearStats()">Clear Stats</button>
@@ -513,7 +530,7 @@ input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:va
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sb-logo">
-      <div class="sb-logo-mark">O</div>
+      <div class="sb-logo-mark" id="logoMark">O</div>
       <div>
         <div class="sb-logo-text">Oakmont AI</div>
         <div class="sb-logo-sub">Depop Directory</div>
@@ -1116,6 +1133,49 @@ function renderChart(){
 }
 function exportSales(){const s=getSales();if(!s.length){alert('No sales to export.');return;}const b=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`depop-sales-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);}
 function importSales(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const imp=JSON.parse(e.target.result);if(!Array.isArray(imp))throw new Error();const ex=getSales(),ids=new Set(ex.map(s=>s.id)),nw=imp.filter(s=>!ids.has(s.id));saveSales([...ex,...nw]);renderSales();renderChart();refreshHomeStats();alert(`✓ Imported ${nw.length} new sale(s).`);}catch{alert('Import failed.');}};r.readAsText(file);input.value='';}
+
+// ── LOGO (stored as base64 in localStorage, set via Admin Panel) ──
+function applyLogo(){
+  const data=store.get('depop_logo');
+  const mark=document.getElementById('logoMark');
+  if(data){mark.innerHTML=`<img src="${data}" alt="Logo">`;}
+  else{mark.textContent='O';}
+}
+function handleLogoUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>1500000){document.getElementById('logoMsg').textContent='Image too large — please use one under 1.5MB.';document.getElementById('logoMsg').className='admin-msg error';return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    store.set('depop_logo',e.target.result);
+    applyLogo();
+    document.getElementById('logoPreviewImg').src=e.target.result;
+    document.getElementById('logoPreviewImg').style.display='block';
+    document.getElementById('logoPreviewLetter').style.display='none';
+    document.getElementById('logoMsg').textContent='✓ Logo updated.';
+    document.getElementById('logoMsg').className='admin-msg';
+    setTimeout(()=>document.getElementById('logoMsg').textContent='',3000);
+  };
+  r.readAsDataURL(file);
+}
+function resetLogo(){
+  store.del('depop_logo');
+  applyLogo();
+  document.getElementById('logoPreviewImg').style.display='none';
+  document.getElementById('logoPreviewLetter').style.display='block';
+  document.getElementById('logoMsg').textContent='✓ Reverted to default.';
+  document.getElementById('logoMsg').className='admin-msg';
+  setTimeout(()=>document.getElementById('logoMsg').textContent='',3000);
+}
+applyLogo();
+// Sync admin preview box if logo already set when admin panel opens
+const _origLoadAdminStats=loadAdminStats;
+loadAdminStats=function(){
+  _origLoadAdminStats();
+  const data=store.get('depop_logo');
+  if(data){document.getElementById('logoPreviewImg').src=data;document.getElementById('logoPreviewImg').style.display='block';document.getElementById('logoPreviewLetter').style.display='none';}
+  else{document.getElementById('logoPreviewImg').style.display='none';document.getElementById('logoPreviewLetter').style.display='block';}
+};
 </script>
 </body>
 </html>
