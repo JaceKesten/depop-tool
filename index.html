@@ -539,6 +539,75 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .coming-soon p { font-size: 13px; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.6; }
 
 /* ============================================================
+   PROMPT CLIPBOARD
+   ============================================================ */
+
+.pc-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.pc-add-btn {
+  background: var(--yellow); color: #000; border: none; border-radius: 3px;
+  padding: 10px 18px; font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 1.5px;
+  cursor: pointer; transition: background .2s;
+}
+.pc-add-btn:hover { background: #fff176; }
+.pc-toolbar-actions { display: flex; gap: 6px; }
+
+.pc-bubble-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+.pc-bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.pc-bubble-hdr { background: var(--surface2); padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+.pc-bubble-name {
+  flex: 1; background: transparent; border: none; color: #fff;
+  font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: .5px;
+  outline: none; min-width: 0;
+}
+.pc-bubble-name::placeholder { color: var(--muted2); font-family: 'Inter', sans-serif; font-size: 13px; letter-spacing: 0; }
+.pc-bubble-delete { background: none; border: none; color: var(--muted2); font-size: 16px; cursor: pointer; padding: 2px 6px; flex-shrink: 0; transition: color .2s; }
+.pc-bubble-delete:hover { color: var(--red); }
+
+.pc-bubble-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+.pc-img-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pc-img-item { position: relative; width: 64px; height: 64px; border-radius: 3px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; }
+.pc-img-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pc-img-item .pc-img-actions { position: absolute; inset: 0; background: rgba(0,0,0,.55); opacity: 0; display: flex; align-items: center; justify-content: center; gap: 4px; transition: opacity .15s; }
+.pc-img-item:hover .pc-img-actions { opacity: 1; }
+.pc-img-actions button { background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; color: #fff; font-size: 11px; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.pc-img-actions button:hover { border-color: var(--yellow); color: var(--yellow); }
+.pc-img-actions button.danger:hover { border-color: var(--red); color: var(--red); }
+
+.pc-img-add {
+  width: 64px; height: 64px; border-radius: 3px; border: 1px dashed var(--border);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  color: var(--muted); font-size: 20px; position: relative; flex-shrink: 0; transition: all .2s;
+}
+.pc-img-add:hover { border-color: var(--yellow); color: var(--yellow); }
+.pc-img-add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+.pc-prompt-wrap { display: flex; flex-direction: column; gap: 6px; }
+.pc-prompt-textarea {
+  width: 100%; min-height: 90px; resize: vertical;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 3px;
+  padding: 10px 12px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
+  line-height: 1.5; outline: none; transition: border-color .2s;
+}
+.pc-prompt-textarea:focus { border-color: var(--yellow); }
+.pc-prompt-textarea::placeholder { color: var(--muted2); }
+
+.pc-bubble-footer { display: flex; justify-content: flex-end; }
+.pc-copy-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 3px;
+  padding: 7px 14px; font-size: 11px; font-weight: 600; letter-spacing: .5px;
+  cursor: pointer; transition: all .2s;
+}
+.pc-copy-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.pc-copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+.pc-empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+.pc-empty .pe-icon { font-size: 36px; margin-bottom: 10px; }
+.pc-empty p { font-size: 13px; }
+
+/* ============================================================
    ADMIN PANEL
    ============================================================ */
 
@@ -693,7 +762,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
       <div class="sb-item" onclick="nav('caption')" id="nav-caption"><span class="sb-icon">✦</span><span class="sb-label">Caption Builder</span></div>
       <div class="sb-item" onclick="nav('pricing')" id="nav-pricing"><span class="sb-icon">◈</span><span class="sb-label">Price Calculator</span></div>
       <div class="sb-item" onclick="nav('sales')" id="nav-sales"><span class="sb-icon">↗</span><span class="sb-label">Sales Tracker</span></div>
-      <div class="sb-item" onclick="nav('photo')" id="nav-photo"><span class="sb-icon">◉</span><span class="sb-label">Photo Gen</span><span class="sb-badge">Soon</span></div>
+      <div class="sb-item" onclick="nav('photo')" id="nav-photo"><span class="sb-icon">◉</span><span class="sb-label">Prompt Clipboard</span></div>
       <div class="sb-divider"></div>
       <div class="sb-section">Settings</div>
       <div class="sb-save-block">
@@ -757,11 +826,10 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
             <div class="tc-title">Sales Tracker</div>
             <div class="tc-sub">Log sales and watch your profit grow over time</div>
           </div>
-          <div class="tool-card disabled">
-            <div class="tc-top"><span class="tc-icon">◉</span></div>
-            <div class="tc-title">Photo Generation</div>
-            <div class="tc-sub">AI background removal and photo enhancement</div>
-            <span class="tc-tag">Coming Soon</span>
+          <div class="tool-card" onclick="nav('photo')">
+            <div class="tc-top"><span class="tc-icon">◉</span><span class="tc-arrow">→</span></div>
+            <div class="tc-title">Prompt Clipboard</div>
+            <div class="tc-sub">Save prompts and reference images in reusable bubbles</div>
           </div>
         </div>
       </div>
@@ -1019,17 +1087,27 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
       </div>
     </div>
 
-    <!-- ════════════ PHOTO GEN (placeholder) ════════════ -->
+    <!-- ════════════ PROMPT CLIPBOARD ════════════ -->
     <div class="page" id="page-photo">
       <div class="page-header">
-        <div><span class="ph-tag">Coming Soon</span><h1 class="ph-title">Photo Generation</h1></div>
+        <div>
+          <span class="ph-tag">Reference Tool</span>
+          <h1 class="ph-title">Prompt Clipboard</h1>
+          <p class="ph-sub">Save prompts and reference images in reusable bubbles.</p>
+        </div>
       </div>
       <div class="page-body">
-        <div class="coming-soon">
-          <div class="cs-icon">📸</div>
-          <h2>Coming Soon</h2>
-          <p>AI-powered background removal, enhancement, and product photo generation.</p>
+
+        <div class="pc-toolbar">
+          <button class="pc-add-btn" onclick="addPromptBubble()">+ New Bubble</button>
+          <div class="pc-toolbar-actions">
+            <button class="sales-action-btn" onclick="exportPrompts()">⬇ Export</button>
+            <div class="sales-action-btn import-btn">⬆ Import<input type="file" accept=".json" onchange="importPrompts(this)"></div>
+          </div>
         </div>
+
+        <div class="pc-bubble-grid" id="promptBubbleGrid"></div>
+
       </div>
     </div>
 
@@ -1129,6 +1207,7 @@ function nav(page) {
 
   if (page === 'sales') { renderSales(); renderChart(); }
   if (page === 'home') refreshHomeStats();
+  if (page === 'photo') renderPromptBubbles();
 
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -1850,6 +1929,174 @@ function importSales(input) {
       renderChart();
       refreshHomeStats();
       alert(`✓ Imported ${newSales.length} new sale(s).`);
+    } catch {
+      alert('Import failed.');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+/* ============================================================
+   PROMPT CLIPBOARD
+   ============================================================ */
+
+function getPrompts() { try { return JSON.parse(store.get('depop_prompts') || '[]'); } catch { return []; } }
+function savePrompts(p) { store.set('depop_prompts', JSON.stringify(p)); }
+
+function addPromptBubble() {
+  const prompts = getPrompts();
+  prompts.unshift({ id: Date.now().toString(), name: '', text: '', images: [] });
+  savePrompts(prompts);
+  renderPromptBubbles();
+}
+
+function deletePromptBubble(id) {
+  if (!confirm('Delete this bubble?')) return;
+  savePrompts(getPrompts().filter(p => p.id !== id));
+  renderPromptBubbles();
+}
+
+function updatePromptField(id, field, value) {
+  const prompts = getPrompts();
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+  p[field] = value;
+  savePrompts(prompts);
+}
+
+function addPromptImage(id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prompts = getPrompts();
+    const p = prompts.find(x => x.id === id);
+    if (!p) return;
+    p.images.push(e.target.result);
+    savePrompts(prompts);
+    renderPromptBubbles();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function removePromptImage(id, idx) {
+  const prompts = getPrompts();
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+  p.images.splice(idx, 1);
+  savePrompts(prompts);
+  renderPromptBubbles();
+}
+
+function copyPromptImage(idx, id) {
+  const prompts = getPrompts();
+  const p = prompts.find(x => x.id === id);
+  if (!p || !p.images[idx]) return;
+  fetch(p.images[idx])
+    .then(r => r.blob())
+    .then(blob => navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]))
+    .then(() => flashCopyFeedback(`imgCopyBtn-${id}-${idx}`))
+    .catch(() => alert('Could not copy image — your browser may not support image clipboard copy.'));
+}
+
+function flashCopyFeedback(btnId) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  const original = btn.textContent;
+  btn.textContent = '✓';
+  setTimeout(() => { btn.textContent = original; }, 1200);
+}
+
+function copyPromptText(id) {
+  const prompts = getPrompts();
+  const p = prompts.find(x => x.id === id);
+  if (!p) return;
+  navigator.clipboard.writeText(p.text || '').then(() => {
+    const btn = document.getElementById(`copyTextBtn-${id}`);
+    if (!btn) return;
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderPromptBubbles() {
+  const grid = document.getElementById('promptBubbleGrid');
+  if (!grid) return;
+  const prompts = getPrompts();
+
+  if (!prompts.length) {
+    grid.innerHTML = `<div class="pc-empty" style="grid-column:1/-1"><div class="pe-icon">📋</div><p>No bubbles yet. Click "+ New Bubble" to add one.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = prompts.map(p => {
+    const imagesHtml = p.images.map((img, idx) => `
+      <div class="pc-img-item">
+        <img src="${img}" alt="">
+        <div class="pc-img-actions">
+          <button id="imgCopyBtn-${p.id}-${idx}" title="Copy image" onclick="copyPromptImage(${idx}, '${p.id}')">📋</button>
+          <button class="danger" title="Remove image" onclick="removePromptImage('${p.id}', ${idx})">✕</button>
+        </div>
+      </div>`).join('');
+
+    return `
+    <div class="pc-bubble">
+      <div class="pc-bubble-hdr">
+        <input class="pc-bubble-name" type="text" placeholder="Untitled bubble — e.g. Prompt 1 - Rug Base"
+          value="${(p.name || '').replace(/"/g, '&quot;')}"
+          oninput="updatePromptField('${p.id}', 'name', this.value)">
+        <button class="pc-bubble-delete" onclick="deletePromptBubble('${p.id}')" title="Delete bubble">✕</button>
+      </div>
+      <div class="pc-bubble-body">
+        <div class="pc-img-row">
+          ${imagesHtml}
+          <div class="pc-img-add" title="Add image">
+            +
+            <input type="file" accept="image/*" onchange="addPromptImage('${p.id}', this)">
+          </div>
+        </div>
+        <div class="pc-prompt-wrap">
+          <textarea class="pc-prompt-textarea" placeholder="Type your prompt here..."
+            oninput="updatePromptField('${p.id}', 'text', this.value)">${(p.text || '')}</textarea>
+        </div>
+        <div class="pc-bubble-footer">
+          <button class="pc-copy-btn" id="copyTextBtn-${p.id}" onclick="copyPromptText('${p.id}')">📋 Copy Prompt</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function exportPrompts() {
+  const prompts = getPrompts();
+  if (!prompts.length) { alert('No bubbles to export.'); return; }
+  const blob = new Blob([JSON.stringify(prompts, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prompt-clipboard-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importPrompts(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error();
+      const existing = getPrompts();
+      const existingIds = new Set(existing.map(p => p.id));
+      const newPrompts = imported.filter(p => !existingIds.has(p.id));
+      savePrompts([...existing, ...newPrompts]);
+      renderPromptBubbles();
+      alert(`✓ Imported ${newPrompts.length} new bubble(s).`);
     } catch {
       alert('Import failed.');
     }
