@@ -168,14 +168,16 @@ body::before {
   color: var(--muted2); padding: 14px 20px 6px;
 }
 .sb-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 16px; margin: 1px 8px;
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px; margin: 1px 8px;
   cursor: pointer; border-radius: 3px; color: var(--muted);
   transition: all .15s;
 }
 .sb-item:hover { background: var(--surface2); color: var(--text); }
 .sb-item.active { background: var(--yellow-glow); color: var(--yellow); border-left: 2px solid var(--yellow); }
-.sb-item .sb-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+.sb-item .sb-icon { font-size: 20px; width: 26px; text-align: center; flex-shrink: 0; transition: transform .15s, text-shadow .15s; }
+.sb-item:hover .sb-icon { transform: scale(1.15); }
+.sb-item.active .sb-icon { text-shadow: 0 0 12px var(--yellow-glow), 0 0 4px var(--yellow); }
 .sb-item .sb-label { font-size: 12px; font-weight: 500; letter-spacing: .3px; }
 .sb-item .sb-badge { margin-left: auto; font-size: 8px; background: var(--red); color: #fff; padding: 2px 6px; border-radius: 20px; font-weight: 700; }
 .sb-divider { height: 1px; background: var(--border); margin: 6px 0; }
@@ -749,11 +751,11 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 
     <div class="sb-nav">
       <div class="sb-section">Terminal</div>
-      <div class="sb-item active" onclick="nav('home')" id="nav-home"><span class="sb-icon">⊞</span><span class="sb-label">Dashboard</span></div>
-      <div class="sb-item" onclick="nav('caption')" id="nav-caption"><span class="sb-icon">✦</span><span class="sb-label">Caption Builder</span></div>
-      <div class="sb-item" onclick="nav('pricing')" id="nav-pricing"><span class="sb-icon">◈</span><span class="sb-label">Price Calculator</span></div>
-      <div class="sb-item" onclick="nav('sales')" id="nav-sales"><span class="sb-icon">↗</span><span class="sb-label">Sales Tracker</span></div>
-      <div class="sb-item" onclick="nav('photo')" id="nav-photo"><span class="sb-icon">◉</span><span class="sb-label">Prompt Clipboard</span></div>
+      <div class="sb-item active" onclick="nav('home')" id="nav-home"><span class="sb-icon">⌬</span><span class="sb-label">Dashboard</span></div>
+      <div class="sb-item" onclick="nav('caption')" id="nav-caption"><span class="sb-icon">✎</span><span class="sb-label">Caption Builder</span></div>
+      <div class="sb-item" onclick="nav('pricing')" id="nav-pricing"><span class="sb-icon">⟁</span><span class="sb-label">Price Calculator</span></div>
+      <div class="sb-item" onclick="nav('sales')" id="nav-sales"><span class="sb-icon">⬈</span><span class="sb-label">Sales Tracker</span></div>
+      <div class="sb-item" onclick="nav('photo')" id="nav-photo"><span class="sb-icon">⌗</span><span class="sb-label">Prompt Clipboard</span></div>
       <div class="sb-divider"></div>
       <div class="sb-section">Settings</div>
       <div class="sb-save-block">
@@ -863,10 +865,19 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
           <div class="card-body">
             <div class="form-grid">
               <div class="form-group"><label for="size">Size *</label><input type="text" id="size" placeholder="e.g. M, L, XL, One Size"></div>
-              <div class="form-group"><label for="material">Material</label><input type="text" id="material" placeholder="e.g. Cotton, Polyester"></div>
+              <div class="form-group">
+                <label for="originalPrice">Cost Price ($) <span class="opt">(optional)</span></label>
+                <input type="number" id="originalPrice" placeholder="8.00" min="0" step="0.01">
+                <span class="field-hint">Used to calculate suggested listing price</span>
+              </div>
             </div>
 
-            <div class="row-header">
+            <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()" style="max-width:260px;margin-top:10px">
+              <div class="tgl-sw"><div class="tgl-kn"></div></div>
+              <div><div class="tgl-lbl">Depop Boost</div><div class="tgl-sub">Adds 12% fee</div></div>
+            </div>
+
+            <div class="row-header" style="margin-top:16px">
               <span class="section-label">Measurements <span class="opt">(optional)</span></span>
               <div class="unit-toggle">
                 <button id="btnCm" class="active" onclick="setUnit('cm')">cm</button>
@@ -878,24 +889,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
               <div class="m-field form-group"><label id="labelLength">Length (cm)</label><input type="text" id="mLength" placeholder="68"></div>
               <div class="m-field form-group"><label id="labelShoulder">Shoulder (cm)</label><input type="text" id="mShoulder" placeholder="55"></div>
               <div class="m-field form-group"><label id="labelSleeve">Sleeve (cm)</label><input type="text" id="mSleeve" placeholder="52"></div>
-            </div>
-
-            <div class="row-header" style="margin-top:16px">
-              <span class="section-label">Pricing <span class="opt">(optional)</span></span>
-            </div>
-            <div class="pricing-row">
-              <div class="form-group">
-                <label for="originalPrice">Cost Price ($)</label>
-                <input type="number" id="originalPrice" placeholder="8.00" min="0" step="0.01">
-                <span class="field-hint">Used to calculate suggested listing price</span>
-              </div>
-              <div class="form-group">
-                <label>Depop Boost</label>
-                <div class="boost-toggle" id="boostToggle" onclick="toggleBoost()">
-                  <div class="tgl-sw"><div class="tgl-kn"></div></div>
-                  <div><div class="tgl-lbl">Boosted listing</div><div class="tgl-sub">Adds 12% fee</div></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -1216,7 +1209,7 @@ function toggleSaveState() {
 function resetCaption() {
   images.length = 0;
   renderPreviews();
-  ['size', 'material', 'mChest', 'mLength', 'mShoulder', 'mSleeve', 'originalPrice'].forEach(id => {
+  ['size', 'mChest', 'mLength', 'mShoulder', 'mSleeve', 'originalPrice'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -1539,7 +1532,6 @@ async function generate() {
   if (!size) { errBox.textContent = 'Please enter the size.'; errBox.classList.add('visible'); return; }
   if (!images.length) { errBox.textContent = 'Please upload at least one photo.'; errBox.classList.add('visible'); return; }
 
-  const material = document.getElementById('material').value.trim();
   const mChest = document.getElementById('mChest').value.trim();
   const mLength = document.getElementById('mLength').value.trim();
   const mShoulder = document.getElementById('mShoulder').value.trim();
@@ -1564,7 +1556,6 @@ async function generate() {
   }));
 
   const detailParts = [`Size: ${size}`];
-  if (material) detailParts.push(`Material: ${material}`);
   if (mLine) detailParts.push(`Measurements: ${mLine}`);
 
   contentBlocks.push({
