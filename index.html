@@ -705,6 +705,151 @@ input:focus, textarea:focus, select:focus { transition: border-color .2s, box-sh
 .sale-item, .pc-bubble, .cat-item { animation: cardFadeIn .3s ease backwards; }
 @keyframes cardFadeIn { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
 
+/* ============================================================
+   SALE CELEBRATION OVERLAY
+   ============================================================ */
+
+#celebrationOverlay {
+  position: fixed; inset: 0; z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+#celebrationOverlay.hidden { display: none; }
+
+.celeb-flash {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 85%, rgba(245,197,24,.35) 0%, transparent 60%);
+  opacity: 0;
+  animation: celebFlash 1.1s ease-out forwards;
+}
+@keyframes celebFlash {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.celeb-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, #fff 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 30% 70%, #fff 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 50% 30%, var(--yellow) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 70% 80%, #fff 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 15%, #fff 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 20% 50%, var(--yellow) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 55%, #fff 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 60%, #fff 0%, transparent 100%);
+  opacity: 0;
+  animation: celebStarsFade 1.6s ease-out forwards;
+}
+@keyframes celebStarsFade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.celeb-rocket-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: -120px;
+  transform: translateX(-50%);
+  animation: rocketLaunch 1.5s cubic-bezier(.45,0,.2,1) forwards;
+}
+@keyframes rocketLaunch {
+  0% { bottom: -120px; transform: translateX(-50%) rotate(0deg); }
+  8% { transform: translateX(-50%) rotate(-2deg); }
+  16% { transform: translateX(-50%) rotate(2deg); }
+  100% { bottom: 115%; transform: translateX(-50%) rotate(0deg); }
+}
+
+.celeb-rocket {
+  font-size: 56px;
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(245,197,24,.7));
+  animation: rocketWobble .25s ease-in-out infinite alternate;
+}
+@keyframes rocketWobble {
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
+}
+
+.celeb-trail {
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 60px;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(to top, rgba(245,197,24,.9), rgba(244,114,182,.6), transparent);
+  filter: blur(3px);
+  animation: trailFlicker .12s ease-in-out infinite alternate;
+}
+@keyframes trailFlicker {
+  0% { opacity: .7; height: 50px; }
+  100% { opacity: 1; height: 70px; }
+}
+
+.celeb-particles { position: absolute; inset: 0; }
+.celeb-particle {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  opacity: 0;
+}
+@keyframes particleBurst {
+  0% { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(.4); }
+  10% { opacity: 1; transform: translate(-50%, -50%) translate(calc(var(--dx) * .15), calc(var(--dy) * .15)) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(.3); }
+}
+
+.celeb-content {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  animation: celebContentPop 1.5s cubic-bezier(.34,1.56,.64,1) forwards;
+  animation-delay: .55s;
+}
+@keyframes celebContentPop {
+  0% { opacity: 0; transform: translate(-50%, -40%) scale(.6); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  25% { transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+.celeb-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; letter-spacing: 5px; color: var(--yellow);
+  text-shadow: 0 0 16px rgba(245,197,24,.6);
+  margin-bottom: 4px;
+}
+.celeb-profit {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 10vw, 96px);
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(245,197,24,.5), 0 0 60px rgba(244,114,182,.25);
+}
+.celeb-profit.loss-color { color: var(--red); text-shadow: 0 0 30px rgba(229,57,53,.5); }
+.celeb-item {
+  font-size: 13px; color: var(--muted); margin-top: 6px;
+  max-width: 320px; margin-left: auto; margin-right: auto;
+}
+
+body.celeb-shake { animation: screenShake .5s ease; }
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  15% { transform: translate(-4px, 2px); }
+  30% { transform: translate(4px, -2px); }
+  45% { transform: translate(-3px, 1px); }
+  60% { transform: translate(3px, -1px); }
+  75% { transform: translate(-2px, 1px); }
+  90% { transform: translate(2px, 0); }
+}
+
 </style>
 </head>
 <body>
@@ -796,6 +941,24 @@ input:focus, textarea:focus, select:focus { transition: border-color .2s, box-sh
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SALE CELEBRATION OVERLAY
+     ════════════════════════════════════════════════════════════ -->
+<div id="celebrationOverlay" class="hidden">
+  <div class="celeb-stars" id="celebStars"></div>
+  <div class="celeb-particles" id="celebParticles"></div>
+  <div class="celeb-flash"></div>
+  <div class="celeb-rocket-wrap">
+    <div class="celeb-rocket" id="celebRocket">🚀</div>
+    <div class="celeb-trail"></div>
+  </div>
+  <div class="celeb-content">
+    <div class="celeb-label">SALE LOGGED</div>
+    <div class="celeb-profit" id="celebProfitText">+$0</div>
+    <div class="celeb-item" id="celebItemText"></div>
   </div>
 </div>
 
@@ -1884,6 +2047,76 @@ function addSale() {
   renderSales();
   renderChart();
   refreshHomeStats();
+  launchSaleCelebration(name, profit);
+}
+
+/* ============================================================
+   SALE CELEBRATION 🚀
+   ============================================================ */
+
+function launchSaleCelebration(itemName, profit) {
+  const overlay = document.getElementById('celebrationOverlay');
+  const profitEl = document.getElementById('celebProfitText');
+  const itemEl = document.getElementById('celebItemText');
+  const particlesWrap = document.getElementById('celebParticles');
+
+  const isProfit = profit >= 0;
+  profitEl.textContent = (isProfit ? '+' : '') + '$' + profit.toFixed(2);
+  profitEl.classList.toggle('loss-color', !isProfit);
+  itemEl.textContent = itemName;
+
+  // Reset any previous animation state by forcing a reflow
+  overlay.classList.remove('hidden');
+  void overlay.offsetWidth;
+
+  // Re-trigger CSS animations by replacing animated elements
+  overlay.querySelectorAll('.celeb-flash, .celeb-stars, .celeb-rocket-wrap, .celeb-content').forEach(el => {
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+
+  // Spawn confetti/spark particles
+  particlesWrap.innerHTML = '';
+  const colors = ['#f5c518', '#f472b6', '#9b59f5', '#ffffff', '#4ade80'];
+  const particleCount = 36;
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'celeb-particle';
+    const angle = (Math.random() * 360) * (Math.PI / 180);
+    const distance = 120 + Math.random() * 260;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance - 80;
+    const delay = 0.5 + Math.random() * 0.25;
+    const duration = 0.8 + Math.random() * 0.6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = 4 + Math.random() * 5;
+
+    p.style.left = '50%';
+    p.style.top = '52%';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.background = color;
+    p.style.boxShadow = `0 0 6px ${color}`;
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    p.style.animation = `particleBurst ${duration}s cubic-bezier(.25,.46,.45,.94) ${delay}s forwards`;
+    p.style.setProperty('--dx', dx + 'px');
+    p.style.setProperty('--dy', dy + 'px');
+    particlesWrap.appendChild(p);
+  }
+
+  // Screen shake
+  document.body.classList.remove('celeb-shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('celeb-shake');
+
+  // Clean up after the sequence finishes
+  clearTimeout(window._celebTimeout);
+  window._celebTimeout = setTimeout(() => {
+    overlay.classList.add('hidden');
+    particlesWrap.innerHTML = '';
+    document.body.classList.remove('celeb-shake');
+  }, 2200);
 }
 
 function deleteSale(id) {
