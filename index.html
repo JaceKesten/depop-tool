@@ -2068,11 +2068,33 @@ function copyPromptImage(idx, id) {
   const prompts = getPrompts();
   const p = prompts.find(x => x.id === id);
   if (!p || !p.images[idx]) return;
-  fetch(p.images[idx])
-    .then(r => r.blob())
-    .then(blob => navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]))
-    .then(() => flashCopyFeedback(`imgCopyBtn-${id}-${idx}`))
-    .catch(() => alert('Could not copy image — your browser may not support image clipboard copy.'));
+
+  if (!navigator.clipboard || !window.ClipboardItem) {
+    alert('Your browser doesn\'t support copying images to the clipboard. Try Chrome or Edge, or right-click the image and choose "Copy Image" instead.');
+    return;
+  }
+
+  // Clipboard API is unreliable with image/jpeg in most browsers — convert to PNG via canvas first
+  const img = new Image();
+  img.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(blob => {
+        if (!blob) { alert('Could not prepare image for copying.'); return; }
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+          .then(() => flashCopyFeedback(`imgCopyBtn-${id}-${idx}`))
+          .catch(err => alert('Could not copy image to clipboard: ' + err.message + '\n\nTry right-clicking the image and choosing "Copy Image" instead.'));
+      }, 'image/png');
+    } catch (err) {
+      alert('Could not prepare image for copying: ' + err.message);
+    }
+  };
+  img.onerror = () => alert('Could not load this image for copying.');
+  img.src = p.images[idx];
 }
 
 function flashCopyFeedback(btnId) {
