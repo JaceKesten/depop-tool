@@ -1784,7 +1784,7 @@ function toggleAddSale() {
 function handleSalePhoto(input) {
   const file = input.files[0];
   if (!file) return;
-  if (!file.type.startsWith('image/')) {
+  if (!file.type.startsWith('image/') && !/\.(heic|heif)$/i.test(file.name || '')) {
     alert('That file type isn\'t supported as an image.');
     return;
   }
@@ -1969,28 +1969,53 @@ function updatePromptField(id, field, value) {
   savePrompts(prompts);
 }
 
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => reject(new Error('Could not read file from disk.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 function compressImage(file, maxDim = 800, quality = 0.82) {
+  const isHeic = /heic|heif/i.test(file.type) || /\.heic$|\.heif$/i.test(file.name || '');
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = e => {
       const img = new Image();
       img.onload = () => {
-        let { width, height } = img;
-        if (width > maxDim || height > maxDim) {
-          if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
-          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+        try {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+            else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const result = canvas.toDataURL('image/jpeg', quality);
+          if (!result || result === 'data:,') {
+            reject(new Error('Canvas produced an empty image.'));
+            return;
+          }
+          resolve(result);
+        } catch (err) {
+          reject(new Error('Canvas processing failed: ' + err.message));
         }
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', quality));
       };
-      img.onerror = () => reject(new Error('Could not read image — file may be corrupted or an unsupported format.'));
+      img.onerror = () => {
+        if (isHeic) {
+          reject(new Error('HEIC photos can\'t be previewed by this browser. On iPhone, go to Settings → Camera → Formats → choose "Most Compatible" so new photos save as JPEG, or use "Share" to convert this photo before uploading.'));
+        } else {
+          reject(new Error('Could not load this image into memory — the file may be corrupted or in an unsupported format.'));
+        }
+      };
       img.src = e.target.result;
     };
-    reader.onerror = () => reject(new Error('Could not read file.'));
+    reader.onerror = () => reject(new Error('Could not read file from disk.'));
     reader.readAsDataURL(file);
   });
 }
@@ -1998,15 +2023,18 @@ function compressImage(file, maxDim = 800, quality = 0.82) {
 function addPromptImage(id, input) {
   const file = input.files[0];
   if (!file) return;
-  if (!file.type.startsWith('image/')) {
-    alert('That file type isn\'t supported as an image.');
+  if (!file.type.startsWith('image/') && !/\.(heic|heif)$/i.test(file.name || '')) {
+    alert('That file type isn\'t supported as an image: ' + (file.type || 'unknown type'));
     return;
   }
   compressImage(file)
     .then(dataUrl => {
       const prompts = getPrompts();
       const p = prompts.find(x => x.id === id);
-      if (!p) return;
+      if (!p) {
+        alert('Could not find that clipboard anymore — try refreshing the page.');
+        return;
+      }
       p.images.push(dataUrl);
       savePrompts(prompts);
       renderPromptBubbles();
