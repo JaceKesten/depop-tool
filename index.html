@@ -1784,15 +1784,19 @@ function toggleAddSale() {
 function handleSalePhoto(input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    salePhotoData = e.target.result;
-    const preview = document.getElementById('salePhotoPreview');
-    preview.src = salePhotoData;
-    preview.style.display = 'block';
-    document.getElementById('salePhotoText').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+  if (!file.type.startsWith('image/')) {
+    alert('That file type isn\'t supported as an image.');
+    return;
+  }
+  compressImage(file)
+    .then(dataUrl => {
+      salePhotoData = dataUrl;
+      const preview = document.getElementById('salePhotoPreview');
+      preview.src = salePhotoData;
+      preview.style.display = 'block';
+      document.getElementById('salePhotoText').style.display = 'none';
+    })
+    .catch(err => alert('Image upload failed: ' + err.message));
 }
 
 function addSale() {
@@ -1965,19 +1969,49 @@ function updatePromptField(id, field, value) {
   savePrompts(prompts);
 }
 
+function compressImage(file, maxDim = 800, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round(height * (maxDim / width)); width = maxDim; }
+          else { width = Math.round(width * (maxDim / height)); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('Could not read image — file may be corrupted or an unsupported format.'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Could not read file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 function addPromptImage(id, input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prompts = getPrompts();
-    const p = prompts.find(x => x.id === id);
-    if (!p) return;
-    p.images.push(e.target.result);
-    savePrompts(prompts);
-    renderPromptBubbles();
-  };
-  reader.readAsDataURL(file);
+  if (!file.type.startsWith('image/')) {
+    alert('That file type isn\'t supported as an image.');
+    return;
+  }
+  compressImage(file)
+    .then(dataUrl => {
+      const prompts = getPrompts();
+      const p = prompts.find(x => x.id === id);
+      if (!p) return;
+      p.images.push(dataUrl);
+      savePrompts(prompts);
+      renderPromptBubbles();
+    })
+    .catch(err => alert('Image upload failed: ' + err.message));
 }
 
 function removePromptImage(id, idx) {
