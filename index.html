@@ -851,75 +851,132 @@ body.celeb-shake { animation: screenShake .5s ease; }
 }
 
 /* ============================================================
-   SALE CRASH (loss) — inverse of celebration
+   SALE CRASH (loss) — rocket collides with a meteor
    ============================================================ */
 
 #celebrationOverlay.crash-mode .celeb-stars { display: none; }
 
 #celebrationOverlay.crash-mode .celeb-flash {
-  background: radial-gradient(circle at 50% 75%, rgba(229,57,53,.4) 0%, transparent 60%);
-  animation: crashFlash 1.3s ease-out forwards;
+  background: radial-gradient(circle at 50% 48%, rgba(229,57,53,.45) 0%, transparent 60%);
+  animation: crashFlash 1.4s ease-out forwards;
 }
 @keyframes crashFlash {
   0% { opacity: 0; }
-  60% { opacity: 0; }
-  72% { opacity: 1; }
+  74% { opacity: 0; }
+  82% { opacity: 1; }
   100% { opacity: 0; }
 }
 
+/* Rocket flies in from bottom-left toward the collision point at screen center */
 #celebrationOverlay.crash-mode .celeb-rocket-wrap {
-  left: 22%;
-  bottom: auto;
-  top: -120px;
-  animation: rocketFall 1.3s cubic-bezier(.55,0,.85,.35) forwards;
+  left: 8%;
+  bottom: 10%;
+  top: auto;
+  animation: rocketApproach 1.1s cubic-bezier(.4,0,.7,.2) forwards;
 }
-@keyframes rocketFall {
-  0% { top: -120px; left: 22%; transform: translateX(-50%) rotate(15deg); }
-  100% { top: 78%; left: 52%; transform: translateX(-50%) rotate(425deg); }
+@keyframes rocketApproach {
+  0% { left: 8%; bottom: 10%; transform: translateX(-50%) rotate(-38deg) scale(.85); }
+  100% { left: 50%; bottom: 50%; transform: translateX(-50%) rotate(-38deg) scale(1.05); }
 }
 
 #celebrationOverlay.crash-mode .celeb-rocket {
-  filter: drop-shadow(0 0 14px rgba(229,57,53,.7));
-  animation: rocketTumble .22s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(245,197,24,.6));
+  animation: none;
 }
-@keyframes rocketTumble {
+
+/* Keep the rocket's flame trail but angle it to match the diagonal flight path */
+#celebrationOverlay.crash-mode .celeb-trail {
+  bottom: -2px;
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.celeb-smoke { display: none; position: absolute; }
+
+/* Meteor streaks in from top-right toward the same collision point */
+.celeb-meteor-wrap {
+  position: absolute;
+  right: 8%;
+  top: 8%;
+  transform: translate(50%, -50%);
+  opacity: 0;
+}
+#celebrationOverlay.crash-mode .celeb-meteor-wrap {
+  opacity: 1;
+  animation: meteorApproach 1.1s cubic-bezier(.4,0,.7,.2) forwards;
+}
+@keyframes meteorApproach {
+  0% { right: 8%; top: 8%; transform: translate(50%, -50%) rotate(35deg) scale(.8); }
+  100% { right: 50%; top: 50%; transform: translate(50%, -50%) rotate(35deg) scale(1.1); }
+}
+
+.celeb-meteor {
+  font-size: 50px;
+  display: block;
+  filter: drop-shadow(0 0 16px rgba(251,146,60,.8));
+  animation: meteorSpin .3s linear infinite;
+}
+@keyframes meteorSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-#celebrationOverlay.crash-mode .celeb-trail { display: none; }
-
-.celeb-smoke { display: none; position: absolute; }
-#celebrationOverlay.crash-mode .celeb-smoke {
-  display: block;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(120,120,120,.7) 0%, rgba(80,80,80,.3) 60%, transparent 80%);
-  filter: blur(2px);
-  animation: smokePuff .35s ease-out infinite;
+.celeb-meteor-trail {
+  position: absolute;
+  top: 50%; left: -6px;
+  transform: translateY(-50%) rotate(180deg);
+  width: 70px; height: 12px;
+  border-radius: 0 50% 50% 0;
+  background: linear-gradient(to left, rgba(251,146,60,.9), rgba(229,57,53,.5), transparent);
+  filter: blur(3px);
 }
-@keyframes smokePuff {
-  0% { opacity: .8; transform: translate(-50%, -50%) scale(.6); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+
+/* Both vehicles vanish at the moment of impact */
+#celebrationOverlay.crash-mode .celeb-rocket-wrap,
+#celebrationOverlay.crash-mode .celeb-meteor-wrap {
+  animation-fill-mode: forwards;
+}
+#celebrationOverlay.crash-mode .celeb-rocket-wrap { animation-name: rocketApproach, vanishAtImpact; animation-duration: 1.1s, .15s; animation-delay: 0s, 1.1s; animation-timing-function: cubic-bezier(.4,0,.7,.2), ease-out; }
+#celebrationOverlay.crash-mode .celeb-meteor-wrap { animation-name: meteorApproach, vanishAtImpact; animation-duration: 1.1s, .15s; animation-delay: 0s, 1.1s; animation-timing-function: cubic-bezier(.4,0,.7,.2), ease-out; }
+@keyframes vanishAtImpact {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .celeb-impact {
   display: none;
   position: absolute;
-  left: 52%; top: 78%;
+  left: 50%; top: 50%;
   transform: translate(-50%, -50%);
   width: 10px; height: 10px;
   border-radius: 50%;
 }
 #celebrationOverlay.crash-mode .celeb-impact {
   display: block;
-  animation: impactBlast .6s ease-out 1.25s forwards;
+  animation: impactBlast .65s ease-out 1.08s forwards;
 }
 @keyframes impactBlast {
-  0% { box-shadow: 0 0 0 0 rgba(229,57,53,.9), 0 0 0 0 rgba(245,197,24,.5); opacity: 1; }
-  100% { box-shadow: 0 0 0 90px rgba(229,57,53,0), 0 0 0 140px rgba(245,197,24,0); opacity: 0; }
+  0% { box-shadow: 0 0 0 0 rgba(251,146,60,.95), 0 0 0 0 rgba(229,57,53,.6), 0 0 0 0 rgba(245,197,24,.4); opacity: 1; }
+  100% { box-shadow: 0 0 0 110px rgba(251,146,60,0), 0 0 0 160px rgba(229,57,53,0), 0 0 0 200px rgba(245,197,24,0); opacity: 0; }
+}
+
+/* Fireball flash right at the collision point */
+.celeb-fireball {
+  display: none;
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, #fff 0%, var(--yellow) 25%, #fb923c 55%, var(--red) 80%, transparent 100%);
+}
+#celebrationOverlay.crash-mode .celeb-fireball {
+  display: block;
+  animation: fireballPop .5s cubic-bezier(.2,1.4,.4,1) 1.08s forwards;
+}
+@keyframes fireballPop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  40% { transform: translate(-50%, -50%) scale(5.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(7.5); opacity: 0; }
 }
 
 .celeb-crackOverlay {
@@ -930,30 +987,30 @@ body.celeb-shake { animation: screenShake .5s ease; }
     linear-gradient(70deg, transparent 58%, rgba(255,255,255,.4) 59%, transparent 60.5%),
     linear-gradient(140deg, transparent 38%, rgba(255,255,255,.35) 39%, transparent 40.5%);
   background-size: 100% 100%;
-  clip-path: circle(0% at 52% 78%);
+  clip-path: circle(0% at 50% 50%);
   opacity: 0;
 }
 #celebrationOverlay.crash-mode .celeb-crackOverlay {
   display: block;
-  animation: crackSpread .5s ease-out 1.25s forwards;
+  animation: crackSpread .5s ease-out 1.1s forwards;
 }
 @keyframes crackSpread {
-  0% { clip-path: circle(0% at 52% 78%); opacity: 0; }
+  0% { clip-path: circle(0% at 50% 50%); opacity: 0; }
   20% { opacity: .9; }
-  100% { clip-path: circle(75% at 52% 78%); opacity: 0; }
+  100% { clip-path: circle(75% at 50% 50%); opacity: 0; }
 }
 
 #celebrationOverlay.crash-mode .celeb-content { animation-name: crashContentSlam; }
 @keyframes crashContentSlam {
   0% { opacity: 0; transform: translate(-50%, -65%) scale(.7) rotate(-4deg); }
-  55% { opacity: 0; }
-  62% { opacity: 1; transform: translate(-50%, -48%) scale(1.1) rotate(2deg); }
-  70% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  88% { opacity: 1; }
+  40% { opacity: 0; }
+  48% { opacity: 1; transform: translate(-50%, -48%) scale(1.1) rotate(2deg); }
+  56% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  85% { opacity: 1; }
   100% { opacity: 0; }
 }
 
-body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1.25s; }
+body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1.08s; }
 @keyframes screenShakeHard {
   0%, 100% { transform: translate(0, 0); }
   10% { transform: translate(-8px, 5px) rotate(-.4deg); }
@@ -1071,7 +1128,12 @@ body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1
     <div class="celeb-trail" id="celebTrail"></div>
     <div class="celeb-smoke" id="celebSmoke"></div>
   </div>
+  <div class="celeb-meteor-wrap" id="celebMeteorWrap">
+    <div class="celeb-meteor" id="celebMeteor">☄️</div>
+    <div class="celeb-meteor-trail"></div>
+  </div>
   <div class="celeb-impact" id="celebImpact"></div>
+  <div class="celeb-fireball" id="celebFireball"></div>
   <div class="celeb-content" id="celebContent">
     <div class="celeb-label" id="celebLabel">SALE LOGGED</div>
     <div class="celeb-profit" id="celebProfitText">+$0</div>
@@ -2191,7 +2253,7 @@ function launchSaleCelebration(itemName, profit) {
   void overlay.offsetWidth;
 
   // Re-trigger CSS animations by forcing reflow on every animated element
-  overlay.querySelectorAll('.celeb-flash, .celeb-stars, .celeb-rocket-wrap, .celeb-rocket, .celeb-content, .celeb-impact, .celeb-crackOverlay, .celeb-smoke').forEach(el => {
+  overlay.querySelectorAll('.celeb-flash, .celeb-stars, .celeb-rocket-wrap, .celeb-rocket, .celeb-content, .celeb-impact, .celeb-crackOverlay, .celeb-smoke, .celeb-meteor-wrap, .celeb-meteor, .celeb-fireball').forEach(el => {
     el.style.animation = 'none';
     void el.offsetWidth;
     el.style.animation = '';
@@ -2249,23 +2311,23 @@ function spawnConfettiBurst(wrap) {
 }
 
 function spawnCrashDebris(wrap) {
-  // Dark smoky/ember debris that bursts outward from the impact point on the ground
-  const colors = ['#e53935', '#fb923c', '#6b6b6b', '#3a3a3a', '#9d8ec4'];
-  const particleCount = 30;
+  // Fiery debris bursting outward in all directions from the mid-air collision point
+  const colors = ['#e53935', '#fb923c', '#f5c518', '#6b6b6b', '#3a3a3a'];
+  const particleCount = 40;
   for (let i = 0; i < particleCount; i++) {
     const p = document.createElement('div');
     p.className = 'celeb-particle';
-    const angle = (Math.random() * 180 + 180) * (Math.PI / 180); // mostly upward/outward from ground
-    const distance = 60 + Math.random() * 180;
+    const angle = (Math.random() * 360) * (Math.PI / 180); // full radial burst
+    const distance = 100 + Math.random() * 240;
     const dx = Math.cos(angle) * distance;
-    const dy = Math.sin(angle) * distance * 0.6;
-    const delay = 1.25 + Math.random() * 0.15;
-    const duration = 0.6 + Math.random() * 0.5;
+    const dy = Math.sin(angle) * distance;
+    const delay = 1.08 + Math.random() * 0.12;
+    const duration = 0.55 + Math.random() * 0.5;
     const color = colors[Math.floor(Math.random() * colors.length)];
     const size = 3 + Math.random() * 6;
 
-    p.style.left = '52%';
-    p.style.top = '78%';
+    p.style.left = '50%';
+    p.style.top = '50%';
     p.style.width = size + 'px';
     p.style.height = size + 'px';
     p.style.background = color;
