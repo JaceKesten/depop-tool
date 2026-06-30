@@ -530,15 +530,6 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .wi-lbl { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
 /* ============================================================
-   COMING SOON
-   ============================================================ */
-
-.coming-soon { text-align: center; padding: 80px 20px; }
-.coming-soon .cs-icon { font-size: 48px; margin-bottom: 14px; }
-.coming-soon h2 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; letter-spacing: 2px; margin-bottom: 8px; }
-.coming-soon p { font-size: 13px; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.6; }
-
-/* ============================================================
    PROMPT CLIPBOARD
    ============================================================ */
 
@@ -1969,15 +1960,6 @@ function updatePromptField(id, field, value) {
   savePrompts(prompts);
 }
 
-function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target.result);
-    reader.onerror = () => reject(new Error('Could not read file from disk.'));
-    reader.readAsDataURL(file);
-  });
-}
-
 function compressImage(file, maxDim = 800, quality = 0.82) {
   const isHeic = /heic|heif/i.test(file.type) || /\.heic$|\.heif$/i.test(file.name || '');
   const fileInfo = `(${file.name || 'unnamed'}, ${(file.size / 1024 / 1024).toFixed(2)}MB, type: "${file.type || 'unknown'}")`;
@@ -2034,8 +2016,7 @@ function compressImage(file, maxDim = 800, quality = 0.82) {
 
 function addPromptImage(id, input) {
   const file = input.files[0];
-  if (!file) { console.warn('No file selected (input.files was empty).'); return; }
-  console.log('Uploading:', file.name, file.size, 'bytes', file.type);
+  if (!file) return;
   if (!file.type.startsWith('image/') && !/\.(heic|heif)$/i.test(file.name || '')) {
     alert(`That file type isn't supported as an image: "${file.type || 'unknown'}" (${file.name})`);
     return;
