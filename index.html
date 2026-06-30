@@ -1021,6 +1021,28 @@ body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1
   85% { transform: translate(3px, -1px); }
 }
 
+/* ============================================================
+   ACCOUNT GEN
+   ============================================================ */
+
+.tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-chip {
+  padding: 8px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--muted); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s; user-select: none;
+}
+.tag-chip:hover { border-color: var(--muted2); color: var(--text); }
+.tag-chip.selected { background: var(--yellow-glow); border-color: var(--yellow); color: var(--yellow); }
+
+.aig-result {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 3px;
+  padding: 18px; margin-top: 16px; display: none;
+}
+.aig-result.visible { display: block; animation: resultReveal .4s cubic-bezier(.16,1,.3,1); }
+.aig-result-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--yellow); margin-bottom: 8px; }
+.aig-result-text { font-size: 16px; font-weight: 600; color: #fff; line-height: 1.5; word-break: break-word; }
+.aig-result-text.bio { font-size: 14px; font-weight: 500; white-space: pre-wrap; }
+
 </style>
 </head>
 <body>
@@ -1177,6 +1199,14 @@ body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1
       <div class="sb-item" onclick="nav('pricing')" id="nav-pricing">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 V21"/><path d="M16.5 7 C16.5 5.3 14.8 4.5 12 4.5 C9.2 4.5 7.5 5.6 7.5 7.3 C7.5 11 16.5 9.3 16.5 13.3 C16.5 15.2 14.6 16.3 12 16.3 C9.4 16.3 7.5 15.3 7.5 13.6"/></svg></span>
         <span class="sb-label">Price Calculator</span>
+      </div>
+      <div class="sb-item" onclick="nav('excuse')" id="nav-excuse">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5 A1.5 1.5 0 0 1 5.5 4 H18.5 A1.5 1.5 0 0 1 20 5.5 V15.5 A1.5 1.5 0 0 1 18.5 17 H9 L5 20.5 V17 H5.5 A1.5 1.5 0 0 1 4 15.5 Z"/><path d="M8 9 H16 M8 12.5 H13"/></svg></span>
+        <span class="sb-label">Excuse Message</span>
+      </div>
+      <div class="sb-item" onclick="nav('accountgen')" id="nav-accountgen">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.4"/><path d="M5 20 C5 15.8 8.1 13.5 12 13.5 C15.9 13.5 19 15.8 19 20"/></svg></span>
+        <span class="sb-label">Account Gen</span>
       </div>
       <div class="sb-divider"></div>
       <div class="sb-section">Settings</div>
@@ -1422,6 +1452,78 @@ body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1
       </div>
     </div>
 
+    <!-- ════════════ EXCUSE MESSAGE ════════════ -->
+    <div class="page" id="page-excuse">
+      <div class="page-header">
+        <div>
+          <span class="ph-tag">Buyer Comms</span>
+          <h1 class="ph-title">Excuse Message</h1>
+          <p class="ph-sub">Quick-copy shipping delay messages to send buyers.</p>
+        </div>
+      </div>
+      <div class="page-body">
+
+        <div class="card">
+          <div class="card-header"><span class="card-step">01</span><span class="card-title">Message 1 — Send Right Away</span></div>
+          <div class="card-body">
+            <div class="desc-output" id="excuseMsg1">Hey girlie thank u for ur purchasee😗💕 I wanted to let you know this one ships from our fulfillment center so it's fully tracked and covered, delivery typically takes 1–2 weeks max. 🫶🏽</div>
+            <button class="copy-btn" id="excuseCopyBtn1" onclick="copyExcuseMsg(1)">📋 Copy Message 1</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-step">02</span><span class="card-title">Message 2 — Follow-Up</span></div>
+          <div class="card-body">
+            <div class="desc-output" id="excuseMsg2">If your not okay with that though i completely understand and i can refund you🫶🏾🫶🏾</div>
+            <button class="copy-btn" id="excuseCopyBtn2" onclick="copyExcuseMsg(2)">📋 Copy Message 2</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════════════ ACCOUNT GEN ════════════ -->
+    <div class="page" id="page-accountgen">
+      <div class="page-header">
+        <div>
+          <span class="ph-tag">Profile Builder</span>
+          <h1 class="ph-title">Account Gen</h1>
+          <p class="ph-sub">Generate a Pinterest PFP search term and a ready-to-paste Depop bio.</p>
+        </div>
+      </div>
+      <div class="page-body">
+
+        <div class="card">
+          <div class="card-header"><span class="card-step">01</span><span class="card-title">Pinterest Profile Picture Search</span></div>
+          <div class="card-body">
+            <div class="section-label" style="margin-bottom:10px">Pick a theme (select one or more)</div>
+            <div class="tag-grid" id="pfpTagGrid"></div>
+            <button class="generate-btn" style="margin-top:16px" onclick="generatePfpSearch()">Generate Search Term</button>
+            <div class="aig-result" id="pfpResult">
+              <div class="aig-result-label">Search This On Pinterest</div>
+              <div class="aig-result-text" id="pfpResultText"></div>
+              <button class="copy-btn" id="pfpCopyBtn" style="margin-top:10px" onclick="copyAigResult('pfpResultText', 'pfpCopyBtn')">📋 Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-step">02</span><span class="card-title">Depop Bio Generator</span></div>
+          <div class="card-body">
+            <div class="section-label" style="margin-bottom:10px">Pick what to highlight (select up to 4)</div>
+            <div class="tag-grid" id="bioTagGrid"></div>
+            <button class="generate-btn" style="margin-top:16px" onclick="generateBio()">Generate Bio</button>
+            <div class="aig-result" id="bioResult">
+              <div class="aig-result-label">Your Depop Bio</div>
+              <div class="aig-result-text bio" id="bioResultText"></div>
+              <button class="copy-btn" id="bioCopyBtn" style="margin-top:10px" onclick="copyAigResult('bioResultText', 'bioCopyBtn')">📋 Copy</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ════════════ SALES TRACKER ════════════ -->
     <div class="page" id="page-sales">
       <div class="page-header">
@@ -1614,6 +1716,7 @@ function nav(page) {
   if (page === 'sales') { renderSales(); renderChart(); }
   if (page === 'home') refreshHomeStats();
   if (page === 'photo') renderPromptBubbles();
+  if (page === 'accountgen') initAccountGenPage();
 
   document.getElementById('sidebar').classList.remove('open');
 }
@@ -2736,6 +2839,118 @@ function importPrompts(input) {
     ripple.addEventListener('animationend', () => ripple.remove());
   });
 })();
+
+/* ============================================================
+   EXCUSE MESSAGE
+   ============================================================ */
+
+function copyExcuseMsg(num) {
+  const text = document.getElementById('excuseMsg' + num).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('excuseCopyBtn' + num);
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ============================================================
+   ACCOUNT GEN
+   ============================================================ */
+
+const PFP_THEMES = ['Realism', 'Anime', 'Y2K', 'Soft Girl', 'Grunge', 'Cottagecore', 'Dark Academia', 'Minimalist', 'Vintage', 'Glam', 'Streetwear', 'Pastel', 'Gothic', 'Boho', 'Coquette'];
+const BIO_FOCUSES = ['Free Shipping', 'Bundle & Save', 'Fast Shipper', 'Final Sale Only', 'Message Before Buying', 'Y2K Vibes', 'Preloved Finds', 'No Trades', 'Smoke-Free Home', 'Same Day Shipping', 'Open to Offers', 'New Drops Weekly'];
+
+const PFP_PHRASES = {
+  'Realism': ['realistic pfp', 'aesthetic realism icon', 'photo pfp aesthetic'],
+  'Anime': ['anime pfp aesthetic', 'anime icon cute', 'manga pfp'],
+  'Y2K': ['y2k pfp aesthetic', 'y2k icon cute', '2000s pfp'],
+  'Soft Girl': ['soft girl pfp', 'soft aesthetic icon', 'pastel pfp cute'],
+  'Grunge': ['grunge pfp aesthetic', 'grunge icon dark', 'edgy pfp'],
+  'Cottagecore': ['cottagecore pfp', 'cottagecore icon aesthetic', 'cozy pfp'],
+  'Dark Academia': ['dark academia pfp', 'academia icon aesthetic', 'vintage academia pfp'],
+  'Minimalist': ['minimalist pfp aesthetic', 'simple icon clean', 'minimal pfp'],
+  'Vintage': ['vintage pfp aesthetic', 'retro icon cute', 'old school pfp'],
+  'Glam': ['glam pfp aesthetic', 'glamour icon cute', 'luxe pfp'],
+  'Streetwear': ['streetwear pfp aesthetic', 'street icon cool', 'hypebeast pfp'],
+  'Pastel': ['pastel pfp aesthetic', 'pastel icon cute', 'soft pastel pfp'],
+  'Gothic': ['gothic pfp aesthetic', 'goth icon dark', 'dark gothic pfp'],
+  'Boho': ['boho pfp aesthetic', 'bohemian icon cute', 'boho chic pfp'],
+  'Coquette': ['coquette pfp aesthetic', 'coquette icon cute', 'bow pfp aesthetic'],
+};
+
+const BIO_LINES = {
+  'Free Shipping': '🚚 Free shipping every order',
+  'Bundle & Save': '📦 Bundle 2+ items & save',
+  'Fast Shipper': '⚡ Same/next day shipping',
+  'Final Sale Only': '❌ Final sale only — no refunds!',
+  'Message Before Buying': '📩 Message before buying 📦',
+  'Y2K Vibes': '💞 2000s nostalgia + preloved Y2K gems ✨',
+  'Preloved Finds': '♻️ Curated preloved finds',
+  'No Trades': '🚫 No trades, sorry!',
+  'Smoke-Free Home': '🚭 Smoke-free, pet-free home',
+  'Same Day Shipping': '📤 Ships same day (Mon–Fri)',
+  'Open to Offers': '💌 Always open to reasonable offers',
+  'New Drops Weekly': '🆕 New drops every week',
+};
+
+let selectedPfpThemes = [];
+let selectedBioFocuses = [];
+let accountGenInitialized = false;
+
+function initAccountGenPage() {
+  if (accountGenInitialized) return;
+  accountGenInitialized = true;
+  renderTagGrid('pfpTagGrid', PFP_THEMES, selectedPfpThemes, false);
+  renderTagGrid('bioTagGrid', BIO_FOCUSES, selectedBioFocuses, true);
+}
+
+function renderTagGrid(gridId, options, selectedArr, multiLimit) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = options.map(opt => `<div class="tag-chip" data-val="${opt}">${opt}</div>`).join('');
+  grid.querySelectorAll('.tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const val = chip.dataset.val;
+      const idx = selectedArr.indexOf(val);
+      if (idx > -1) {
+        selectedArr.splice(idx, 1);
+        chip.classList.remove('selected');
+      } else {
+        if (multiLimit && selectedArr.length >= 4) return;
+        selectedArr.push(val);
+        chip.classList.add('selected');
+      }
+    });
+  });
+}
+
+function generatePfpSearch() {
+  if (!selectedPfpThemes.length) { alert('Pick at least one theme first.'); return; }
+  const theme = selectedPfpThemes[Math.floor(Math.random() * selectedPfpThemes.length)];
+  const phrases = PFP_PHRASES[theme] || [`${theme.toLowerCase()} pfp aesthetic`];
+  const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+  document.getElementById('pfpResultText').textContent = phrase;
+  document.getElementById('pfpResult').classList.add('visible');
+}
+
+function generateBio() {
+  if (!selectedBioFocuses.length) { alert('Pick at least one focus first.'); return; }
+  const lines = selectedBioFocuses.map(f => BIO_LINES[f] || `✨ ${f}`);
+  document.getElementById('bioResultText').textContent = lines.join('\n');
+  document.getElementById('bioResult').classList.add('visible');
+}
+
+function copyAigResult(elId, btnId) {
+  const btn = document.getElementById(btnId);
+  navigator.clipboard.writeText(document.getElementById(elId).textContent).then(() => {
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+  });
+}
 </script>
 </body>
 </html>
