@@ -829,7 +829,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
           <div class="tool-card" onclick="nav('photo')">
             <div class="tc-top"><span class="tc-icon">◉</span><span class="tc-arrow">→</span></div>
             <div class="tc-title">Prompt Clipboard</div>
-            <div class="tc-sub">Save prompts and reference images in reusable bubbles</div>
+            <div class="tc-sub">Save prompts and reference images in reusable clipboards</div>
           </div>
         </div>
       </div>
@@ -1093,13 +1093,13 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
         <div>
           <span class="ph-tag">Reference Tool</span>
           <h1 class="ph-title">Prompt Clipboard</h1>
-          <p class="ph-sub">Save prompts and reference images in reusable bubbles.</p>
+          <p class="ph-sub">Save prompts and reference images in reusable clipboards.</p>
         </div>
       </div>
       <div class="page-body">
 
         <div class="pc-toolbar">
-          <button class="pc-add-btn" onclick="addPromptBubble()">+ New Bubble</button>
+          <button class="pc-add-btn" onclick="addPromptBubble()">+ New Clipboard</button>
           <div class="pc-toolbar-actions">
             <button class="sales-action-btn" onclick="exportPrompts()">⬇ Export</button>
             <div class="sales-action-btn import-btn">⬆ Import<input type="file" accept=".json" onchange="importPrompts(this)"></div>
@@ -1952,7 +1952,7 @@ function addPromptBubble() {
 }
 
 function deletePromptBubble(id) {
-  if (!confirm('Delete this bubble?')) return;
+  if (!confirm('Delete this clipboard?')) return;
   savePrompts(getPrompts().filter(p => p.id !== id));
   renderPromptBubbles();
 }
@@ -1978,7 +1978,6 @@ function addPromptImage(id, input) {
     renderPromptBubbles();
   };
   reader.readAsDataURL(file);
-  input.value = '';
 }
 
 function removePromptImage(id, idx) {
@@ -2029,7 +2028,7 @@ function renderPromptBubbles() {
   const prompts = getPrompts();
 
   if (!prompts.length) {
-    grid.innerHTML = `<div class="pc-empty" style="grid-column:1/-1"><div class="pe-icon">📋</div><p>No bubbles yet. Click "+ New Bubble" to add one.</p></div>`;
+    grid.innerHTML = `<div class="pc-empty" style="grid-column:1/-1"><div class="pe-icon">📋</div><p>No clipboards yet. Click "+ New Clipboard" to add one.</p></div>`;
     return;
   }
 
@@ -2046,7 +2045,7 @@ function renderPromptBubbles() {
     return `
     <div class="pc-bubble">
       <div class="pc-bubble-hdr">
-        <input class="pc-bubble-name" type="text" placeholder="Untitled bubble — e.g. Prompt 1 - Rug Base"
+        <input class="pc-bubble-name" type="text" placeholder="Untitled clipboard — e.g. Prompt 1 - Rug Base"
           value="${(p.name || '').replace(/"/g, '&quot;')}"
           oninput="updatePromptField('${p.id}', 'name', this.value)">
         <button class="pc-bubble-delete" onclick="deletePromptBubble('${p.id}')" title="Delete bubble">✕</button>
@@ -2073,7 +2072,7 @@ function renderPromptBubbles() {
 
 function exportPrompts() {
   const prompts = getPrompts();
-  if (!prompts.length) { alert('No bubbles to export.'); return; }
+  if (!prompts.length) { alert('No clipboards to export.'); return; }
   const blob = new Blob([JSON.stringify(prompts, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2096,7 +2095,7 @@ function importPrompts(input) {
       const newPrompts = imported.filter(p => !existingIds.has(p.id));
       savePrompts([...existing, ...newPrompts]);
       renderPromptBubbles();
-      alert(`✓ Imported ${newPrompts.length} new bubble(s).`);
+      alert(`✓ Imported ${newPrompts.length} new clipboard(s).`);
     } catch {
       alert('Import failed.');
     }
