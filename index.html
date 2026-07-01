@@ -1312,7 +1312,7 @@ body.celeb-shake-hard { animation: screenShakeHard .55s ease; animation-delay: 1
           <div class="card-header"><span class="card-step">01</span><span class="card-title">Photos</span></div>
           <div class="card-body">
             <div class="drop-zone" id="dropZone">
-              <input type="file" id="fileInput" accept="image/*" multiple>
+              <input type="file" id="fileInput" accept="image/*,.heic,.heif,.raw,.cr2,.nef,.arw,.bmp,.tiff,.tif,.avif,.webp" multiple>
               <span class="dz-icon">📸</span>
               <h3>Drop photos here</h3>
               <p>Front + back if there's a graphic · Up to 4 images</p>
@@ -1929,11 +1929,15 @@ document.addEventListener('paste', e => {
 });
 
 function addFiles(files) {
+  const imageExts = /\.(jpe?g|png|webp|gif|avif|svg|bmp|tiff?|heic|heif|ico|raw|cr2|nef|arw)$/i;
   for (const file of files) {
-    if (!file.type.startsWith('image/') || images.length >= 4) continue;
+    if (images.length >= 4) break;
+    const looksLikeImage = file.type.startsWith('image/') || !file.type || imageExts.test(file.name || '');
+    if (!looksLikeImage) continue;
+    const mediaType = file.type.startsWith('image/') ? file.type : 'image/jpeg';
     const reader = new FileReader();
     reader.onload = e => {
-      images.push({ dataUrl: e.target.result, base64: e.target.result.split(',')[1], mediaType: file.type });
+      images.push({ dataUrl: e.target.result, base64: e.target.result.split(',')[1], mediaType });
       renderPreviews();
     };
     reader.readAsDataURL(file);
